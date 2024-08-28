@@ -1,0 +1,36 @@
+
+# .gitignore
+
+# Ignore virtual environment folder
+venv/
+
+# Python specific ignores
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+*.env
+*.env.*
+.envrc
+venv/
+ENV/
+env.bak/
+.envrc
+env.bak/
+venv.bak/
+
+# Other common ignores
+*.log
+*.sqlite3
+*.sqlite
+
+# Ignore IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.swn
+*.orig
+.DS_Store
+Thumbs.db
+

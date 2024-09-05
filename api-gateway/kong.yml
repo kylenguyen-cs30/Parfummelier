@@ -1,0 +1,20 @@
+_format_version: "1.1"
+services:
+  - name: user-service
+    url: http://user-service:5000
+    routes:
+      - name: user-route
+        paths:
+          - /users
+  - name: recommendation-service
+    url: http://recommendation-service:8000
+    routes:
+      - name: recommendation-route
+        paths:
+          - /recommendations
+  - name: perfume-service
+    url: http://perfume-service:8001
+    routes:
+      - name: perfume-route
+        paths:
+          - /perfumes

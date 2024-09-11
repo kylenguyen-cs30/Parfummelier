@@ -14,6 +14,12 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
+- Install packages
+
+```
+pip install requests beautifulsoup4
+```
+
 - Copy perfume links from the website into perfume-links.txt in the same format.
 
 - Compile and run "run.py"

@@ -7,15 +7,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    scentID = db.Column(
+        db.Integer, db.ForeignKey("scent.id"), nullable=True, unique=True
+    )  # ForeignKey to Favorites Scent table
     email = db.Column(db.String(100), unique=True, nullable=False)
     userName = db.Column(db.String(100), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
     firstName = db.Column(db.String(100), nullable=False)
     lastName = db.Column(db.String(100), nullable=False)
     dateOfBirth = db.Column(db.Date, nullable=False)
-    scentID = db.Column(
-        db.Integer, db.ForeignKey("scent.id"), nullable=True
-    )  # ForeignKey to Favorites Scent table
 
     # accesss the key directly
     scent = db.relationship("Scent", backref="users", lazy=True)

@@ -1,70 +1,79 @@
 import requests
 from bs4 import BeautifulSoup
 
-# The URL of the page you want to scrape
-url = "https://www.fragrantica.com/perfume/Dior/Dior-Homme-Voyage-6017.html"
-
 # Set custom headers to mimic a browser request
 headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36"
 }
 
-# Send an HTTP request to get the page content with headers
-response = requests.get(url, headers=headers)
+# Open the file containing the list of URLs and read line by line
+with open("perfume-links.txt", "r") as url_file:
+    urls = url_file.readlines()
 
-# Check if the request was successful
-if response.status_code == 200:
-    print("Page loaded successfully")
-else:
-    print(f"Failed to load page. Status code: {response.status_code}")
-    exit()
+# Open a result file to save the output
+with open("result.txt", "w") as result_file:
+    for url in urls:
+        url = url.strip()  # Remove any extra whitespace/newline characters
 
-# Parse the page content with BeautifulSoup
-html_content = response.content
-soup = BeautifulSoup(html_content, "html.parser")
+        print(f"Processing: {url}")
 
-# Extract the perfume name from the <h1> tag with itemprop="name"
-perfume_name_tag = soup.find("h1", itemprop="name")
-if perfume_name_tag:
-    perfume_name = perfume_name_tag.text.strip()
-    print(f"Perfume Name: {perfume_name}")
-else:
-    print("Could not find the perfume name.")
-    perfume_name = "Unknown Perfume Name"
+        # Send an HTTP request to get the page content with headers
+        response = requests.get(url, headers=headers)
 
-# Find all elements with the class 'accord-bar' for accords
-accord_elements = soup.find_all("div", class_="accord-bar")
+        # Check if the request was successful
+        if response.status_code == 200:
+            print("Page loaded successfully")
+        else:
+            print(f"Failed to load page. Status code: {response.status_code}")
+            continue  # Skip to the next URL if the page failed to load
 
-if not accord_elements:
-    print("Could not find any accord elements.")
-else:
-    print(f"Found {len(accord_elements)} accord elements.")
+        # Parse the page content with BeautifulSoup
+        html_content = response.content
+        soup = BeautifulSoup(html_content, "html.parser")
 
-# Open a text file to save the results
-with open("perfume_accords_debug.txt", "w") as file:
-    # Write the perfume name at the top of the file
-    file.write(f"Perfume Name: {perfume_name}\n\n")
+        # Extract the perfume name from the <h1> tag with itemprop="name"
+        perfume_name_tag = soup.find("h1", itemprop="name")
+        if perfume_name_tag:
+            perfume_name = perfume_name_tag.text.strip()
+            print(f"Perfume Name: {perfume_name}")
+        else:
+            print("Could not find the perfume name.")
+            perfume_name = "Unknown Perfume Name"
 
-    # Loop through all the accord elements
-    for accord in accord_elements:
-        # Extract the accord name (text inside the div)
-        accord_name = accord.text.strip()
+        # Find all elements with the class 'accord-bar' for accords
+        accord_elements = soup.find_all("div", class_="accord-bar")
 
-        # Extract the background color (style attribute)
-        style = accord.get("style", "")
-        background_color = ""
-        width = ""
+        if not accord_elements:
+            print("Could not find any accord elements.")
+        else:
+            print(f"Found {len(accord_elements)} accord elements.")
 
-        # Parse the style attribute for background color and width
-        if "background" in style:
-            background_color = style.split("background:")[1].split(";")[0].strip()
+        # Write the perfume name to the result file
+        result_file.write(f"Perfume Name: {perfume_name}\n")
 
-        if "width" in style:
-            width = style.split("width:")[1].split(";")[0].strip()
+        # Loop through all the accord elements and extract accord information
+        for accord in accord_elements:
+            # Extract the accord name (text inside the div)
+            accord_name = accord.text.strip()
 
-        # Write the extracted data to the file
-        file.write(
-            f"Accord: {accord_name}, Background Color: {background_color}, Width: {width}\n"
-        )
+            # Extract the background color (style attribute)
+            style = accord.get("style", "")
+            background_color = ""
+            width = ""
 
-print("Data extraction complete! Check the 'perfume_accords_debug.txt' file.")
+            # Parse the style attribute for background color and width
+            if "background" in style:
+                background_color = style.split("background:")[1].split(";")[0].strip()
+
+            if "width" in style:
+                width = style.split("width:")[1].split(";")[0].strip()
+
+            # Write the extracted data to the result file
+            result_file.write(
+                f"Accord: {accord_name}, Background Color: {background_color}, Width: {width}\n"
+            )
+
+        # Add a separator between perfume entries
+        result_file.write("\n---\n\n")
+
+print("Data extraction complete! Check the 'result.txt' file.")

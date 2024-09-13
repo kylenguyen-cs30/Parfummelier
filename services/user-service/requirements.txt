@@ -14,3 +14,4 @@ Werkzeug==2.2.3
 SQLAlchemy==1.4.47
 Flask-Migrate==4.0.4
 Flask-CORS>=3.0.10
+Flask-Login==0.3.2

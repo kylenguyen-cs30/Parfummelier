@@ -1,7 +1,7 @@
 from app import db
 from enum import unique
 
-# from flask_login import UserMixin
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 import enum
 
@@ -12,7 +12,7 @@ class PotencyLevel(enum.Enum):
     intense = "Intense and Forever"
 
 
-class User(db.Model):
+class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     scentID = db.Column(
         db.Integer, db.ForeignKey("scent.id"), nullable=True, unique=True
@@ -27,12 +27,13 @@ class User(db.Model):
     # accesss the key directly
     scent = db.relationship("ScentBank", backref="users", lazy=True)
 
-    def __init__(self, userName, email, firstName, lastName, dateOfBirth):
+    def __init__(self, userName, email, firstName, lastName, dateOfBirth, password):
         self.userName = userName
         self.email = email
         self.firstName = firstName
         self.lastName = lastName
         self.dateOfBirth = dateOfBirth
+        self.set_password(password)
 
     # Set password_hash
     def set_password(self, password):
@@ -95,10 +96,6 @@ class ScentBank(db.Model):
         secondary=scentBank_seasons,
         backref=db.backref("scentBanks", lazy="dynamic"),
     )
-    # favorite_brand = db.Column(db.String(100), nullable=True)
-    # favorite_potency_level = db.Column(db.Enum(PotencyLevel), nullable=False)
-    # collection_overview = db.Column(db.String(255), nullable=True)
-    # favorite_traits = db.Column(db.String(255), nullable=True)
 
     def __init__(
         self,

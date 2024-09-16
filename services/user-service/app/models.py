@@ -12,10 +12,18 @@ class PotencyLevel(enum.Enum):
     intense = "Intense and Forever"
 
 
+# NOTE: User Table
 class User(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key=True)
     scentID = db.Column(
-        db.Integer, db.ForeignKey("scent.id"), nullable=True, unique=True
+        db.Integer,
+        db.ForeignKey("scent_bank.id"),
+        nullable=True,
+        unique=True,
+        # db.String(100),
+        # db.ForeignKey("scent_bank.id"),
+        # nullable=True,
+        # unique=True,
     )  # ForeignKey to ScentBank table
     email = db.Column(db.String(100), unique=True, nullable=False)
     userName = db.Column(db.String(100), unique=True, nullable=False)

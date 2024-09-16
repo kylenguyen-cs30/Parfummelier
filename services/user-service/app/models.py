@@ -20,10 +20,6 @@ class User(db.Model, UserMixin):
         db.ForeignKey("scent_bank.id"),
         nullable=True,
         unique=True,
-        # db.String(100),
-        # db.ForeignKey("scent_bank.id"),
-        # nullable=True,
-        # unique=True,
     )  # ForeignKey to ScentBank table
     email = db.Column(db.String(100), unique=True, nullable=False)
     userName = db.Column(db.String(100), unique=True, nullable=False)
@@ -56,6 +52,7 @@ class User(db.Model, UserMixin):
 
 
 # NOTE: Association Tables for many-to-many relationship
+
 scentBank_notes = db.Table(
     "scentBank_notes",
     db.Column("scentBank_id", db.Integer, db.ForeignKey("scent_bank.id")),
@@ -112,10 +109,10 @@ class ScentBank(db.Model):
         favorite_scents,
         favorite_seasons,
     ):
-        self.favorite_notes = favorite_notes
-        self.favorite_accords = favorite_accords
-        self.favorite_scents = favorite_scents
-        self.favorite_seasons = favorite_seasons
+        self.favorite_notes = favorite_notes or []
+        self.favorite_accords = favorite_accords or []
+        self.favorite_scents = favorite_scents or []
+        self.favorite_seasons = favorite_seasons or []
 
     def __repr__(self):
         return f"ScentBank {self.id}"
@@ -124,25 +121,25 @@ class ScentBank(db.Model):
 # NOTE: Perfume Note Table
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Perfume Accords Table
 class Accord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Perfume Scent Table
 class Scent(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Perfume Season Table
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), unique=True, nullable=False)
+    name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: BRAND TABLE [OPTIONAL]
@@ -150,3 +147,7 @@ class Season(db.Model):
 # class Brand(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)
 #     name = db.Column(db.String(100), unique=True, nullable=False)
+#             # db.String(100),
+# db.ForeignKey("scent_bank.id"),
+# nullable=True,
+# unique=True,

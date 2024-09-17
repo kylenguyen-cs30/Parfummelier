@@ -11,10 +11,6 @@ from .models import (
     Scent,
     Accord,
     Season,
-    scentBank_notes,
-    scentBank_accords,
-    scentBank_scents,
-    scentBank_seasons,
 )
 from app import db
 
@@ -50,28 +46,6 @@ def register_user():
         )
         db.session.add(new_user)  # add new user to database
         db.session.commit()  # commit the adding action
-
-        #############################################################
-        # Default Values for the new user's scentbank
-        # default_notes = Note.query.filter(Note.name.in_(["Citrus", "Floral"])).all()
-        # default_accords = Accord.query.filter(Accord.name.in_(["Fresh", "Woody"])).all()
-        # default_scents = Scent.query.filter(
-        #     Scent.name.in_(["Strong", "Long-Lasting"])
-        # ).all()
-        # default_seasons = Season.query.filter(
-        #     Season.name.in_(["Summer", "Spring"])
-        # ).all()
-
-        #############################################################
-        # Create a new ScentBank for this user
-        # new_scent_bank = ScentBank(
-        #     favorite_notes=default_notes,
-        #     favorite_accords=default_accords,
-        #     favorite_scents=default_scents,
-        #     favorite_seasons=default_seasons,
-        # )
-        #############################################################
-
         # Check and insert default values for notes, accords, scents, and seasons if they don't exist
         default_notes = ["Citrus", "Floral"]
         default_accords = ["Fresh", "Woody"]
@@ -125,31 +99,6 @@ def register_user():
         # Assign the ScentBank Id to the user's scentID
         new_user.scentID = new_scent_bank.id
         db.session.commit()
-
-        #############################################################
-        #
-        # new_scent_bank = ScentBank()
-        # db.session.add(new_scent_bank)
-        # db.session.commit()
-        #
-        # # ScentBank is created, associate the default Values
-        # new_scent_bank.favorite_notes = default_notes
-        # new_scent_bank.favorite_accords = default_accords
-        # new_scent_bank.favorite_scents = default_scents
-        # new_scent_bank.favorite_seasons = default_seasons
-        #
-        # # commit the changes to the scent bank
-        # db.session.commit()
-        #
-        # # Assign the ScentBank Id to the user's scentID
-        # # Do we need to do something like this in order to map the key from scentBank to Accord table
-        # new_user.scentID = new_scent_bank.id
-        # new_accord = Accord()
-        # new_accord.id = new_user.scentID
-        # new_accord.name = default_notes
-        #
-        #############################################################
-
         db.session.commit()
         return (
             jsonify(
@@ -241,6 +190,9 @@ def get_scentbank_for_user(user_id):
 
 
 # NOTE: Update ScentBank Details for User
+
+
+#############################################################
 @user_blueprint.route("/user/<int:user_id>/scentbank", methods=["PUT", "POST"])
 def add_scentbank_for_user(user_id):
     try:
@@ -294,56 +246,31 @@ def add_scentbank_for_user(user_id):
 
 
 #############################################################
-## PERPLEXITY ## def register_user():
-#     try:
-#         firstName = request.json.get("firstName")
-#         lastName = request.json.get("lastName")
-#         email = request.json.get("email")
-#         password = request.json.get("password")
-#         userName = request.json.get("userName")
-#         dateOfBirth = request.json.get("dob")
-#
-#         # checking if the user already exists
-#         existing_user = User.query.filter_by(email=email).first()
-#         if existing_user:
-#             return jsonify({"error": "User with this email already exists"}), 401
-#
-#         # Create a new ScentBank
-#         new_scent_bank = ScentBank()
-#         db.session.add(new_scent_bank)
-#         db.session.flush()  # This assigns an ID to new_scent_bank
-#
-#         # create a new user with the ScentBank
-#         new_user = User(
-#             firstName=firstName,
-#             lastName=lastName,
-#             email=email,
-#             password=password,
-#             dateOfBirth=dateOfBirth,
-#             userName=userName,
-#             scentID=new_scent_bank.id,  # Assign the ScentBank ID here
-#         )
-#         db.session.add(new_user)
-#
-#         db.session.commit()
-#
-#         return (
-#             jsonify(
-#                 {
-#                     "message": "User created successfully!",
-#                     "user_id": new_user.id,
-#                     "scentID": new_scent_bank.id,
-#                 }
-#             ),
-#             201,
-#         )  # 201 is more appropriate for resource creation
-#
-#     except Exception as e:
-#         db.session.rollback()  # Rollback in case of error
-#         print(f"Error registering user: {e}")
-#         return (
-#             jsonify({"error": f"Failed to register user: {str(e)}"}),
-#             500,
-#         )  # 500 for server error
-#
-##############################################################
+
+# NOTE: Update ScentBank
+
+
+#############################################################
+
+
+# NOTE: reset db route
+@user_blueprint.route("/reset-db", methods=["POST"])
+def reset_db():
+    try:
+        # Drop all tables
+        db.drop_all()
+
+        # Recreate the tables
+        db.create_all()
+
+        # Apply migrations
+        from flask_migrate import upgrade
+
+        upgrade()
+
+        db.session.commit()
+        return jsonify({"message": "Database reset successful"}), 200
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to reset database: {str(e)}"}), 500

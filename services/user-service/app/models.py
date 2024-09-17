@@ -130,6 +130,9 @@ class Season(db.Model):
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
+# NOTE:
+
+
 # NOTE: BRAND TABLE [OPTIONAL]
 
 # class Brand(db.Model):

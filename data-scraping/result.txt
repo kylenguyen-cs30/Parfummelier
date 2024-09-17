@@ -14,46 +14,47 @@ Accord: iris, Background Color: #b7a7d7, Width: 52.580797294293%
 
 Perfume Name: Sauvage Eau Forte Dior for men
 Accord: musky, Background Color: #E7D8EA, Width: 100%
-Accord: aromatic, Background Color: #37a089, Width: 90.615289240188%
-Accord: lavender, Background Color: #e7ceec, Width: 84.615444224883%
-Accord: powdery, Background Color: #EEDDCC, Width: 64.999806269131%
-Accord: woody, Background Color: #774414, Width: 60.769111550234%
-Accord: fresh spicy, Background Color: #83C928, Width: 56.076949901197%
-Accord: warm spicy, Background Color: #CC3300, Width: 55.307838350963%
-Accord: balsamic, Background Color: #ad8359, Width: 54.230694718897%
-Accord: conifer, Background Color: #1b422f, Width: 49.384710759812%
+Accord: aromatic, Background Color: #37a089, Width: 93.636508933158%
+Accord: lavender, Background Color: #e7ceec, Width: 87.273017866317%
+Accord: powdery, Background Color: #EEDDCC, Width: 65%
+Accord: woody, Background Color: #774414, Width: 61.111022318625%
+Accord: fresh spicy, Background Color: #83C928, Width: 57.363890633027%
+Accord: warm spicy, Background Color: #CC3300, Width: 56.727381699869%
+Accord: balsamic, Background Color: #ad8359, Width: 55.454363833552%
+Accord: conifer, Background Color: #1b422f, Width: 50.363491066842%
 
 ---
 
 Perfume Name: Cherry Cherry Mancera for women and men
 Accord: powdery, Background Color: #EEDDCC, Width: 100%
-Accord: patchouli, Background Color: #63652e, Width: 82.325772955163%
-Accord: vanilla, Background Color: #FFFEC0, Width: 77.209513493881%
-Accord: cherry, Background Color: #ce1d33, Width: 73.023070287519%
-Accord: iris, Background Color: #b7a7d7, Width: 73.023070287519%
-Accord: woody, Background Color: #774414, Width: 70.4651675628%
-Accord: earthy, Background Color: #544838, Width: 68.13971890181%
-Accord: warm spicy, Background Color: #CC3300, Width: 56.162886477582%
-Accord: almond, Background Color: #f1e3c5, Width: 52.093124314929%
-Accord: balsamic, Background Color: #ad8359, Width: 48.139589184141%
+Accord: patchouli, Background Color: #63652e, Width: 82.700461498848%
+Accord: vanilla, Background Color: #FFFEC0, Width: 77.659692466147%
+Accord: cherry, Background Color: #ce1d33, Width: 75.826307415012%
+Accord: iris, Background Color: #b7a7d7, Width: 72.389230373094%
+Accord: woody, Background Color: #774414, Width: 70.670922931673%
+Accord: earthy, Background Color: #544838, Width: 68.035691885147%
+Accord: warm spicy, Background Color: #CC3300, Width: 56.349999669886%
+Accord: almond, Background Color: #f1e3c5, Width: 51.767692439738%
+Accord: balsamic, Background Color: #ad8359, Width: 48.387923123139%
 
 ---
 
 Perfume Name: Eros Energy Versace for men
 Accord: citrus, Background Color: #F9FF52, Width: 100%
-Accord: musky, Background Color: #E7D8EA, Width: 44.729772867641%
-Accord: woody, Background Color: #774414, Width: 44.482272850293%
+Accord: musky, Background Color: #E7D8EA, Width: 44.339604399415%
 
 ---
 
 Perfume Name: Eau d'Ombré Leather Tom Ford for men
 Accord: vanilla, Background Color: #FFFEC0, Width: 100%
-Accord: warm spicy, Background Color: #CC3300, Width: 97.51831656267%
-Accord: leather, Background Color: #78483A, Width: 74.545365113272%
-Accord: aromatic, Background Color: #37a089, Width: 57.363773492983%
-Accord: animalic, Background Color: #8E4B13, Width: 52.272846515637%
-Accord: powdery, Background Color: #EEDDCC, Width: 50.999868832799%
-Accord: sweet, Background Color: #ee363b, Width: 44.477251859764%
+Accord: warm spicy, Background Color: #CC3300, Width: 97.552811006236%
+Accord: leather, Background Color: #78483A, Width: 78.943100478005%
+Accord: aromatic, Background Color: #37a089, Width: 59.764055031179%
+Accord: animalic, Background Color: #8E4B13, Width: 54.471550239002%
+Accord: powdery, Background Color: #EEDDCC, Width: 50.999830150681%
+Accord: soft spicy, Background Color: #E27752, Width: 44.9959964089%
+Accord: smoky, Background Color: #827487, Width: 44.682794263946%
+Accord: sweet, Background Color: #ee363b, Width: 44.597529905612%
 
 ---
 

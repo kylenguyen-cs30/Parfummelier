@@ -102,18 +102,6 @@ class ScentBank(db.Model):
         backref=db.backref("scentBanks", lazy="dynamic"),
     )
 
-    def __init__(
-        self,
-        favorite_notes,
-        favorite_accords,
-        favorite_scents,
-        favorite_seasons,
-    ):
-        self.favorite_notes = favorite_notes or []
-        self.favorite_accords = favorite_accords or []
-        self.favorite_scents = favorite_scents or []
-        self.favorite_seasons = favorite_seasons or []
-
     def __repr__(self):
         return f"ScentBank {self.id}"
 

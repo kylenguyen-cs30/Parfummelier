@@ -292,3 +292,27 @@ def scentbank_details(f):
 @scentbank_details
 def get_user_scentbank_details(scent_bank_details, user_id):
     return jsonify(scent_bank_details), 200
+
+
+# NOTE: Delete a user
+@user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
+def delete_user(user_id):
+    try:
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not Found"}), 404
+
+        # Delete the user from the database
+        db.session.delete(user)
+        db.session.commit()
+        return (
+            jsonify(
+                {
+                    "message": f"User {user.firstName} {user.lastName} delete successfully"
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500

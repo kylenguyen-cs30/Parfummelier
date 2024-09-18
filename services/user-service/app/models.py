@@ -128,17 +128,3 @@ class Scent(db.Model):
 class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
-
-
-# NOTE:
-
-
-# NOTE: BRAND TABLE [OPTIONAL]
-
-# class Brand(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(100), unique=True, nullable=False)
-#             # db.String(100),
-# db.ForeignKey("scent_bank.id"),
-# nullable=True,
-# unique=True,

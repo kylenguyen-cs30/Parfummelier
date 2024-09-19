@@ -13,12 +13,12 @@ serializer = URLSafeTimedSerializer("SECRET_KEY")
 
 
 # NOTE: Home route
-#
 @auth_blueprint.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Authentication service launched !!!"})
 
 
+# TODO: Need Test
 # NOTE: Login Route
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
@@ -37,9 +37,8 @@ def login():
         return jsonify({"error": "Invalid Email"}), 401
 
 
+# TODO: Need Test
 # NOTE: Logout Route
-
-
 @auth_blueprint.route("/logout", methods=["POST"])
 @login_required
 def logout():
@@ -48,8 +47,6 @@ def logout():
 
 
 # NOTE: Forget password before Login
-
-
 @auth_blueprint.route("/forget-password", methods=["POST"])
 def forget_password():
     email = request.json.get("email")
@@ -81,8 +78,6 @@ def change_password():
 
 
 # NOTE: Change Password before login (After clicking Reset Password Link)
-
-
 @auth_blueprint.route("/request-password-reset", methods=["POST"])
 def request_password_reset():
     email = request.json.get("email")

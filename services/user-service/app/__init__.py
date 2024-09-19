@@ -14,7 +14,6 @@ def create_app():
 
     # CORS configurations
 
-    # app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://admin:password@db/users_db"
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
     )

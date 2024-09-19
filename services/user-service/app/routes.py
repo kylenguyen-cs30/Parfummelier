@@ -1,5 +1,3 @@
-import string
-import os
 import logging
 
 # import smtplib [optional]
@@ -256,7 +254,7 @@ def test_put():
         return jsonify({"error": f"Fail to test the PUT METHOD: {str(e)}"}), 500
 
 
-# scent bank detail decorator
+# NOTE:  scent bank detail decorator
 def scentbank_details(f):
     @wraps(f)
     def decorated_function(*arg, **kwargs):

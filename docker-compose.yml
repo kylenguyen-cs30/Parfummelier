@@ -1,5 +1,3 @@
-# version: "3.9"
-
 services:
   user-service:
     build: ./services/user-service
@@ -9,6 +7,24 @@ services:
       - db
     environment:
       - DATABASE_URL=${DATABASE_URL}
+
+  authentication-service:
+    build: ./services/authentication-service/
+    ports:
+      - "5002:5000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+
+  # product-service:
+  #   build: ./services/product-service/
+  #   ports:
+  #     - "5003:5000"
+  #   depends_on:
+  #     - db
+  #   environment:
+  #     - DATABASE_URL=${DATABASE_URL}
 
   db:
     image: postgres:latest

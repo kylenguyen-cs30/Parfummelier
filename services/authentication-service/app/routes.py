@@ -1,9 +1,11 @@
-from flask import Blueprint, request, jsonify, url_for
+from flask import Blueprint, request, jsonify, url_for, current_app
 from .models import User
 from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
+import jwt
+import datetime
 
 
 auth_blueprint = Blueprint("auth", __name__)
@@ -32,7 +34,17 @@ def login():
     # check user
     if user and user.check_password(password):
         login_user(user)
-        return jsonify({"message": "Logged in successfully !"}), 200
+
+        # generate JWT token
+        token = jwt.encode(
+            {
+                "user_id": user.id,
+                "exp": datetime.datetime.now() + datetime.timedelta(hours=2),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+        return jsonify({"message": "Logged in successfully !", "token": token}), 200
     else:
         return jsonify({"error": "Invalid Email"}), 401
 

@@ -40,8 +40,8 @@ for _ in range(10):
     response = requests.post(url, json=user_data)
 
     # Print response for each user
-    if response.status_code == 201:
-        print(f"User {user_name} registered successfully.")
+    if response.status_code == 202:
+        print(f"User {user_name} registered successfully. password  is {password}")
     else:
         print(
             f"Failed to register user {user_name}. Response: {response.status_code} - {response.text}"

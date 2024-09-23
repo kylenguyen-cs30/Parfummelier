@@ -16,6 +16,12 @@ from app import db
 user_blueprint = Blueprint("user", __name__)
 logging.basicConfig(level=logging.INFO)
 
+# TODO:
+########################################################
+# Token Required for JWT request
+# Service to  service user need to go through JWT Checking point
+########################################################
+
 
 # NOTE: Add new user route
 @user_blueprint.route("/register", methods=["POST"])
@@ -76,6 +82,9 @@ def home():
 
 
 # NOTE: list all users
+
+
+# WARNING: This route should be disabled
 @user_blueprint.route("/users", methods=["GET"])
 def list_users():
     try:
@@ -234,6 +243,7 @@ def scentbank_details(f):
 
 
 # Decorator List User
+# TODO: Add Token_required decorator for returning value
 @user_blueprint.route("/user/<int:user_id>/scentbank/details", methods=["GET"])
 @scentbank_details
 def get_user_scentbank_details(scent_bank_details, user_id):
@@ -241,6 +251,9 @@ def get_user_scentbank_details(scent_bank_details, user_id):
 
 
 # NOTE: Delete a user
+
+
+# WARNING: this route should only be used by admin
 @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
 def delete_user(user_id):
     try:

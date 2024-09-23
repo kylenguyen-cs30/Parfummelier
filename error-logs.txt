@@ -1,0 +1,329 @@
+
+HTTP/1.1 500 INTERNAL SERVER ERROR
+Connection: close
+Content-Length: 18174
+Content-Type: text/html; charset=utf-8
+Date: Mon, 23 Sep 2024 07:08:31 GMT
+Server: Werkzeug/2.2.3 Python/3.9.20
+
+<!doctype html>
+<html lang=en>
+  <head>
+    <title>AttributeError: 'Flask' object has no attribute 'login_manager'
+ // Werkzeug Debugger</title>
+    <link rel="stylesheet" href="?__debugger__=yes&amp;cmd=resource&amp;f=style.css">
+    <link rel="shortcut icon"
+        href="?__debugger__=yes&amp;cmd=resource&amp;f=console.png">
+    <script src="?__debugger__=yes&amp;cmd=resource&amp;f=debugger.js"></script>
+    <script>
+      var CONSOLE_MODE = false,
+          EVALEX = true,
+          EVALEX_TRUSTED = false,
+          SECRET = "udYrrNCtJz4EgCRuY2wJ";
+    </script>
+  </head>
+  <body style="background-color: #fff">
+    <div class="debugger">
+<h1>AttributeError</h1>
+<div class="detail">
+  <p class="errormsg">AttributeError: &#39;Flask&#39; object has no attribute &#39;login_manager&#39;
+</p>
+</div>
+<h2 class="traceback">Traceback <em>(most recent call last)</em></h2>
+<div class="traceback">
+  <h3></h3>
+  <ul><li><div class="frame" id="frame-281473070093584">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">2552</em>,
+      in <code class="function">__call__</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">    </span>def __call__(self, environ: dict, start_response: t.Callable) -&gt; t.Any:</pre>
+<pre class="line before"><span class="ws">        </span>&#34;&#34;&#34;The WSGI server calls the Flask application object as the</pre>
+<pre class="line before"><span class="ws">        </span>WSGI application. This calls :meth:`wsgi_app`, which can be</pre>
+<pre class="line before"><span class="ws">        </span>wrapped to apply middleware.</pre>
+<pre class="line before"><span class="ws">        </span>&#34;&#34;&#34;</pre>
+<pre class="line current"><span class="ws">        </span>return self.wsgi_app(environ, start_response)</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069247392">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">2532</em>,
+      in <code class="function">wsgi_app</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">            </span>try:</pre>
+<pre class="line before"><span class="ws">                </span>ctx.push()</pre>
+<pre class="line before"><span class="ws">                </span>response = self.full_dispatch_request()</pre>
+<pre class="line before"><span class="ws">            </span>except Exception as e:</pre>
+<pre class="line before"><span class="ws">                </span>error = e</pre>
+<pre class="line current"><span class="ws">                </span>response = self.handle_exception(e)</pre>
+<pre class="line after"><span class="ws">            </span>except:  # noqa: B001</pre>
+<pre class="line after"><span class="ws">                </span>error = sys.exc_info()[1]</pre>
+<pre class="line after"><span class="ws">                </span>raise</pre>
+<pre class="line after"><span class="ws">            </span>return response(environ, start_response)</pre>
+<pre class="line after"><span class="ws">        </span>finally:</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069247504">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask_cors/extension.py"</cite>,
+      line <em class="line">178</em>,
+      in <code class="function">wrapped_function</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">        </span># Wrap exception handlers with cross_origin</pre>
+<pre class="line before"><span class="ws">        </span># These error handlers will still respect the behavior of the route</pre>
+<pre class="line before"><span class="ws">        </span>if options.get(&#39;intercept_exceptions&#39;, True):</pre>
+<pre class="line before"><span class="ws">            </span>def _after_request_decorator(f):</pre>
+<pre class="line before"><span class="ws">                </span>def wrapped_function(*args, **kwargs):</pre>
+<pre class="line current"><span class="ws">                    </span>return cors_after_request(app.make_response(f(*args, **kwargs)))</pre>
+<pre class="line after"><span class="ws">                </span>return wrapped_function</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">            </span>if hasattr(app, &#39;handle_exception&#39;):</pre>
+<pre class="line after"><span class="ws">                </span>app.handle_exception = _after_request_decorator(</pre>
+<pre class="line after"><span class="ws">                    </span>app.handle_exception)</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069266864">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">2529</em>,
+      in <code class="function">wsgi_app</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">        </span>ctx = self.request_context(environ)</pre>
+<pre class="line before"><span class="ws">        </span>error: t.Optional[BaseException] = None</pre>
+<pre class="line before"><span class="ws">        </span>try:</pre>
+<pre class="line before"><span class="ws">            </span>try:</pre>
+<pre class="line before"><span class="ws">                </span>ctx.push()</pre>
+<pre class="line current"><span class="ws">                </span>response = self.full_dispatch_request()</pre>
+<pre class="line after"><span class="ws">            </span>except Exception as e:</pre>
+<pre class="line after"><span class="ws">                </span>error = e</pre>
+<pre class="line after"><span class="ws">                </span>response = self.handle_exception(e)</pre>
+<pre class="line after"><span class="ws">            </span>except:  # noqa: B001</pre>
+<pre class="line after"><span class="ws">                </span>error = sys.exc_info()[1]</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069266976">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">1825</em>,
+      in <code class="function">full_dispatch_request</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">            </span>request_started.send(self)</pre>
+<pre class="line before"><span class="ws">            </span>rv = self.preprocess_request()</pre>
+<pre class="line before"><span class="ws">            </span>if rv is None:</pre>
+<pre class="line before"><span class="ws">                </span>rv = self.dispatch_request()</pre>
+<pre class="line before"><span class="ws">        </span>except Exception as e:</pre>
+<pre class="line current"><span class="ws">            </span>rv = self.handle_user_exception(e)</pre>
+<pre class="line after"><span class="ws">        </span>return self.finalize_request(rv)</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">    </span>def finalize_request(</pre>
+<pre class="line after"><span class="ws">        </span>self,</pre>
+<pre class="line after"><span class="ws">        </span>rv: t.Union[ft.ResponseReturnValue, HTTPException],</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069267088">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask_cors/extension.py"</cite>,
+      line <em class="line">178</em>,
+      in <code class="function">wrapped_function</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">        </span># Wrap exception handlers with cross_origin</pre>
+<pre class="line before"><span class="ws">        </span># These error handlers will still respect the behavior of the route</pre>
+<pre class="line before"><span class="ws">        </span>if options.get(&#39;intercept_exceptions&#39;, True):</pre>
+<pre class="line before"><span class="ws">            </span>def _after_request_decorator(f):</pre>
+<pre class="line before"><span class="ws">                </span>def wrapped_function(*args, **kwargs):</pre>
+<pre class="line current"><span class="ws">                    </span>return cors_after_request(app.make_response(f(*args, **kwargs)))</pre>
+<pre class="line after"><span class="ws">                </span>return wrapped_function</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">            </span>if hasattr(app, &#39;handle_exception&#39;):</pre>
+<pre class="line after"><span class="ws">                </span>app.handle_exception = _after_request_decorator(</pre>
+<pre class="line after"><span class="ws">                    </span>app.handle_exception)</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069267200">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">1823</em>,
+      in <code class="function">full_dispatch_request</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws"></span> </pre>
+<pre class="line before"><span class="ws">        </span>try:</pre>
+<pre class="line before"><span class="ws">            </span>request_started.send(self)</pre>
+<pre class="line before"><span class="ws">            </span>rv = self.preprocess_request()</pre>
+<pre class="line before"><span class="ws">            </span>if rv is None:</pre>
+<pre class="line current"><span class="ws">                </span>rv = self.dispatch_request()</pre>
+<pre class="line after"><span class="ws">        </span>except Exception as e:</pre>
+<pre class="line after"><span class="ws">            </span>rv = self.handle_user_exception(e)</pre>
+<pre class="line after"><span class="ws">        </span>return self.finalize_request(rv)</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">    </span>def finalize_request(</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069267312">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask/app.py"</cite>,
+      line <em class="line">1799</em>,
+      in <code class="function">dispatch_request</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">            </span>and req.method == &#34;OPTIONS&#34;</pre>
+<pre class="line before"><span class="ws">        </span>):</pre>
+<pre class="line before"><span class="ws">            </span>return self.make_default_options_response()</pre>
+<pre class="line before"><span class="ws">        </span># otherwise dispatch to the handler for that endpoint</pre>
+<pre class="line before"><span class="ws">        </span>view_args: t.Dict[str, t.Any] = req.view_args  # type: ignore[assignment]</pre>
+<pre class="line current"><span class="ws">        </span>return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">    </span>def full_dispatch_request(self) -&gt; Response:</pre>
+<pre class="line after"><span class="ws">        </span>&#34;&#34;&#34;Dispatches the request and on top of that performs request</pre>
+<pre class="line after"><span class="ws">        </span>pre and postprocessing as well as HTTP exception catching and</pre>
+<pre class="line after"><span class="ws">        </span>error handling.</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069267424">
+  <h4>File <cite class="filename">"/app/app/routes.py"</cite>,
+      line <em class="line">36</em>,
+      in <code class="function">login</code></h4>
+  <div class="source "><pre class="line before"><span class="ws">    </span># Fetch user from the database</pre>
+<pre class="line before"><span class="ws">    </span>user = User.query.filter_by(email=email).first()</pre>
+<pre class="line before"><span class="ws"></span> </pre>
+<pre class="line before"><span class="ws">    </span># check user</pre>
+<pre class="line before"><span class="ws">    </span>if user and user.check_password(password):</pre>
+<pre class="line current"><span class="ws">        </span>login_user(user)</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">        </span># generate JWT token</pre>
+<pre class="line after"><span class="ws">        </span>token = jwt.encode(</pre>
+<pre class="line after"><span class="ws">            </span>{</pre>
+<pre class="line after"><span class="ws">                </span>&#34;user_id&#34;: user.id,</pre></div>
+</div>
+
+<li><div class="frame" id="frame-281473069281904">
+  <h4>File <cite class="filename">"/usr/local/lib/python3.9/site-packages/flask_login/utils.py"</cite>,
+      line <em class="line">183</em>,
+      in <code class="function">login_user</code></h4>
+  <div class="source library"><pre class="line before"><span class="ws">    </span>:type fresh: bool</pre>
+<pre class="line before"><span class="ws">    </span>&#34;&#34;&#34;</pre>
+<pre class="line before"><span class="ws">    </span>if not force and not user.is_active:</pre>
+<pre class="line before"><span class="ws">        </span>return False</pre>
+<pre class="line before"><span class="ws"></span> </pre>
+<pre class="line current"><span class="ws">    </span>user_id = getattr(user, current_app.login_manager.id_attribute)()</pre>
+<pre class="line after"><span class="ws">    </span>session[&#34;_user_id&#34;] = user_id</pre>
+<pre class="line after"><span class="ws">    </span>session[&#34;_fresh&#34;] = fresh</pre>
+<pre class="line after"><span class="ws">    </span>session[&#34;_id&#34;] = current_app.login_manager._session_identifier_generator()</pre>
+<pre class="line after"><span class="ws"></span> </pre>
+<pre class="line after"><span class="ws">    </span>if remember:</pre></div>
+</div>
+</ul>
+  <blockquote>AttributeError: &#39;Flask&#39; object has no attribute &#39;login_manager&#39;
+</blockquote>
+</div>
+
+<div class="plain">
+    <p>
+      This is the Copy/Paste friendly version of the traceback.
+    </p>
+    <textarea cols="50" rows="10" name="code" readonly>Traceback (most recent call last):
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 2552, in __call__
+    return self.wsgi_app(environ, start_response)
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 2532, in wsgi_app
+    response = self.handle_exception(e)
+  File &#34;/usr/local/lib/python3.9/site-packages/flask_cors/extension.py&#34;, line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 2529, in wsgi_app
+    response = self.full_dispatch_request()
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File &#34;/usr/local/lib/python3.9/site-packages/flask_cors/extension.py&#34;, line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File &#34;/usr/local/lib/python3.9/site-packages/flask/app.py&#34;, line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File &#34;/app/app/routes.py&#34;, line 36, in login
+    login_user(user)
+  File &#34;/usr/local/lib/python3.9/site-packages/flask_login/utils.py&#34;, line 183, in login_user
+    user_id = getattr(user, current_app.login_manager.id_attribute)()
+AttributeError: &#39;Flask&#39; object has no attribute &#39;login_manager&#39;
+</textarea>
+</div>
+<div class="explanation">
+  The debugger caught an exception in your WSGI application.  You can now
+  look at the traceback which led to the error.  <span class="nojavascript">
+  If you enable JavaScript you can also use additional features such as code
+  execution (if the evalex feature is enabled), automatic pasting of the
+  exceptions and much more.</span>
+</div>
+      <div class="footer">
+        Brought to you by <strong class="arthur">DON'T PANIC</strong>, your
+        friendly Werkzeug powered traceback interpreter.
+      </div>
+    </div>
+
+    <div class="pin-prompt">
+      <div class="inner">
+        <h3>Console Locked</h3>
+        <p>
+          The console is locked and needs to be unlocked by entering the PIN.
+          You can find the PIN printed out on the standard output of your
+          shell that runs the server.
+        <form>
+          <p>PIN:
+            <input type=text name=pin size=14>
+            <input type=submit name=btn value="Confirm Pin">
+        </form>
+      </div>
+    </div>
+  </body>
+</html>
+
+<!--
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2552, in __call__
+    return self.wsgi_app(environ, start_response)
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2532, in wsgi_app
+    response = self.handle_exception(e)
+  File "/usr/local/lib/python3.9/site-packages/flask_cors/extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2529, in wsgi_app
+    response = self.full_dispatch_request()
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+    rv = self.handle_user_exception(e)
+  File "/usr/local/lib/python3.9/site-packages/flask_cors/extension.py", line 178, in wrapped_function
+    return cors_after_request(app.make_response(f(*args, **kwargs)))
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/app/app/routes.py", line 36, in login
+    login_user(user)
+  File "/usr/local/lib/python3.9/site-packages/flask_login/utils.py", line 183, in login_user
+    user_id = getattr(user, current_app.login_manager.id_attribute)()
+AttributeError: 'Flask' object has no attribute 'login_manager'
+
+
+-->
+
+docker-compose logs authentication-service: 
+
+❯ docker-compose logs authentication-service
+authentication-service-1  |  * Serving Flask app 'app'
+authentication-service-1  |  * Debug mode: on
+authentication-service-1  | WARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.
+authentication-service-1  |  * Running on all addresses (0.0.0.0)
+authentication-service-1  |  * Running on http://127.0.0.1:5000
+authentication-service-1  |  * Running on http://172.19.0.4:5000
+authentication-service-1  | Press CTRL+C to quit
+authentication-service-1  |  * Restarting with stat
+authentication-service-1  |  * Debugger is active!
+authentication-service-1  |  * Debugger PIN: 453-375-544
+authentication-service-1  | 192.168.65.1 - - [23/Sep/2024 06:52:27] "GET / HTTP/1.1" 200 -
+authentication-service-1  | 192.168.65.1 - - [23/Sep/2024 07:06:25] "POST /register HTTP/1.1" 404 -
+authentication-service-1  | 192.168.65.1 - - [23/Sep/2024 07:08:31] "POST /login HTTP/1.1" 500 -
+authentication-service-1  | Traceback (most recent call last):
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2552, in __call__
+authentication-service-1  |     return self.wsgi_app(environ, start_response)
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2532, in wsgi_app
+authentication-service-1  |     response = self.handle_exception(e)
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask_cors/extension.py", line 178, in wrapped_function
+authentication-service-1  |     return cors_after_request(app.make_response(f(*args, **kwargs)))
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 2529, in wsgi_app
+authentication-service-1  |     response = self.full_dispatch_request()
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1825, in full_dispatch_request
+authentication-service-1  |     rv = self.handle_user_exception(e)
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask_cors/extension.py", line 178, in wrapped_function
+authentication-service-1  |     return cors_after_request(app.make_response(f(*args, **kwargs)))
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1823, in full_dispatch_request
+authentication-service-1  |     rv = self.dispatch_request()
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask/app.py", line 1799, in dispatch_request
+authentication-service-1  |     return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+authentication-service-1  |   File "/app/app/routes.py", line 36, in login
+authentication-service-1  |     login_user(user)
+authentication-service-1  |   File "/usr/local/lib/python3.9/site-packages/flask_login/utils.py", line 183, in login_user
+authentication-service-1  |     user_id = getattr(user, current_app.login_manager.id_attribute)()
+authentication-service-1  | AttributeError: 'Flask' object has no attribute 'login_manager'
+
+

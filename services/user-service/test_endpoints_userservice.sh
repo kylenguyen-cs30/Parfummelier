@@ -19,7 +19,7 @@ check_status $? 200 "Home Route" "$home_response"
 
 # 2. Register user
 echo "Registering new user..."
-user_data=$(http POST "$BASE_URL/register" firstName="John" lastName="Doe" email="john.doe123@example.com" password="password123" userName="johndoe123" dob="1990-01-01" 2>&1)
+user_data=$(http POST "$BASE_URL/register" firstName="Boo" lastName="Yeah" email="Boo.Yeah@example.com" password="password123" userName="booyeah" dob="1990-01-01" 2>&1)
 check_status $? 202 "User Registration" "$user_data"
 
 user_id=$(echo "$user_data" | jq -r '.user_id')
@@ -57,6 +57,5 @@ check_status $? 200 "Delete User" "$delete_response"
 echo "Resetting the database..."
 reset_db_response=$(http POST "$BASE_URL/reset-db" 2>&1)
 check_status $? 200 "Reset Database" "$reset_db_response"
-
 
 # 8. Test PUT method

@@ -51,6 +51,16 @@ def login():
         return jsonify({"error": "invalid email"}), 401
 
 
+# NOTE: Test Command
+#
+
+####################################################################################
+"""
+http POST http://localhost:5002:/login email="<email>" password="<password>"
+"""
+####################################################################################
+
+
 # TODO: Need Test
 # NOTE: Logout Route
 @auth_blueprint.route("/logout", methods=["POST"])

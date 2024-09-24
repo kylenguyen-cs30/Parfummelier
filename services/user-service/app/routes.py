@@ -49,7 +49,7 @@ def token_required(f):
             #
 
             data = jwt.decode(
-                token, current_app.config["SECRET_KEY"], algorithm=["HS256"]
+                token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
             )
             print(f"Decoded: {data}")
             current_user = User.query.get(data["user_id"])
@@ -253,14 +253,26 @@ def reset_db():
         return jsonify({"error": f"Failed to reset database: {str(e)}"}), 500
 
 
+##########################################################################################################################################
+
+
 # NOTE: Test PUT API
 @user_blueprint.route("/test-put", methods=["PUT"])
-def test_put():
+@token_required
+def test_put(current_user):
     try:
-        return jsonify({"message": "PUT is successfully tested"})
+        return (
+            jsonify(
+                {"message": "PUT is successfully tested", "user": current_user.email}
+            ),
+            200,
+        )
     except Exception as e:
         print(f"Error : {e}")
         return jsonify({"error": f"Fail to test the PUT METHOD: {str(e)}"}), 500
+
+
+##########################################################################################################################################
 
 
 # NOTE:  scent bank detail decorator

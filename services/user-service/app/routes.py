@@ -1,7 +1,9 @@
 import logging
+import jwt
+import os
 
 # import smtplib [optional]
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, current_app
 from functools import wraps
 from .models import (
     ScentBank,
@@ -17,10 +19,52 @@ user_blueprint = Blueprint("user", __name__)
 logging.basicConfig(level=logging.INFO)
 
 # TODO:
-########################################################
+##########################################################################################################################################
 # Token Required for JWT request
 # Service to  service user need to go through JWT Checking point
-########################################################
+##########################################################################################################################################
+
+
+# NOTE: Token Check point
+
+
+def token_required(f):
+    @wraps(f)
+    def decorated(*arg, **kwargs):
+        token = None
+
+        if "Authorization" in request.headers:
+            # Split Bearer <Token> into array
+            token = request.headers["Authorization"].split(" ")[1]
+        if not token:
+            print("Token Missing")
+            return jsonify({"error": "Token missing"}), 401
+
+        try:
+            print(f"Token   : {token}")
+            print(f"SECRET_KEY  : {current_app.config['SECRET_KEY']}")
+
+            # BUG:
+            # data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithm=["HS256"])
+            #
+
+            data = jwt.decode(
+                token, current_app.config["SECRET_KEY"], algorithm=["HS256"]
+            )
+            print(f"Decoded: {data}")
+            current_user = User.query.get(data["user_id"])
+            if not current_user:
+                return jsonify({"error": "User not found"}), 404
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Token is expried"}), 401
+        except jwt.InvalidTokenError:
+            print(f"Token : {token}")
+            return jsonify({"error": "Invalid Token"}), 401
+
+        # Pass to the current_user to the wrapped function
+        return f(current_user, *arg, **kwargs)
+
+    return decorated
 
 
 # NOTE: Add new user route
@@ -106,16 +150,24 @@ def list_users():
 
 
 # NOTE: Update ScentBank
-@user_blueprint.route("/user/<int:user_id>/scentbank", methods=["PUT", "POST"])
-def update_scentbank_for_user(user_id):
+
+
+# WARNING: Don't uncomment this line
+# @user_blueprint.route("/user/<int:user_id>/scentbank", methods=["PUT", "POST"])
+@user_blueprint.route("/user/scentbank", methods=["PUT", "POST"])
+@token_required
+def update_scentbank_for_user(current_user):
     try:
+        ##########################################################################################################################################
         # Find the user
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({"error": "user not found"}), 404
+        # user = User.query.get(user_id)
+        # if not user:
+        #     return jsonify({"error": "user not found"}), 404
+        ##########################################################################################################################################
+        print(f"Updating scentbank for user : {current_user.email}")  # debug email
 
         # Get the user's existing ScentBank
-        scent_bank = ScentBank.query.get(user.scentID)
+        scent_bank = ScentBank.query.get(current_user.scentID)
         if not scent_bank:
             return jsonify({"error": "ScentBank not found for this user"}), 404
 
@@ -214,24 +266,27 @@ def test_put():
 # NOTE:  scent bank detail decorator
 def scentbank_details(f):
     @wraps(f)
-    def decorated_function(*arg, **kwargs):
-        user_id = kwargs.get("user_id")  # get the user_id from the route arguments
-
-        # find the user
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({"error": "user not found"}), 404
+    @token_required
+    def decorated_function(current_user, *arg, **kwargs):
+        ##########################################################################################################################################
+        # user_id = kwargs.get("user_id")  # get the user_id from the route arguments
+        #
+        # # find the user
+        # user = User.query.get(user_id)
+        # if not user:
+        #     return jsonify({"error": "user not found"}), 404
+        ##########################################################################################################################################
 
         # find the user's scentbank
-        scent_bank = ScentBank.query.get(user.scentID)
+        scent_bank = ScentBank.query.get(current_user.scentID)
         if not scent_bank:
             return jsonify({"error": "scent bank not found"}), 404
         scent_bank_details = {
-            "user_id": user.id,
+            "user_id": current_user.id,
             "scent_id": scent_bank.id,
-            "firstName": user.firstName,
-            "lastName": user.lastName,
-            "email": user.email,
+            "firstName": current_user.firstName,
+            "lastName": current_user.lastName,
+            "email": current_user.email,
             "favorite_notes": [note.name for note in scent_bank.favorite_notes],
             "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
             "favorite_seasons": [season.name for season in scent_bank.favorite_seasons],
@@ -244,16 +299,20 @@ def scentbank_details(f):
 
 # Decorator List User
 # TODO: Add Token_required decorator for returning value
-@user_blueprint.route("/user/<int:user_id>/scentbank/details", methods=["GET"])
+
+
+# WARNING : Don't uncomment this line
+# @user_blueprint.route("/user/<int:user_id>/scentbank/details", methods=["GET"])
+
+
+@user_blueprint.route("/user/scentbank/details", methods=["GET"])
 @scentbank_details
-def get_user_scentbank_details(scent_bank_details, user_id):
+# def get_user_scentbank_details(scent_bank_details, user_id):
+def get_user_scentbank_details(scent_bank_details):
     return jsonify(scent_bank_details), 200
 
 
 # NOTE: Delete a user
-
-
-# WARNING: this route should only be used by admin
 @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
 def delete_user(user_id):
     try:

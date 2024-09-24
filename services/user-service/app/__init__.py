@@ -18,6 +18,9 @@ def create_app():
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # app config for secret key
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "my-default-secret-key")
     db.init_app(app)
     migrate.init_app(app, db)
 

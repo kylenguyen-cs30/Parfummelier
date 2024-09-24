@@ -10,32 +10,34 @@ import datetime
 
 auth_blueprint = Blueprint("auth", __name__)
 
-# serializer for generating and verifying tokens
+# NOTE: serializer for generating and verifying tokens
+# this serializer verify and add security layer for
+# JSON Authentication Token
 serializer = URLSafeTimedSerializer("SECRET_KEY")
 
 
 # NOTE: Home route
-@auth_blueprint.route("/", methods=["GET"])
+@auth_blueprint.route("/", methods=["get"])
 def home():
-    return jsonify({"message": "Authentication service launched !!!"})
+    return jsonify({"message": "authentication service launched !!!"})
 
 
-# TODO: Need Test
-# NOTE: Login Route
-@auth_blueprint.route("/login", methods=["POST"])
+# todo: need test
+# note: login route
+@auth_blueprint.route("/login", methods=["post"])
 def login():
     data = request.json
     email = data.get("email")
     password = data.get("password")
 
-    # Fetch user from the database
+    # fetch user from the database
     user = User.query.filter_by(email=email).first()
 
     # check user
     if user and user.check_password(password):
         login_user(user)
 
-        # generate JWT token
+        # generate jwt token
         token = jwt.encode(
             {
                 "user_id": user.id,
@@ -44,9 +46,9 @@ def login():
             current_app.config["SECRET_KEY"],
             algorithm="HS256",
         )
-        return jsonify({"message": "Logged in successfully !", "token": token}), 200
+        return jsonify({"message": "logged in successfully !", "token": token}), 200
     else:
-        return jsonify({"error": "Invalid Email"}), 401
+        return jsonify({"error": "invalid email"}), 401
 
 
 # TODO: Need Test

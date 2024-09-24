@@ -1,3 +1,11 @@
 # Authenticaiton service
 
-- check connection on the database
+## Completed:
+
+- login
+
+## Incompleted
+
+- reset password
+- request password reset
+- logout

@@ -24,6 +24,9 @@ logging.basicConfig(level=logging.INFO)
 # Service to  service user need to go through JWT Checking point
 ##########################################################################################################################################
 
+# NOTE:
+# Database reset is neccessary if the token authentication are not accepted or invalid 
+# make sure writing the documentaion if there are unprecedented caese 
 
 # NOTE: Token Check point
 
@@ -254,8 +257,6 @@ def reset_db():
 
 
 ##########################################################################################################################################
-
-
 # NOTE: Test PUT API
 @user_blueprint.route("/test-put", methods=["PUT"])
 @token_required
@@ -280,15 +281,6 @@ def scentbank_details(f):
     @wraps(f)
     @token_required
     def decorated_function(current_user, *arg, **kwargs):
-        ##########################################################################################################################################
-        # user_id = kwargs.get("user_id")  # get the user_id from the route arguments
-        #
-        # # find the user
-        # user = User.query.get(user_id)
-        # if not user:
-        #     return jsonify({"error": "user not found"}), 404
-        ##########################################################################################################################################
-
         # find the user's scentbank
         scent_bank = ScentBank.query.get(current_user.scentID)
         if not scent_bank:
@@ -323,6 +315,7 @@ def scentbank_details(f):
 def get_user_scentbank_details(scent_bank_details):
     return jsonify(scent_bank_details), 200
 
+# WARNING: This route should be disabled for security reason
 
 # NOTE: Delete a user
 @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])

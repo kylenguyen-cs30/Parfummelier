@@ -25,8 +25,8 @@ logging.basicConfig(level=logging.INFO)
 ##########################################################################################################################################
 
 # NOTE:
-# Database reset is neccessary if the token authentication are not accepted or invalid 
-# make sure writing the documentaion if there are unprecedented caese 
+# Database reset is neccessary if the token authentication are not accepted or invalid
+# make sure writing the documentaion if there are unprecedented caese
 
 # NOTE: Token Check point
 
@@ -315,7 +315,9 @@ def scentbank_details(f):
 def get_user_scentbank_details(scent_bank_details):
     return jsonify(scent_bank_details), 200
 
+
 # WARNING: This route should be disabled for security reason
+
 
 # NOTE: Delete a user
 @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])

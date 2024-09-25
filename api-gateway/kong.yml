@@ -6,15 +6,10 @@ services:
       - name: user-route
         paths:
           - /users
-  - name: recommendation-service
-    url: http://recommendation-service:8000
+
+  - name: authentication-service
+    url: http://authentication-service:5000
     routes:
-      - name: recommendation-route
+      - name: auth-route
         paths:
-          - /recommendations
-  - name: perfume-service
-    url: http://perfume-service:8001
-    routes:
-      - name: perfume-route
-        paths:
-          - /perfumes
+          - /auth

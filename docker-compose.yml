@@ -28,6 +28,17 @@ services:
   #   environment:
   #     - DATABASE_URL=${DATABASE_URL}
 
+  api-gateway:
+    build: ./api-gateway/
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    depends_on:
+      - user-service
+      - authentication-service
+    volumes:
+      - ./api-gateway/kong.yml:/app/kong.yml
+
   db:
     image: postgres:latest
     environment:

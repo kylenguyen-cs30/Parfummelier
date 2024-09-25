@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for, current_app
 from .models import User
-from flask_login import login_user, logout_user, current_user, login_required
+# from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
@@ -35,7 +35,6 @@ def login():
 
     # check user
     if user and user.check_password(password):
-        login_user(user)
 
         # generate jwt token
         token = jwt.encode(
@@ -64,9 +63,7 @@ http POST http://localhost:5002:/login email="<email>" password="<password>"
 # TODO: Need Test
 # NOTE: Logout Route
 @auth_blueprint.route("/logout", methods=["POST"])
-@login_required
 def logout():
-    logout_user()
     return jsonify({"message": "Logged out successfully"}), 200
 
 
@@ -86,7 +83,6 @@ def forget_password():
 
 # NOTE: Change password after login
 @auth_blueprint.route("/change-password", methods=["POST"])
-@login_required
 def change_password():
     data = request.json
     old_pass = data.get("old_password")

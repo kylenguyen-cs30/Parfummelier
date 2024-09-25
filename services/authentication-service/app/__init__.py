@@ -4,13 +4,13 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from flask_login import LoginManager
+# from flask_login import LoginManager
 
 
 # from flask_migrate import Migrate
 
 db = SQLAlchemy()
-login_manager = LoginManager()
+# login_manager = LoginManager()
 
 # PERF: No need for Flask Migrating 🙅
 #
@@ -24,7 +24,7 @@ def create_app():
     configure_app(app)
 
     # initialize extensions
-    initialize_extensions(app)
+    db.init_app(app)
 
     # CORS for connection
     CORS(
@@ -59,16 +59,3 @@ def configure_app(app):
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
-def initialize_extensions(app):
-    db.init_app(app)
-
-    # LoginManager
-    login_manager.init_app(app)
-    login_manager.login_view = "auth.login"  # route for redirect not for authentication
-
-    # function define how to load user from db by their user_id
-    @login_manager.user_loader
-    def load_user(user_id):
-        from app.models import User
-
-        return User.query.get(int(user_id))

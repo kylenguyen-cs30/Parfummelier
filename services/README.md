@@ -25,6 +25,7 @@
 - List All available products
 - List All product in a same collection_id
 - List All Product that meet certain attributes (note, accord, scent, season)
+- Return Info of a product
 - Add new product [Optional but helpful]
 - Delete a product [Optional but helpful]
 - Update a product [Optional but helpful]

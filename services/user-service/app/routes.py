@@ -26,7 +26,8 @@ logging.basicConfig(level=logging.INFO)
 
 # NOTE:
 # Database reset is neccessary if the token authentication are not accepted or invalid
-# make sure writing the documentaion if there are unprecedented caese
+# make sure writing the documentaion if there are unprecedented case. This service is
+# reponsible for creating user account, return user's json information for client side
 
 # NOTE: Token Check point
 
@@ -301,14 +302,6 @@ def scentbank_details(f):
     return decorated_function
 
 
-# Decorator List User
-# TODO: Add Token_required decorator for returning value
-
-
-# WARNING : Don't uncomment this line
-# @user_blueprint.route("/user/<int:user_id>/scentbank/details", methods=["GET"])
-
-
 @user_blueprint.route("/user/scentbank/details", methods=["GET"])
 @scentbank_details
 # def get_user_scentbank_details(scent_bank_details, user_id):
@@ -316,28 +309,34 @@ def get_user_scentbank_details(scent_bank_details):
     return jsonify(scent_bank_details), 200
 
 
-# WARNING: This route should be disabled for security reason
+# WARNING: This route should be disabled for security reason.
+# let me know if you need to open this route
 
 
 # NOTE: Delete a user
-@user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
-def delete_user(user_id):
-    try:
-        user = User.query.get(user_id)
-        if not user:
-            return jsonify({"error": "User not Found"}), 404
+#
+##########################################################################################################################################
+# @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
+# def delete_user(user_id):
+#     try:
+#         user = User.query.get(user_id)
+#         if not user:
+#             return jsonify({"error": "User not Found"}), 404
+#
+#         # Delete the user from the database
+#         db.session.delete(user)
+#         db.session.commit()
+#         return (
+#             jsonify(
+#                 {
+#                     "message": f"User {user.firstName} {user.lastName} delete successfully"
+#                 }
+#             ),
+#             200,
+#         )
+#     except Exception as e:
+#         db.session.rollback()
+#         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
+#
 
-        # Delete the user from the database
-        db.session.delete(user)
-        db.session.commit()
-        return (
-            jsonify(
-                {
-                    "message": f"User {user.firstName} {user.lastName} delete successfully"
-                }
-            ),
-            200,
-        )
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
+##########################################################################################################################################

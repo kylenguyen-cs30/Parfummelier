@@ -1,0 +1,9 @@
+.button {
+  padding: 6px;
+  border-radius: 5%;
+  background-color: rgb(100, 130, 173);
+  font-family: sans-serif;
+  color: white;
+  text-justify: auto;
+  position: flex;
+}

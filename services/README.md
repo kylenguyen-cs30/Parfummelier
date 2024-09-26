@@ -36,8 +36,8 @@
 
 ## Community service
 
-- Rating for user
-- List Post
+- Rating for user 💻
+- List Post 💻
 - List Thread
 - Social Media
   - List User

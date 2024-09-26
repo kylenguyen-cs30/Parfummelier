@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, url_for, current_app
 from .models import User
+
 # from flask_login import login_user, logout_user, current_user, login_required
 from app import db
 from werkzeug.security import generate_password_hash
@@ -22,8 +23,11 @@ def home():
     return jsonify({"message": "authentication service launched !!!"})
 
 
-# todo: need test
-# note: login route
+# NOTE: login route
+# WARNING: Do Not Use this route for Auth. New Route is being implemented
+#
+########################################################################
+"""
 @auth_blueprint.route("/login", methods=["post"])
 def login():
     data = request.json
@@ -48,16 +52,24 @@ def login():
         return jsonify({"message": "logged in successfully !", "token": token}), 200
     else:
         return jsonify({"error": "invalid email"}), 401
-
-
-# NOTE: Test Command
-#
-
-####################################################################################
 """
-http POST http://localhost:5002:/login email="<email>" password="<password>"
-"""
-####################################################################################
+########################################################################
+
+# TODO: create a new login route
+
+
+@auth_blueprint.route("/login", methods=["POST"])
+def login():
+    data = request.json
+    email = data.get("email")
+    password = data.get("password")
+
+    # fetch user user from database
+    user = User.query.filter_by(email=email).first()
+
+    # check user 
+    if user and user.check_password(password):
+    
 
 
 # TODO: Need Test

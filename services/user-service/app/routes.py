@@ -29,9 +29,8 @@ logging.basicConfig(level=logging.INFO)
 # make sure writing the documentaion if there are unprecedented case. This service is
 # reponsible for creating user account, return user's json information for client side
 
+
 # NOTE: Token Check point
-
-
 def token_required(f):
     @wraps(f)
     def decorated(*arg, **kwargs):
@@ -130,8 +129,6 @@ def home():
 
 
 # NOTE: list all users
-
-
 # WARNING: This route should be disabled
 @user_blueprint.route("/users", methods=["GET"])
 def list_users():
@@ -162,13 +159,6 @@ def list_users():
 @token_required
 def update_scentbank_for_user(current_user):
     try:
-        ##########################################################################################################################################
-        # Find the user
-        # user = User.query.get(user_id)
-        # if not user:
-        #     return jsonify({"error": "user not found"}), 404
-        ##########################################################################################################################################
-        print(f"Updating scentbank for user : {current_user.email}")  # debug email
 
         # Get the user's existing ScentBank
         scent_bank = ScentBank.query.get(current_user.scentID)

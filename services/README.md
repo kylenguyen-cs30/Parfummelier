@@ -1,26 +1,30 @@
 # Micro-service rundown
 
+✅ Finished
+❌ Need test
+💻 still working
+
 ## User service
 
-- create an account
-- list all scentbank detail base on one user_id
-- register new user
-- update user scentbank details
+- Create an account ✅
+- list all scentbank detail base on one user_id ✅ ❌
+- register new user ✅ ❌
+- update user scentbank details ✅
 
 ## Authentication service
 
-- Check login and generate token
-- Check logout and destroy token
-- Resquest password reset
-- password reset
+- Check login and generate token ✅
+- Check logout and destroy token 💻
+- Resquest password reset 💻
+- password reset 💻
 
-## Quiz service [OPTIONAL]
+## Quiz service [CONFIRMATION?] 💻
 
 - List all answers by a user with user_id
 - Map user's answer to corresponding product
 - Add user's answers into database
 
-## Product service
+## Product service 💻 [SOMEBODY CODE THIS THING?]
 
 - List All available products
 - List All product in a same collection_id
@@ -35,7 +39,8 @@
 - Rating for user
 - List Post
 - List Thread
-- List User
+- Social Media
+  - List User
   - making relationships
   - Instant and Private message [No-sql database]
 - Market Place

@@ -1,3 +1,4 @@
+from types import MethodType
 from flask import Blueprint, request, jsonify, url_for, current_app
 from .models import User
 
@@ -23,60 +24,100 @@ def home():
     return jsonify({"message": "authentication service launched !!!"})
 
 
-# NOTE: login route
-# WARNING: Do Not Use this route for Auth. New Route is being implemented
-#
-########################################################################
-"""
-@auth_blueprint.route("/login", methods=["post"])
-def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-
-    # fetch user from the database
-    user = User.query.filter_by(email=email).first()
-
-    # check user
-    if user and user.check_password(password):
-
-        # generate jwt token
-        token = jwt.encode(
-            {
-                "user_id": user.id,
-                "exp": datetime.datetime.now() + datetime.timedelta(hours=2),
-            },
-            current_app.config["SECRET_KEY"],
-            algorithm="HS256",
-        )
-        return jsonify({"message": "logged in successfully !", "token": token}), 200
-    else:
-        return jsonify({"error": "invalid email"}), 401
-"""
-########################################################################
-
-# TODO: create a new login route
+# NOTE: New Login Route
 
 
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    try:
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
 
-    # fetch user user from database
-    user = User.query.filter_by(email=email).first()
+        # fetch user user from database
+        user = User.query.filter_by(email=email).first()
 
-    # check user 
-    if user and user.check_password(password):
-    
+        # check user
+        if user and user.check_password(password):
+            # NOTE: generate access token
+            access_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
+
+            # NOTE: generate JWT
+            refresh_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
+            return (
+                jsonify(
+                    {
+                        "message": "Login successfully",
+                        "access_token": access_token,
+                        "refresh_token": refresh_token,
+                    }
+                ),
+                200,
+            )
+        else:
+            return jsonify({"error": "invalid email"}), 401
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Unknown error"}), 500
 
 
-# TODO: Need Test
+# NOTE: refresh access_token route:
+@auth_blueprint.route("/refresh", methods=["POST"])
+def refresh():
+    token = request.json.get("refresh_token")
+
+    try:
+        # NOTE: decode the token
+        data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+
+        user_id = data["user_id"]
+
+        # Query user
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "Invalid user"}), 404
+
+        # NOTE: Generate new access token
+        access_token = jwt.encode(
+            {
+                "user_id": user.id,
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+
+        return jsonify({"access_token": access_token}), 200
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Refresh token expired. Please login again"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
+
+
 # NOTE: Logout Route
-@auth_blueprint.route("/logout", methods=["POST"])
-def logout():
-    return jsonify({"message": "Logged out successfully"}), 200
+# WARNING: No need this route anymore
+#
+###########################################################################
+# @auth_blueprint.route("/logout", methods=["POST"])
+# def logout():
+#     return jsonify({"message": "Logged out successfully"}), 200
+##########################################################################
 
 
 # NOTE: Forget password before Login

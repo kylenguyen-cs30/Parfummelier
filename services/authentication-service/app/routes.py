@@ -1,5 +1,5 @@
 from types import MethodType
-from flask import Blueprint, request, jsonify, url_for, current_app
+from flask import Blueprint, request, jsonify, url_for, current_app, make_response
 from .models import User
 
 # from flask_login import login_user, logout_user, current_user, login_required
@@ -25,8 +25,6 @@ def home():
 
 
 # NOTE: New Login Route
-
-
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     try:
@@ -58,16 +56,35 @@ def login():
                 current_app.config["SECRET_KEY"],
                 algorithm="HS256",
             )
-            return (
-                jsonify(
-                    {
-                        "message": "Login successfully",
-                        "access_token": access_token,
-                        "refresh_token": refresh_token,
-                    }
-                ),
-                200,
+
+            # set response HTTP Cookie only
+            response = make_response(
+                jsonify({"message": "Login successfully", "access_token": access_token})
             )
+
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                httponly=True,
+                # secure=True,
+                samesite="Lax",
+                path="/refresh",
+            )
+            return response
+
+            # NOTE: Return as JSON
+            #
+            # return (
+            #     jsonify(
+            #         {
+            #             "message": "Login successfully",
+            #             "access_token": access_token,
+            #             "refresh_token": refresh_token,
+            #         }
+            #     ),
+            #     200,
+            # )
+
         else:
             return jsonify({"error": "invalid email"}), 401
     except Exception as e:
@@ -78,11 +95,19 @@ def login():
 # NOTE: refresh access_token route:
 @auth_blueprint.route("/refresh", methods=["POST"])
 def refresh():
-    token = request.json.get("refresh_token")
+    # token = request.json.get("refresh_token")
+    # old_refresh_token = request.json.get("refresh_token") NOTE: we don't need this
 
     try:
+        old_refresh_token = request.cookies.get("refresh_token")
+
+        if not old_refresh_token:
+            return jsonify({"error": "Refresh Token missing "}), 401
+
         # NOTE: decode the token
-        data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithms=["HS256"])
+        data = jwt.decode(
+            old_refresh_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
 
         user_id = data["user_id"]
 
@@ -102,7 +127,36 @@ def refresh():
             algorithm="HS256",
         )
 
-        return jsonify({"access_token": access_token}), 200
+        # NOTE: Generate new refresh token
+        refresh_token = jwt.encode(
+            {
+                "user_id": user.id,
+                "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+
+        response = make_response(
+            jsonify({"message": "refresh successfully", "access_token": access_token})
+        )
+
+        response.set_cookie(
+            "refresh_token",
+            refresh_token,
+            httponly=True,
+            # secure=True,
+            samesite="Lax",
+            path="/refresh",
+        )
+        return response
+
+        ##########################################################################
+        # return (
+        #     jsonify({"access_token": access_token, "refresh_token": refresh_token}),
+        #     200,
+        # )
+        ##########################################################################
 
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Refresh token expired. Please login again"}), 401

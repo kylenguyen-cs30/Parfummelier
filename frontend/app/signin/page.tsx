@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
-import Header from "../components/Header";
+import Header from "../components/Navbar";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -30,13 +30,13 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5002/login", //We can add API endpoint here
+        "http://localhost:5001/login", //We can add API endpoint here
         formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.status === 200) {
@@ -44,7 +44,7 @@ const SignIn = () => {
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.error || "An error occurred while signing in.",
+        error.response?.data?.error || "An error occurred while signing in."
       );
     }
   };

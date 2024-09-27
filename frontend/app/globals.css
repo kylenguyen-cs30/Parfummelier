@@ -27,3 +27,7 @@ body {
     text-wrap: balance;
   }
 }
+
+.font-handwritten {
+  font-family: "Dancing Script", cursive;
+}

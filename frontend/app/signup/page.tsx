@@ -104,7 +104,7 @@ const SignUp = () => {
           <input
             type="password"
             name="password"
-            value={formData.firstName}
+            value={formData.password}
             onChange={handleChange}
             required
             className="w-full border rounded px-2 py-1"
@@ -124,7 +124,7 @@ const SignUp = () => {
         </div>
 
         <div>
-          <label className="block">Date of Bird </label>
+          <label className="block">Date of Birth </label>
           <input
             type="date"
             name="dob"

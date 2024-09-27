@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
-import Header from "../components/Header";
+import Header from "../components/Navbar";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -40,7 +40,7 @@ const SignUp = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.status === 202) {
@@ -49,7 +49,7 @@ const SignUp = () => {
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.error || "An error occurred while registering.",
+        error.response?.data?.error || "An error occurred while registering."
       );
     }
   };

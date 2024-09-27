@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, url_for, current_app
+from types import MethodType
+from flask import Blueprint, request, jsonify, url_for, current_app, make_response
 from .models import User
 
 # from flask_login import login_user, logout_user, current_user, login_required
@@ -23,60 +24,154 @@ def home():
     return jsonify({"message": "authentication service launched !!!"})
 
 
-# NOTE: login route
-# WARNING: Do Not Use this route for Auth. New Route is being implemented
-#
-########################################################################
-"""
-@auth_blueprint.route("/login", methods=["post"])
+# NOTE: New Login Route
+@auth_blueprint.route("/login", methods=["POST"])
 def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    try:
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
 
-    # fetch user from the database
-    user = User.query.filter_by(email=email).first()
+        # fetch user user from database
+        user = User.query.filter_by(email=email).first()
 
-    # check user
-    if user and user.check_password(password):
+        # check user
+        if user and user.check_password(password):
+            # NOTE: generate access token
+            access_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
 
-        # generate jwt token
-        token = jwt.encode(
+            # NOTE: generate JWT
+            refresh_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
+
+            # set response HTTP Cookie only
+            response = make_response(
+                jsonify({"message": "Login successfully", "access_token": access_token})
+            )
+
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                httponly=True,
+                # secure=True,
+                samesite="Lax",
+                path="/refresh",
+            )
+            return response
+
+            # NOTE: Return as JSON
+            #
+            # return (
+            #     jsonify(
+            #         {
+            #             "message": "Login successfully",
+            #             "access_token": access_token,
+            #             "refresh_token": refresh_token,
+            #         }
+            #     ),
+            #     200,
+            # )
+
+        else:
+            return jsonify({"error": "invalid email"}), 401
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Unknown error"}), 500
+
+
+# NOTE: refresh access_token route:
+@auth_blueprint.route("/refresh", methods=["POST"])
+def refresh():
+    # token = request.json.get("refresh_token")
+    # old_refresh_token = request.json.get("refresh_token") NOTE: we don't need this
+
+    try:
+        old_refresh_token = request.cookies.get("refresh_token")
+
+        if not old_refresh_token:
+            return jsonify({"error": "Refresh Token missing "}), 401
+
+        # NOTE: decode the token
+        data = jwt.decode(
+            old_refresh_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
+
+        user_id = data["user_id"]
+
+        # Query user
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "Invalid user"}), 404
+
+        # NOTE: Generate new access token
+        access_token = jwt.encode(
             {
                 "user_id": user.id,
-                "exp": datetime.datetime.now() + datetime.timedelta(hours=2),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
             },
             current_app.config["SECRET_KEY"],
             algorithm="HS256",
         )
-        return jsonify({"message": "logged in successfully !", "token": token}), 200
-    else:
-        return jsonify({"error": "invalid email"}), 401
-"""
-########################################################################
 
-# TODO: create a new login route
+        # NOTE: Generate new refresh token
+        refresh_token = jwt.encode(
+            {
+                "user_id": user.id,
+                "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+
+        response = make_response(
+            jsonify({"message": "refresh successfully", "access_token": access_token})
+        )
+
+        response.set_cookie(
+            "refresh_token",
+            refresh_token,
+            httponly=True,
+            # secure=True,
+            samesite="Lax",
+            path="/refresh",
+        )
+        return response
+
+        ##########################################################################
+        # return (
+        #     jsonify({"access_token": access_token, "refresh_token": refresh_token}),
+        #     200,
+        # )
+        ##########################################################################
+
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Refresh token expired. Please login again"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
 
 
-@auth_blueprint.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-
-    # fetch user user from database
-    user = User.query.filter_by(email=email).first()
-
-    # check user 
-    if user and user.check_password(password):
-    
-
-
-# TODO: Need Test
 # NOTE: Logout Route
-@auth_blueprint.route("/logout", methods=["POST"])
-def logout():
-    return jsonify({"message": "Logged out successfully"}), 200
+# WARNING: No need this route anymore
+#
+###########################################################################
+# @auth_blueprint.route("/logout", methods=["POST"])
+# def logout():
+#     return jsonify({"message": "Logged out successfully"}), 200
+##########################################################################
 
 
 # NOTE: Forget password before Login

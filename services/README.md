@@ -34,7 +34,7 @@
 - Delete a product [Optional but helpful]
 - Update a product [Optional but helpful]
 
-## Community service
+## Community service [NO DEVELOPMENTS]
 
 - Rating for user 💻
 - List Post 💻

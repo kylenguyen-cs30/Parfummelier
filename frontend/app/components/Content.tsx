@@ -1,9 +1,13 @@
-import React from "react";
+import React, { ReactNode } from "react";
 
-const Content = () => {
+interface ContentProps {
+  children: ReactNode;
+}
+
+const Content: React.FC<ContentProps> = ({ children }) => {
   return (
     <div className="flex justify-center items-center h-64 bg-gray-200">
-      <p className="text-lg">Content of landing page</p>
+      {children}
     </div>
   );
 };

@@ -8,7 +8,9 @@ export default function Home() {
     <div>
       <Header />
       <Navbar />
-      <Content />
+      <Content>
+        <h1>This is landing page</h1>
+      </Content>
       <Footer />
     </div>
   );

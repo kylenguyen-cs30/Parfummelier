@@ -14,7 +14,7 @@ def create_app():
         methods=[
             "GET",
             "POST",
-            "DELETE",
+            "PUT",
             "DELETE",
             "OPTIONS",
         ],
@@ -32,7 +32,6 @@ def create_app():
     db.init_app(app)
 
     from app.routes import product_blueprint
-
-    app.register_blueprint(product_blueprint)
+    app.register_blueprint(product_blueprint, url_prefix='/api')
 
     return app

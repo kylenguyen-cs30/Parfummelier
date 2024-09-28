@@ -30,13 +30,13 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5001/login", //We can add API endpoint here
+        "http://localhost:5002/login", //We can add API endpoint here
         formData,
         {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 200) {
@@ -44,14 +44,14 @@ const SignIn = () => {
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.error || "An error occurred while signing in."
+        error.response?.data?.error || "An error occurred while signing in.",
       );
     }
   };
 
   const handleTestApi = async () => {
     try {
-      const response = await axios.get("http://localhost:5001/");
+      const response = await axios.get("http://localhost:5002/");
       setMessage(response.data.message); // Assuming the response is { message: "authentication service launched !!!" }
     } catch (error: any) {
       setMessage("Failed to fetch message.");

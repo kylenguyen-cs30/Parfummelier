@@ -40,16 +40,16 @@ const SignUp = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        }
+        },
       );
 
       if (response.status === 202) {
         setSuccessMessage("User Register Successfully!");
-        router.push("/login");
+        router.push("/signin");
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.error || "An error occurred while registering."
+        error.response?.data?.error || "An error occurred while registering.",
       );
     }
   };
@@ -62,7 +62,7 @@ const SignUp = () => {
         <div className="text-red-500 mb-4">{successMessage}</div>
       )}
       {/* NOTE: Form for sign up */}
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <label className="block">First Name</label>
           <input

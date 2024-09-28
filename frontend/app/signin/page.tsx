@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
 import Header from "../components/Navbar";
@@ -40,7 +40,7 @@ const SignIn = () => {
       );
 
       if (response.status === 200) {
-        router.push("/dashboard");
+        router.push("/main-page");
       }
     } catch (error: any) {
       setError(

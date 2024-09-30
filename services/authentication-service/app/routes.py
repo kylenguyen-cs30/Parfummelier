@@ -72,19 +72,6 @@ def login():
             )
             return response
 
-            # NOTE: Return as JSON
-            #
-            # return (
-            #     jsonify(
-            #         {
-            #             "message": "Login successfully",
-            #             "access_token": access_token,
-            #             "refresh_token": refresh_token,
-            #         }
-            #     ),
-            #     200,
-            # )
-
         else:
             return jsonify({"error": "invalid email"}), 401
     except Exception as e:
@@ -150,14 +137,6 @@ def refresh():
             path="/refresh",
         )
         return response
-
-        ##########################################################################
-        # return (
-        #     jsonify({"access_token": access_token, "refresh_token": refresh_token}),
-        #     200,
-        # )
-        ##########################################################################
-
     except jwt.ExpiredSignatureError:
         return jsonify({"error": "Refresh token expired. Please login again"}), 401
     except jwt.InvalidTokenError:
@@ -174,7 +153,17 @@ def refresh():
 ##########################################################################
 
 
-# NOTE: Forget password before Login
+# TODO:
+# we need time to finallize this feature.
+# - set up email service
+# - set up App Password to use email service
+# - set up SMTP server to create connection link
+# - set up testing api endpoint and form from frontend
+##########################################################################
+# NOTE: Forget password intializaiton
+# user send request to server check email and username to check
+# if the userName and email matched. if they are matched, client change
+# the website to the different page.
 @auth_blueprint.route("/forget-password", methods=["POST"])
 def forget_password():
     email = request.json.get("email")
@@ -188,7 +177,8 @@ def forget_password():
         return jsonify({"error": "Email not found"}), 404
 
 
-# NOTE: Change password after login
+# NOTE: After verifying user's information. we help user change the password
+# from old password to new password. this
 @auth_blueprint.route("/change-password", methods=["POST"])
 def change_password():
     data = request.json
@@ -202,49 +192,3 @@ def change_password():
         return jsonify({"message": "password changed successfully"}), 200
     else:
         return jsonify({"error": "old password is incorrect"}), 401
-
-
-# NOTE: Change Password before login (After clicking Reset Password Link)
-@auth_blueprint.route("/request-password-reset", methods=["POST"])
-def request_password_reset():
-    email = request.json.get("email")
-    user = User.query.filter_by(email=email).first()
-
-    if user:
-        # generate a secure token
-        token = serializer.dumps(user.email, salt="password-reset-salt")
-
-        # build a reset url
-        reset_url = url_for("auth.reset_password", token=token, _external=True)
-
-        # TODO:
-        # adding SMTP Server to send an email link to user's email
-
-        return jsonify({"message": "email sent successfully"}), 200
-    else:
-        return jsonify({"error": "Email not Found"}), 404
-
-
-# NOTE: Reset Password (Changing the password using the token)
-@auth_blueprint.route("/reset-password/<token>", methods=["POST"])
-def reset_password(token):
-    try:
-        # Verify the token with a max age of 1 hour (3600 seconds)
-        email = serializer.loads(token, salt="password-reset-salt", max_age=3600)
-    except Exception as e:
-        return jsonify({"error": "The reset link is invalid or expired"}), 400
-
-    # Fetch the user by email
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
-    # Get the new password from the request
-    new_password = request.json.get("new_password")
-
-    # Update the user's password
-    user.set_password(new_password)
-    db.session.commit()
-
-    return jsonify({"message": "Password has been reset successfully"}), 200

@@ -6,7 +6,7 @@ const Navbar = () => {
     <nav>
       {/* animation for letters */}
       {/* NOTE: we need Logo */}
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-center justify-between mx-auto p-3">
+      <div className="max-w-screen-xl flex flex-wrap items-center justify-center mx-auto p-3">
         <a className="flex items-center space-x-6">
           {/* TODO: Add image link here */}
           <div className="p-4 text-2xl text-black">

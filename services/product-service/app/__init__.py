@@ -5,6 +5,7 @@ from flask_cors import CORS
 
 db = SQLAlchemy()
 
+
 def create_app():
     app = Flask(__name__)
     CORS(
@@ -28,9 +29,12 @@ def create_app():
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "my-default-secret-key")
     db.init_app(app)
+    migrate.init_app(app, db)
 
     from app.routes import product_blueprint
-    app.register_blueprint(product_blueprint, url_prefix='/api')
+
+    app.register_blueprint(product_blueprint, url_prefix="/api")
 
     return app

@@ -49,13 +49,8 @@ const SignIn = () => {
     }
   };
 
-  const handleTestApi = async () => {
-    try {
-      const response = await axios.get("http://localhost:5002/");
-      setMessage(response.data.message); // Assuming the response is { message: "authentication service launched !!!" }
-    } catch (error: any) {
-      setMessage("Failed to fetch message.");
-    }
+  const handleForgetPassword = () => {
+    router.push("/forget-password");
   };
 
   return (
@@ -100,8 +95,8 @@ const SignIn = () => {
 
         <Button type="submit">Sign In</Button>
       </form>
-      <Button type="button" onClick={handleTestApi}>
-        Test API
+      <Button type="button" onClick={handleForgetPassword}>
+        Forget your password
       </Button>
     </div>
   );

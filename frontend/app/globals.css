@@ -31,3 +31,10 @@ body {
 .font-handwritten {
   font-family: "Dancing Script", cursive;
 }
+
+/* global.css */
+.bg-main-background {
+  background-image: url("/images/background1.webp");
+  background-size: cover;
+  background-position: center;
+}

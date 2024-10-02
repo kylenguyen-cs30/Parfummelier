@@ -18,6 +18,9 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
   #
   # product-service:
   #   build: ./services/product-service/

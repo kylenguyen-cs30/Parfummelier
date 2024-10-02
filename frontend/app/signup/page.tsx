@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
-import Header from "../components/Header";
+import Header from "../components/Navbar";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -45,7 +45,7 @@ const SignUp = () => {
 
       if (response.status === 202) {
         setSuccessMessage("User Register Successfully!");
-        router.push("/login");
+        router.push("/signin");
       }
     } catch (error: any) {
       setError(
@@ -62,7 +62,7 @@ const SignUp = () => {
         <div className="text-red-500 mb-4">{successMessage}</div>
       )}
       {/* NOTE: Form for sign up */}
-      <form>
+      <form onSubmit={handleSubmit}>
         <div>
           <label className="block">First Name</label>
           <input

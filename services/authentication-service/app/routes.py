@@ -1,4 +1,5 @@
-from flask import Blueprint, request, jsonify, url_for, current_app
+from types import MethodType
+from flask import Blueprint, request, jsonify, url_for, current_app, make_response
 from .models import User
 
 # from flask_login import login_user, logout_user, current_user, login_required
@@ -23,63 +24,146 @@ def home():
     return jsonify({"message": "authentication service launched !!!"})
 
 
-# NOTE: login route
-# WARNING: Do Not Use this route for Auth. New Route is being implemented
-#
-########################################################################
-"""
-@auth_blueprint.route("/login", methods=["post"])
+# NOTE: New Login Route
+@auth_blueprint.route("/login", methods=["POST"])
 def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
+    try:
+        data = request.json
+        email = data.get("email")
+        password = data.get("password")
 
-    # fetch user from the database
-    user = User.query.filter_by(email=email).first()
+        # fetch user user from database
+        user = User.query.filter_by(email=email).first()
 
-    # check user
-    if user and user.check_password(password):
+        # check user
+        if user and user.check_password(password):
+            # NOTE: generate access token
+            access_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
 
-        # generate jwt token
-        token = jwt.encode(
+            # NOTE: generate JWT
+            refresh_token = jwt.encode(
+                {
+                    "user_id": user.id,
+                    "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+                },
+                current_app.config["SECRET_KEY"],
+                algorithm="HS256",
+            )
+
+            # set response HTTP Cookie only
+            response = make_response(
+                jsonify({"message": "Login successfully", "access_token": access_token})
+            )
+
+            response.set_cookie(
+                "refresh_token",
+                refresh_token,
+                httponly=True,
+                # secure=True,
+                samesite="Lax",
+                path="/refresh",
+            )
+            return response
+
+        else:
+            return jsonify({"error": "invalid email"}), 401
+    except Exception as e:
+        print(f"Error: {e}")
+        return jsonify({"error": "Unknown error"}), 500
+
+
+# NOTE: refresh access_token route:
+@auth_blueprint.route("/refresh", methods=["POST"])
+def refresh():
+    # token = request.json.get("refresh_token")
+    # old_refresh_token = request.json.get("refresh_token") NOTE: we don't need this
+
+    try:
+        old_refresh_token = request.cookies.get("refresh_token")
+
+        if not old_refresh_token:
+            return jsonify({"error": "Refresh Token missing "}), 401
+
+        # NOTE: decode the token
+        data = jwt.decode(
+            old_refresh_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
+
+        user_id = data["user_id"]
+
+        # Query user
+        user = User.query.get(user_id)
+
+        if not user:
+            return jsonify({"error": "Invalid user"}), 404
+
+        # NOTE: Generate new access token
+        access_token = jwt.encode(
             {
                 "user_id": user.id,
-                "exp": datetime.datetime.now() + datetime.timedelta(hours=2),
+                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
             },
             current_app.config["SECRET_KEY"],
             algorithm="HS256",
         )
-        return jsonify({"message": "logged in successfully !", "token": token}), 200
-    else:
-        return jsonify({"error": "invalid email"}), 401
-"""
-########################################################################
 
-# TODO: create a new login route
+        # NOTE: Generate new refresh token
+        refresh_token = jwt.encode(
+            {
+                "user_id": user.id,
+                "exp": datetime.datetime.now() + datetime.timedelta(days=7),
+            },
+            current_app.config["SECRET_KEY"],
+            algorithm="HS256",
+        )
+
+        response = make_response(
+            jsonify({"message": "refresh successfully", "access_token": access_token})
+        )
+
+        response.set_cookie(
+            "refresh_token",
+            refresh_token,
+            httponly=True,
+            # secure=True,
+            samesite="Lax",
+            path="/refresh",
+        )
+        return response
+    except jwt.ExpiredSignatureError:
+        return jsonify({"error": "Refresh token expired. Please login again"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"error": "Invalid token"}), 401
 
 
-@auth_blueprint.route("/login", methods=["POST"])
-def login():
-    data = request.json
-    email = data.get("email")
-    password = data.get("password")
-
-    # fetch user user from database
-    user = User.query.filter_by(email=email).first()
-
-    # check user 
-    if user and user.check_password(password):
-    
-
-
-# TODO: Need Test
 # NOTE: Logout Route
-@auth_blueprint.route("/logout", methods=["POST"])
-def logout():
-    return jsonify({"message": "Logged out successfully"}), 200
+# WARNING: No need this route anymore
+#
+###########################################################################
+# @auth_blueprint.route("/logout", methods=["POST"])
+# def logout():
+#     return jsonify({"message": "Logged out successfully"}), 200
+##########################################################################
 
 
-# NOTE: Forget password before Login
+# TODO:
+# we need time to finallize this feature.
+# - set up email service
+# - set up App Password to use email service
+# - set up SMTP server to create connection link
+# - set up testing api endpoint and form from frontend
+##########################################################################
+# NOTE: Forget password intializaiton
+# user send request to server check email and username to check
+# if the userName and email matched. if they are matched, client change
+# the website to the different page.
 @auth_blueprint.route("/forget-password", methods=["POST"])
 def forget_password():
     email = request.json.get("email")
@@ -93,7 +177,8 @@ def forget_password():
         return jsonify({"error": "Email not found"}), 404
 
 
-# NOTE: Change password after login
+# NOTE: After verifying user's information. we help user change the password
+# from old password to new password. this
 @auth_blueprint.route("/change-password", methods=["POST"])
 def change_password():
     data = request.json
@@ -107,49 +192,3 @@ def change_password():
         return jsonify({"message": "password changed successfully"}), 200
     else:
         return jsonify({"error": "old password is incorrect"}), 401
-
-
-# NOTE: Change Password before login (After clicking Reset Password Link)
-@auth_blueprint.route("/request-password-reset", methods=["POST"])
-def request_password_reset():
-    email = request.json.get("email")
-    user = User.query.filter_by(email=email).first()
-
-    if user:
-        # generate a secure token
-        token = serializer.dumps(user.email, salt="password-reset-salt")
-
-        # build a reset url
-        reset_url = url_for("auth.reset_password", token=token, _external=True)
-
-        # TODO:
-        # adding SMTP Server to send an email link to user's email
-
-        return jsonify({"message": "email sent successfully"}), 200
-    else:
-        return jsonify({"error": "Email not Found"}), 404
-
-
-# NOTE: Reset Password (Changing the password using the token)
-@auth_blueprint.route("/reset-password/<token>", methods=["POST"])
-def reset_password(token):
-    try:
-        # Verify the token with a max age of 1 hour (3600 seconds)
-        email = serializer.loads(token, salt="password-reset-salt", max_age=3600)
-    except Exception as e:
-        return jsonify({"error": "The reset link is invalid or expired"}), 400
-
-    # Fetch the user by email
-    user = User.query.filter_by(email=email).first()
-
-    if not user:
-        return jsonify({"error": "User not found"}), 404
-
-    # Get the new password from the request
-    new_password = request.json.get("new_password")
-
-    # Update the user's password
-    user.set_password(new_password)
-    db.session.commit()
-
-    return jsonify({"message": "Password has been reset successfully"}), 200

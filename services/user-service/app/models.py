@@ -3,13 +3,6 @@ from enum import unique
 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-import enum
-
-
-class PotencyLevel(enum.Enum):
-    light = "Light and Short"
-    medium = "Medium and Lasting Moment"
-    intense = "Intense and Forever"
 
 
 # NOTE: User Table

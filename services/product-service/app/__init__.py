@@ -14,7 +14,7 @@ def create_app():
         methods=[
             "GET",
             "POST",
-            "DELETE",
+            "PUT",
             "DELETE",
             "OPTIONS",
         ],
@@ -29,10 +29,12 @@ def create_app():
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "my-default-secret-key")
     db.init_app(app)
+    migrate.init_app(app, db)
 
     from app.routes import product_blueprint
 
-    app.register_blueprint(product_blueprint)
+    app.register_blueprint(product_blueprint, url_prefix="/api")
 
     return app

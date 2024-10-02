@@ -47,10 +47,6 @@ def token_required(f):
             print(f"Token   : {token}")
             print(f"SECRET_KEY  : {current_app.config['SECRET_KEY']}")
 
-            # BUG:
-            # data = jwt.decode(token, current_app.config["SECRET_KEY"], algorithm=["HS256"])
-            #
-
             data = jwt.decode(
                 token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
             )

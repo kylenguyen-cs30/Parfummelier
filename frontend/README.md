@@ -1,36 +1,31 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Front End Pages
 
-## Getting Started
+## Sign in
 
-First, run the development server:
+- Sign in User
+- Forget password
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Sign up
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Register user
+- Sign in
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Forget Password
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Verify user's email
+- Navigate user to change password page
 
-## Learn More
+## Change Password
 
-To learn more about Next.js, take a look at the following resources:
+- Change user's password
+- Navigate user back to sign in
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Landing page
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Display Hero pictures
+- Display Login and Register option
 
-## Deploy on Vercel
+## Main Page
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Display User's favorite Perfume
+- Display User's Tran

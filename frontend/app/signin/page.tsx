@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
-import Header from "../components/Header";
+import Header from "../components/Navbar";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +13,8 @@ const SignIn = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null); // State to store message from home API
+
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,7 +30,7 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5001/login",  //We can add API endpoint here
+        "http://localhost:5002/login", //We can add API endpoint here
         formData,
         {
           headers: {
@@ -38,12 +40,21 @@ const SignIn = () => {
       );
 
       if (response.status === 200) {
-        router.push("/dashboard");  
+        router.push("/main-page");
       }
     } catch (error: any) {
       setError(
-        error.response?.data?.error || "An error occurred while signing in."
+        error.response?.data?.error || "An error occurred while signing in.",
       );
+    }
+  };
+
+  const handleTestApi = async () => {
+    try {
+      const response = await axios.get("http://localhost:5002/");
+      setMessage(response.data.message); // Assuming the response is { message: "authentication service launched !!!" }
+    } catch (error: any) {
+      setMessage("Failed to fetch message.");
     }
   };
 
@@ -52,6 +63,8 @@ const SignIn = () => {
       <Header />
       <h1 className="text-2xl font-bold mb-6">Sign In</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
+      {message && <div className="text-green-500 mb-4">{message}</div>}{" "}
+      {/* Display message */}
       {/* Sign-In Form */}
       <form onSubmit={handleSubmit}>
         <div>
@@ -87,6 +100,9 @@ const SignIn = () => {
 
         <Button type="submit">Sign In</Button>
       </form>
+      <Button type="button" onClick={handleTestApi}>
+        Test API
+      </Button>
     </div>
   );
 };

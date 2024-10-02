@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+"user server";
+import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/router";
 import Button from "../components/ui/button";

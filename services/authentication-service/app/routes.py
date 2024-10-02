@@ -249,11 +249,12 @@ def verify_code():
 # user send request to server check email and username to check
 # if the userName and email matched. if they are matched, client change
 # the website to the different page.
-@auth_blueprint.route("/forget-password", methods=["POST"])
+@auth_blueprint.route("/forget-password", methods=["POST", "OPTIONS"])
 def forget_password():
+    if request.method == "OPTIONS":
+        return "", 200
+
     email = request.json.get("email")
-    # username = request.json.get("userName")
-    # user = User.query.filter_by(email=email, username=username).first()
     user = User.query.filter_by(email=email).first()
 
     if user:

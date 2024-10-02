@@ -61,7 +61,7 @@ const ForgetPassword = () => {
   const handle2FASubmit = async () => {
     try {
       const response = await axios.post(
-        "http://localhost:5003/verify-code",
+        "http://localhost:5002/verify-code",
         {
           email: formData.email,
           code: twoFactorCode,

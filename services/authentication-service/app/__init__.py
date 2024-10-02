@@ -38,6 +38,7 @@ def create_app():
             "DELETE",
             "OPTIONS",
         ],
+        supports_credentials=True,
         allow_headers=[
             "Content-Type",
             "Authorization",

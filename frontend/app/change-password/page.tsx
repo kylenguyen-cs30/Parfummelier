@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 // import { useRouter } from "next/router";
 import axios from "axios";
 import Button from "../components/ui/button";
@@ -11,27 +11,30 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const { isVerified, setIsVerified } = useAuth(); // Using AuthContext
+  // const { isVerified, setIsVerified } = useAuth(); // Using AuthContext
+  const { resetToken, setResetToken } = useAuth();
 
   // NOTE: router search params
 
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const reset_token = searchParams.get("reset_token");
+  // const searchParams = useSearchParams();
+  // const reset_token = searchParams.get("reset-token");
 
   // NOTE: prevent unauthorized access
-  useEffect(() => {
-    if (!isVerified) {
-      router.push("/");
-    }
-  }, [isVerified, router]);
+  //
+  // useEffect(() => {
+  //   if (!isVerified) {
+  //     router.push("/");
+  //   }
+  // }, [isVerified, router]);
 
   // NOTE: handle case no reset_token
   useEffect(() => {
-    if (!reset_token) {
+    console.log(resetToken);
+    if (!resetToken) {
       router.push("/");
     }
-  }, [reset_token, router]);
+  }, [resetToken, router]);
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -41,7 +44,7 @@ const ChangePassword = () => {
     try {
       const response = await axios.post(
         "http://localhost:5002/change-password",
-        { reset_token, new_password: newPassword },
+        { resetToken, new_password: newPassword },
         {
           headers: {
             "Content-Type": "application/json",
@@ -51,8 +54,9 @@ const ChangePassword = () => {
 
       if (response.status === 200) {
         setMessage(response.data.message);
+        setResetToken(null);
         // clear verifcation status after changing the password
-        setIsVerified(false);
+        // setIsVerified(false);
         router.push("/login");
       }
     } catch (error: any) {

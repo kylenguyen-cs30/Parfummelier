@@ -7,39 +7,25 @@ import Header from "../components/Header";
 import { useAuth } from "../components/AuthContext";
 
 const ForgetPassword = () => {
-  const [formData, setFormData] = useState({
-    email: "",
-  });
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [resetToken, setResetToken] = useState<string | null>(null);
+  // const [resetToken, setResetToken] = useState<string | null>(null);
   const [twoFactorCode, setTwoFactorCode] = useState<string>("");
+  const [email, setEmail] = useState("");
   const router = useRouter();
   const { setIsVerified } = useAuth();
-
-  // NOTE: map input
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
+  const { setResetToken } = useAuth();
 
   // NOTE: send data to backend email and username for verification
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
+    setMessage(null);
     try {
       const response = await axios.post(
-        "http://localhost:5002/forget-password/",
-        formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+        "http://localhost:5002/forget-password",
+        { email: email },
       );
 
       // NOTE: found result
@@ -57,36 +43,20 @@ const ForgetPassword = () => {
     }
   };
 
-  // NOTE:
+  // NOTE: verifying code for 2FA
   const handle2FASubmit = async () => {
     try {
-      const response = await axios.post(
-        "http://localhost:5002/verify-code",
-        {
-          email: formData.email,
-          code: twoFactorCode,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
+      const response = await axios.post("http://localhost:5002/verify-code", {
+        email: email,
+        code: twoFactorCode,
+      });
 
       // NOTE: Check condition
       if (response.status === 200) {
         const reset_token = response.data.reset_token;
-        setResetToken(reset_token);
+        setResetToken(reset_token); // Store reset TOKEN in localStorage and state
         setIsModalOpen(false);
-
-        // navigate to change-password page with reset_token and user_id
-        // router.push({
-        //   pathname: "/change-password",
-        //   query: {
-        //     reset_token: reset_token,
-        //   },
-        //   })
-        router.push(`/change-password?reset-token=${reset_token}`);
+        router.push("/change-password");
       } else {
         setError("Invalid 2FA Code");
         return;
@@ -129,7 +99,9 @@ const ForgetPassword = () => {
       {/* TODO: we need Modal for entering 6 digits code for 2-F-A  */}
       <Header />
       <h1>Forget Password</h1>
-      {error && <p>{error}</p>}
+      {error && <p className="text-red-900">{error}</p>}
+      {message && <p className="text-green-600">{message}</p>}
+
       {/* Display Message  */}
 
       <form onSubmit={handleSubmit}>
@@ -138,8 +110,9 @@ const ForgetPassword = () => {
           <input
             type="email"
             name="email"
-            value={formData.email}
-            onChange={handleChange}
+            // value={formData.email}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             required
             className="w-full border rounded px-2 py-1"
           />

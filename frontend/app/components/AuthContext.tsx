@@ -8,6 +8,8 @@ interface AuthContextProps {
   setAccessToken: (token: string | null) => void;
   isVerified: boolean;
   setIsVerified: (isVerified: boolean) => void;
+  resetToken: string | null;
+  setResetToken: (token: string | null) => void;
   logout: () => void;
 }
 
@@ -16,19 +18,48 @@ const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [resetToken, setResetTokenState] = useState<string | null>(null);
 
   const router = useRouter();
 
   // Function to handle logout
   const logout = () => {
     setAccessToken(null);
+    setResetToken(null);
     setIsVerified(false); // reset verifications
     router.push("/signin");
   };
 
+  // NOTE: Temporarily store in localStorage
+  // Save resetToken to localStorage
+  const setResetToken = (token: string | null) => {
+    if (token) {
+      localStorage.setItem("resetToken", token);
+    } else {
+      localStorage.removeItem("resetToken");
+    }
+    setResetTokenState(token);
+  };
+
+  // Load resetToken from localStorage when the app starts
+  useEffect(() => {
+    const token = localStorage.getItem("resetToken");
+    if (token) {
+      setResetTokenState(token);
+    }
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ accessToken, setAccessToken, logout, isVerified, setIsVerified }}
+      value={{
+        accessToken,
+        setAccessToken,
+        logout,
+        isVerified,
+        setIsVerified,
+        resetToken,
+        setResetToken,
+      }}
     >
       {children}
     </AuthContext.Provider>

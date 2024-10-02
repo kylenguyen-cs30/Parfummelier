@@ -202,10 +202,12 @@ def send_email(to_email, code):
 
 # NOTE: Verify Code Route
 
-auth_blueprint.route("/verify-code", methods=["POST"])
 
-
+@auth_blueprint.route("/verify-code", methods=["POST", "OPTIONS"])
 def verify_code():
+    if request.method == "OPTIONS":
+        # This is needed to respond to CORS preflight requests
+        return "", 200
     email = request.json.get("email")
     entered_code = request.json.get("code")
 

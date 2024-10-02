@@ -1,6 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/router";
+import { useRouter, useSearchParams } from "next/navigation";
+// import { useRouter } from "next/router";
 import axios from "axios";
 import Button from "../components/ui/button";
 import { useAuth } from "../components/AuthContext";
@@ -10,9 +11,13 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  const router = useRouter();
-  const { reset_token } = router.query; // NOTE: get user_id from query paramater
   const { isVerified, setIsVerified } = useAuth(); // Using AuthContext
+
+  // NOTE: router search params
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const reset_token = searchParams.get("reset_token");
 
   // NOTE: prevent unauthorized access
   useEffect(() => {

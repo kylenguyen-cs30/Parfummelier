@@ -252,6 +252,8 @@ def verify_code():
 @auth_blueprint.route("/forget-password", methods=["POST"])
 def forget_password():
     email = request.json.get("email")
+    # username = request.json.get("userName")
+    # user = User.query.filter_by(email=email, username=username).first()
     user = User.query.filter_by(email=email).first()
 
     if user:

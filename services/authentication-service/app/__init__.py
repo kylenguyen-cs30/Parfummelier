@@ -34,7 +34,7 @@ def create_app():
         methods=[
             "GET",
             "POST",
-            "DELETE",
+            "PUT",
             "DELETE",
             "OPTIONS",
         ],

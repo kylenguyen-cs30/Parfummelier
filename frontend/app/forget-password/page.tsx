@@ -1,7 +1,7 @@
-"user server";
+"use client";
 import React, { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import Button from "../components/ui/button";
 import Header from "../components/Header";
 import { useAuth } from "../components/AuthContext";
@@ -9,7 +9,6 @@ import { useAuth } from "../components/AuthContext";
 const ForgetPassword = () => {
   const [formData, setFormData] = useState({
     email: "",
-    userName: "",
   });
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -81,14 +80,16 @@ const ForgetPassword = () => {
         setIsModalOpen(false);
 
         // navigate to change-password page with reset_token and user_id
-        router.push({
-          pathname: "/change-password",
-          query: {
-            reset_token: reset_token,
-          },
-        });
+        // router.push({
+        //   pathname: "/change-password",
+        //   query: {
+        //     reset_token: reset_token,
+        //   },
+        //   })
+        router.push(`/change-password?reset-token=${reset_token}`);
       } else {
         setError("Invalid 2FA Code");
+        return;
       }
     } catch (error: any) {
       setError("An Error occured while verifying 2FA code");
@@ -143,17 +144,7 @@ const ForgetPassword = () => {
             className="w-full border rounded px-2 py-1"
           />
         </div>
-        <div>
-          <label>User Name</label>
-          <input
-            type="text"
-            name="userName"
-            value={formData.userName}
-            onChange={handleChange}
-            required
-            className="w-full border rounded py-2 px-1"
-          />
-        </div>
+
         <Button type="submit">Submit</Button>
       </form>
       <Button type="button" onClick={handleTestApi}>

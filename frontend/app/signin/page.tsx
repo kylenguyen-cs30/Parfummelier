@@ -49,10 +49,6 @@ const SignIn = () => {
     }
   };
 
-  const handleForgetPassword = () => {
-    router.push("/forget-password");
-  };
-
   return (
     <div className="container mx-auto">
       <Header />
@@ -88,16 +84,13 @@ const SignIn = () => {
 
         {/* "Forget My Password" Link */}
         <div>
-          <a href="/forgot-password" className="text-blue-500">
+          <a href="/forget-password" className="text-blue-500">
             Forgot My Password?
           </a>
         </div>
 
         <Button type="submit">Sign In</Button>
       </form>
-      <Button type="button" onClick={handleForgetPassword}>
-        Forget your password
-      </Button>
     </div>
   );
 };

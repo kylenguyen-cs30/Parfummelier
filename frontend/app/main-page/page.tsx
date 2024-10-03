@@ -4,11 +4,13 @@ import Header from "../components/ui/header/page";
 import Navbar from "../components/ui/navbar/page";
 import Content from "../components/ui/content/page";
 import Footer from "../components/ui/footer/page";
+import Button from "../components/ui/button/page";
 import { useAuth } from "../components/AuthContext";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
   const { accessToken } = useAuth();
+  const { logout } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
@@ -21,20 +23,22 @@ export default function Home() {
     <div>
       <Header />
       <Navbar>
-        <ul>
-          <li>
-            <a>Perfumes</a>
-          </li>
-          <li>
-            <a>Discover</a>
-          </li>
-          <li>
-            <a>Community</a>
-          </li>
-          <li>
-            <a>Logout</a>
-          </li>
-        </ul>
+        <div className="flex flex-row">
+          <ul>
+            <li>
+              <a>Perfumes</a>
+            </li>
+            <li>
+              <a>Discover</a>
+            </li>
+            <li>
+              <a>Community</a>
+            </li>
+          </ul>
+          <Button type="button" onClick={logout}>
+            Log out
+          </Button>
+        </div>
       </Navbar>
       <Content>
         <h1>This is main page</h1>

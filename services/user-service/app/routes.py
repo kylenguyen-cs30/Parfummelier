@@ -147,10 +147,6 @@ def list_users():
 
 
 # NOTE: Update ScentBank
-
-
-# WARNING: Don't uncomment this line
-# @user_blueprint.route("/user/<int:user_id>/scentbank", methods=["PUT", "POST"])
 @user_blueprint.route("/user/scentbank", methods=["PUT", "POST"])
 @token_required
 def update_scentbank_for_user(current_user):

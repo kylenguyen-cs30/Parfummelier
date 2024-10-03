@@ -13,7 +13,9 @@ const ForgetPassword = () => {
   const [twoFactorCode, setTwoFactorCode] = useState<string>("");
   const [email, setEmail] = useState("");
   const router = useRouter();
-  const { setIsVerified } = useAuth();
+
+  // AuthContext  provider
+  // const { setIsVerified } = useAuth();
   const { setResetToken } = useAuth();
 
   // NOTE: send data to backend email and username for verification
@@ -29,9 +31,9 @@ const ForgetPassword = () => {
 
       // NOTE: found result
       if (response.status === 200) {
-        setIsVerified(true);
-        setIsModalOpen(true);
+        // setIsVerified(true);
         setMessage(response.data.message);
+        setIsModalOpen(true);
       } else {
         console.log("email not found");
       }
@@ -54,7 +56,8 @@ const ForgetPassword = () => {
       if (response.status === 200) {
         const reset_token = response.data.reset_token;
         // setResetToken(reset_token); // Store reset TOKEN in localStorage and state
-        localStorage.setItem("resetToken", reset_token);
+        // localStorage.setItem("resetToken", reset_token);
+        setResetToken(reset_token);
         setIsModalOpen(false);
         router.push("/change-password");
       } else {

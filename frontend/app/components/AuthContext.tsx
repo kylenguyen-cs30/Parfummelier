@@ -2,6 +2,7 @@
 import React, { createContext, useState, useContext, useEffect } from "react";
 // import axios from "axios";
 import { useRouter } from "next/navigation";
+import { document } from "postcss";
 
 interface AuthContextProps {
   accessToken: string | null;
@@ -25,43 +26,86 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //NOTE: logout context
   const logout = () => {
     setAccessToken(null);
-    // setResetToken(null); // reset token
+    setResetToken(null);
     setIsVerified(false); // reset verifications
+    document.cookie = "accessToken=; max-age=0";
+    document.cookie = "resetToken=; max-age=0";
     router.push("/signin");
   };
 
   // NOTE: Temporarily store in localStorage
   // Save resetToken to localStorage
+  //
+  // const setResetToken = (token: string | null) => {
+  //   if (token) {
+  //     localStorage.setItem("resetToken", token);
+  //   } else {
+  //     localStorage.removeItem("resetToken");
+  //   }
+  //   setResetTokenState(token);
+  // };
+  //
+
+  // Load resetToken from localStorage when the app starts
+  // useEffect(() => {
+  //   const token = localStorage.getItem("resetToken");
+  //   if (token) {
+  //     setResetTokenState(token);
+  //   }
+  // }, []);
+
+  // NOTE: localStorage for accessToken
+  //
+  // const setAccessToken = (token: string | null) => {
+  //   if (token) {
+  //     localStorage.setItem("accessToken", token);
+  //   } else {
+  //     localStorage.removeItem("accessToken");
+  //   }
+  //   setAccessTokenState(token);
+  // };
+
+  // useEffect(() => {
+  //   const token = localStorage.getItem("accessToken");
+  //   if (token) {
+  //     setAccessTokenState(token);
+  //   }
+  // }, []);
+
+  // NOTE: Cookie Implementation
   const setResetToken = (token: string | null) => {
     if (token) {
-      localStorage.setItem("resetToken", token);
+      document.cookie = `resetToken=${token}; max-age=86400`;
     } else {
-      localStorage.removeItem("resetToken");
+      document.cookie = "resetToken=;max-age=0";
     }
     setResetTokenState(token);
   };
 
-  // Load resetToken from localStorage when the app starts
   useEffect(() => {
-    const token = localStorage.getItem("resetToken");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => startsWith("resetToken="))
+      ?.split("=")[1];
     if (token) {
       setResetTokenState(token);
     }
   }, []);
 
-  // NOTE: localStorage for accessToken
-
   const setAccessToken = (token: string | null) => {
     if (token) {
-      localStorage.setItem("accessToken", token);
+      document.cookie = `accessToken=${token}; max-age=86400`;
     } else {
-      localStorage.removeItem("accessToken");
+      document.cookie = "accessToken=; max-age=0";
     }
     setAccessTokenState(token);
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("accessToken");
+    const token = document.cookie
+      .split("; ")
+      .find((row) => startsWith("resetToken="))
+      ?.split("=")[1];
     if (token) {
       setAccessTokenState(token);
     }

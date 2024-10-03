@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
 import axios from "axios";
 import Button from "../components/ui/button/page";
 import { useAuth } from "../components/AuthContext";
@@ -11,22 +10,30 @@ const ChangePassword = () => {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  // const { isVerified, setIsVerified } = useAuth(); // Using AuthContext
+
+  // AuthContext
+  // const { isVerified, setIsVerified } = useAuth();
   const { resetToken, setResetToken } = useAuth();
 
   // NOTE: router search params
-
   const router = useRouter();
 
   // NOTE: handle case no reset_token
+  //
+  // useEffect(() => {
+  //   const token = localStorage.getItem("resetToken");
+  //   if (!token) {
+  //     router.push("/"); // Redirect if no token is found
+  //   } else {
+  //     setResetToken(token); // Update the context state
+  //   }
+  // }, [router, setResetToken]);
+
   useEffect(() => {
-    const token = localStorage.getItem("resetToken");
-    if (!token) {
-      router.push("/"); // Redirect if no token is found
-    } else {
-      setResetToken(token); // Update the context state
+    if (!resetToken) {
+      router.push("/");
     }
-  }, [router, setResetToken]);
+  }, [resetToken, router]);
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -47,7 +54,7 @@ const ChangePassword = () => {
 
       if (response.status === 200) {
         setMessage(response.data.message);
-        localStorage.removeItem("resetToken");
+        // localStorage.removeItem("resetToken");
         setResetToken(null);
         // setResetToken(null);
         // clear verifcation status after changing the password
@@ -55,6 +62,7 @@ const ChangePassword = () => {
         router.push("/signin");
       }
     } catch (error: any) {
+      // print(`error : ${error}`);
       setError("Failed to change password");
     }
   };

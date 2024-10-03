@@ -54,7 +54,8 @@ const ForgetPassword = () => {
       // NOTE: Check condition
       if (response.status === 200) {
         const reset_token = response.data.reset_token;
-        setResetToken(reset_token); // Store reset TOKEN in localStorage and state
+        // setResetToken(reset_token); // Store reset TOKEN in localStorage and state
+        localStorage.setItem("resetToken", reset_token);
         setIsModalOpen(false);
         router.push("/change-password");
       } else {

@@ -17,24 +17,16 @@ const ChangePassword = () => {
   // NOTE: router search params
 
   const router = useRouter();
-  // const searchParams = useSearchParams();
-  // const reset_token = searchParams.get("reset-token");
-
-  // NOTE: prevent unauthorized access
-  //
-  // useEffect(() => {
-  //   if (!isVerified) {
-  //     router.push("/");
-  //   }
-  // }, [isVerified, router]);
 
   // NOTE: handle case no reset_token
   useEffect(() => {
-    console.log(resetToken);
-    if (!resetToken) {
-      router.push("/");
+    const token = localStorage.getItem("resetToken");
+    if (!token) {
+      router.push("/"); // Redirect if no token is found
+    } else {
+      setResetToken(token); // Update the context state
     }
-  }, [resetToken, router]);
+  }, [router, setResetToken]);
 
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
@@ -42,22 +34,25 @@ const ChangePassword = () => {
       return;
     }
     try {
+      const token = resetToken || localStorage.getItem("resetToken");
+
+      if (!token) {
+        setError("Reset token is missing");
+        return;
+      }
       const response = await axios.post(
         "http://localhost:5002/change-password",
-        { resetToken, new_password: newPassword },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+        { reset_token: token, new_password: newPassword },
       );
 
       if (response.status === 200) {
         setMessage(response.data.message);
+        localStorage.removeItem("resetToken");
         setResetToken(null);
+        // setResetToken(null);
         // clear verifcation status after changing the password
         // setIsVerified(false);
-        router.push("/login");
+        router.push("/signin");
       }
     } catch (error: any) {
       setError("Failed to change password");

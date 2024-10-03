@@ -22,10 +22,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const router = useRouter();
 
-  // Function to handle logout
+  //NOTE: logout context
   const logout = () => {
     setAccessToken(null);
-    setResetToken(null);
+    // setResetToken(null); // reset token
     setIsVerified(false); // reset verifications
     router.push("/signin");
   };

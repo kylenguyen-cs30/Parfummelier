@@ -206,8 +206,8 @@ def send_email(to_email, code):
 @auth_blueprint.route("/verify-code", methods=["POST", "OPTIONS"])
 def verify_code():
     if request.method == "OPTIONS":
-        # This is needed to respond to CORS preflight requests
         return "", 200
+
     email = request.json.get("email")
     entered_code = request.json.get("code")
 
@@ -233,8 +233,10 @@ def verify_code():
 
     return (
         jsonify(
-            {"message": "2-F-A verified. user can change the password now "},
-            reset_token,
+            {
+                "message": "2-F-A verified. user can change the password now ",
+                "reset_token": reset_token,
+            },
         ),
         200,
     )

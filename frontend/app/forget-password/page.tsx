@@ -2,15 +2,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button";
-import Header from "../components/Header";
+import Button from "../components/ui/button/page";
+import Header from "../components/ui/header/page";
 import { useAuth } from "../components/AuthContext";
 
 const ForgetPassword = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  // const [resetToken, setResetToken] = useState<string | null>(null);
   const [twoFactorCode, setTwoFactorCode] = useState<string>("");
   const [email, setEmail] = useState("");
   const router = useRouter();

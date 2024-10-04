@@ -1,5 +1,6 @@
 "use client";
 
+import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -7,15 +8,18 @@ import Button from "../components/ui/button/page";
 import Header from "../components/ui/navbar/page";
 import { useAuth } from "../components/AuthContext";
 
-const SignIn = () => {
-  const { setAccessToken } = useAuth();
+type SignInProps = {
+  initialError?: string;
+};
+
+const SignIn = ({ initialError }: SignInProps) => {
+  const { setAccessToken } = useAuth(); // AuthContext
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [error, setError] = useState<string | null>(null);
-
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -39,8 +43,6 @@ const SignIn = () => {
           },
         },
       );
-
-      console.log("Response data:", response.data); // Log the response data for debugging
 
       // NOTE: login successfully
       if (response.status === 200) {
@@ -99,6 +101,31 @@ const SignIn = () => {
       </form>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    // Optionally check for any pre-existing cookies or tokens
+    const accessToken = context.req.cookies.accessToken;
+    if (accessToken) {
+      return {
+        redirect: {
+          destination: "/main-page",
+          permanent: false,
+        },
+      };
+    }
+    return {
+      props: {},
+    };
+  } catch (error) {
+    console.error("Error during SSR: ", error);
+    return {
+      props: {
+        initialError: "Failed to load the page ",
+      },
+    };
+  }
 };
 
 export default SignIn;

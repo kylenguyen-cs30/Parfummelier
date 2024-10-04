@@ -45,7 +45,7 @@ migrations/__pycache__/
 migrations/env.py
 
 # Static files
-public/
+# public/
 
 # Mac OS files
 .DS_Store

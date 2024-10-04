@@ -3,17 +3,18 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button";
-import Header from "../components/Navbar";
+import Button from "../components/ui/button/page";
+import Header from "../components/ui/navbar/page";
+import { useAuth } from "../components/AuthContext";
 
 const SignIn = () => {
+  const { setAccessToken } = useAuth();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   });
 
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null); // State to store message from home API
 
   const router = useRouter();
 
@@ -39,10 +40,16 @@ const SignIn = () => {
         },
       );
 
+      console.log("Response data:", response.data); // Log the response data for debugging
+
+      // NOTE: login successfully
       if (response.status === 200) {
+        const { access_token } = response.data;
+        setAccessToken(access_token);
         router.push("/main-page");
       }
     } catch (error: any) {
+      console.error("Error logging in: ", error);
       setError(
         error.response?.data?.error || "An error occurred while signing in.",
       );
@@ -54,7 +61,6 @@ const SignIn = () => {
       <Header />
       <h1 className="text-2xl font-bold mb-6">Sign In</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      {message && <div className="text-green-500 mb-4">{message}</div>}{" "}
       {/* Display message */}
       {/* Sign-In Form */}
       <form onSubmit={handleSubmit}>

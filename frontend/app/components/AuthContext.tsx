@@ -16,7 +16,7 @@ interface AuthContextProps {
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [accessToken, setAccessTokenState] = useState<string | null>(null);
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [resetToken, setResetTokenState] = useState<string | null>(null);
 
@@ -46,6 +46,24 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const token = localStorage.getItem("resetToken");
     if (token) {
       setResetTokenState(token);
+    }
+  }, []);
+
+  // NOTE: localStorage for accessToken
+
+  const setAccessToken = (token: string | null) => {
+    if (token) {
+      localStorage.setItem("accessToken", token);
+    } else {
+      localStorage.removeItem("accessToken");
+    }
+    setAccessTokenState(token);
+  };
+
+  useEffect(() => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      setAccessTokenState(token);
     }
   }, []);
 

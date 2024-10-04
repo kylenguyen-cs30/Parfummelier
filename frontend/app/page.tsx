@@ -1,9 +1,19 @@
 "use client";
-import React from "react";
-import Button from "./components/ui/button";
+import React, { useEffect } from "react";
+import Button from "./components/ui/button/page";
 import { useRouter } from "next/navigation";
+import { useAuth } from "./components/AuthContext";
+
 export default function Home() {
   const router = useRouter();
+  const { accessToken } = useAuth();
+
+  // NOTE: if user's browser have token already, navigate user to /main-page
+  useEffect(() => {
+    if (accessToken) {
+      router.push("/main-page");
+    }
+  }, [accessToken, router]);
 
   const handleClick = (type: "signin" | "signup") => {
     //TODO: if it register, router.push("/signup") otherwise, router.push("/signin")

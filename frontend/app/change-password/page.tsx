@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 // import { useRouter } from "next/router";
 import axios from "axios";
-import Button from "../components/ui/button";
+import Button from "../components/ui/button/page";
 import { useAuth } from "../components/AuthContext";
 
 const ChangePassword = () => {

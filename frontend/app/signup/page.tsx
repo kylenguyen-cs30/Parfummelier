@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState } from "react";
-import axios, { AxiosError } from "axios";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button";
-import Header from "../components/Navbar";
+import Button from "../components/ui/button/page";
+import Header from "../components/ui/navbar/page";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({

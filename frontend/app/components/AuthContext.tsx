@@ -1,6 +1,5 @@
 "use client";
 import React, { createContext, useState, useContext, useEffect } from "react";
-// import axios from "axios";
 import { useRouter } from "next/navigation";
 
 interface AuthContextProps {
@@ -20,6 +19,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isVerified, setIsVerified] = useState<boolean>(false);
   const [resetToken, setResetTokenState] = useState<string | null>(null);
 
+  // router for page changing
   const router = useRouter();
 
   //NOTE: logout context

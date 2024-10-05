@@ -42,7 +42,7 @@ const ChangePassword = () => {
       }
       const response = await axios.post(
         "http://localhost:5002/change-password",
-        { reset_token: token, new_password: newPassword }
+        { reset_token: token, new_password: newPassword },
       );
 
       if (response.status === 200) {

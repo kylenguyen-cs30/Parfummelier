@@ -84,8 +84,6 @@ def login():
 # NOTE: refresh access_token route:
 @auth_blueprint.route("/refresh", methods=["POST"])
 def refresh():
-    # token = request.json.get("refresh_token")
-    # old_refresh_token = request.json.get("refresh_token") NOTE: we don't need this
 
     try:
         old_refresh_token = request.cookies.get("refresh_token")
@@ -110,7 +108,7 @@ def refresh():
         access_token = jwt.encode(
             {
                 "user_id": user.id,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+                "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
             },
             current_app.config["SECRET_KEY"],
             algorithm="HS256",

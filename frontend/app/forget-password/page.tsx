@@ -6,6 +6,17 @@ import Button from "../components/ui/button/page";
 import Header from "../components/ui/header/page";
 import { useAuth } from "../components/AuthContext";
 
+//-------------------------------------------------------------------------//
+// NOTE:
+// this page help user veryfy their email and user's identity by send 6 digits
+// 2-F-A identification code to user's email
+//
+// WARNING:
+// this page need test before testing with network layer and API call
+// traceroute.
+//
+//-------------------------------------------------------------------------//
+
 const ForgetPassword = () => {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
@@ -14,7 +25,6 @@ const ForgetPassword = () => {
   const [email, setEmail] = useState("");
   const router = useRouter();
   const { setIsVerified } = useAuth();
-  const { setResetToken } = useAuth();
 
   // NOTE: send data to backend email and username for verification
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -53,8 +63,9 @@ const ForgetPassword = () => {
       // NOTE: Check condition
       if (response.status === 200) {
         const reset_token = response.data.reset_token;
-        // setResetToken(reset_token); // Store reset TOKEN in localStorage and state
-        localStorage.setItem("resetToken", reset_token);
+        await axios.post("/api/setResetToken", { reset_token });
+
+        // close Modal
         setIsModalOpen(false);
         router.push("/change-password");
       } else {

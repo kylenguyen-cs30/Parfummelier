@@ -5,17 +5,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 
-# from flask_login import LoginManager
-
-
-# from flask_migrate import Migrate
 
 db = SQLAlchemy()
-# login_manager = LoginManager()
-
-# PERF: No need for Flask Migrating 🙅
-#
-# migrate = Migrate()
 
 
 def create_app():
@@ -27,12 +18,9 @@ def create_app():
     # initialize extensions
     db.init_app(app)
 
-    # CORS for connection
     CORS(
         app,
-        resources={
-            r"/*": {"origins": ["http://108.225.73.225", "http://localhost:3000"]}
-        },
+        resources={r"/*": {"origins": "http://108.225.73.225"}},
         methods=[
             "GET",
             "POST",
@@ -75,3 +63,24 @@ def configure_app(app):
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
+
+    # CORS for connection
+    # CORS(
+    #     app,
+    #     resources={
+    #         r"/*": {"origins": ["http://108.225.73.225", "http://localhost:3000"]}
+    #     },
+    #     methods=[
+    #         "GET",
+    #         "POST",
+    #         "PUT",
+    #         "DELETE",
+    #         "OPTIONS",
+    #     ],
+    #     supports_credentials=True,
+    #     allow_headers=[
+    #         "Content-Type",
+    #         "Authorization",
+    #         "Access-Control-Allow-Credentials",
+    #     ],
+    # )

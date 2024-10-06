@@ -28,8 +28,8 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        // "http://108.225.73.225:8000/login", //We can add API endpoint here
-        "http://108.225.73.225/auth/login",
+        "http://108.225.73.225/login", //We can add API endpoint here
+        // "http://108.225.73.225/auth/login",
         formData,
         {
           headers: {

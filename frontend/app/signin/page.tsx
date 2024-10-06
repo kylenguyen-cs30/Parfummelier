@@ -48,7 +48,7 @@ const SignIn = () => {
         await axios.post(
           "/api/setAccessToken",
           { access_token },
-          { headers: { "Content-Type": "application/json" } },
+          // { headers: { "Content-Type": "application/json" } },
         );
 
         // safely push user into main-page

@@ -28,7 +28,7 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:8000/login", //We can add API endpoint here
+        "http://108.225.73.225:8000/login", //We can add API endpoint here
         // "http://108.225.73.225/auth/login",
         formData,
         {
@@ -67,7 +67,7 @@ const SignIn = () => {
     try {
       // Make a GET request to your API
       const response = await axios.get(
-        "http://localhost:8000/auth",
+        "http://108.225.73.225:8000/auth",
         // "http://108.225.73.225/auth",
         {
           headers: {

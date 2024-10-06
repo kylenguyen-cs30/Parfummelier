@@ -7,6 +7,7 @@ import Footer from "../components/ui/footer/page";
 import Button from "../components/ui/button/page";
 import { useAuth } from "../components/AuthContext";
 import { useRouter } from "next/navigation";
+import Sidebar from "../components/ui/Sidebar";
 
 export default function Home() {
   const { accessToken } = useAuth();
@@ -22,6 +23,7 @@ export default function Home() {
   return (
     <div>
       <Header />
+      <Sidebar />
       <Navbar>
         <div className="flex flex-row">
           <ul>

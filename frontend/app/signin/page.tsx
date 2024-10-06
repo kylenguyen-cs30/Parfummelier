@@ -42,7 +42,15 @@ const SignIn = () => {
       // NOTE: login successfully
       if (response.status === 200) {
         const { access_token } = response.data;
-        await axios.post("/api/setAccessToken", { access_token });
+
+        // ensure user access_token set in cookie
+        await axios.post(
+          "/api/setAccessToken",
+          { access_token },
+          { headers: { "Content-Type": "application/json" } },
+        );
+
+        // safely push user into main-page
         router.push("/main-page");
       }
     } catch (error: any) {

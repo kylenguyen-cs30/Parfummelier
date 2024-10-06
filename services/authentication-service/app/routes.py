@@ -6,6 +6,7 @@ from .models import User
 from app import db
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
+from datetime import datetime, timezone
 import jwt
 import datetime
 import random
@@ -143,16 +144,6 @@ def refresh():
         return jsonify({"error": "Invalid token"}), 401
 
 
-# NOTE: Logout Route
-# WARNING: No need this route anymore
-#
-###########################################################################
-# @auth_blueprint.route("/logout", methods=["POST"])
-# def logout():
-#     return jsonify({"message": "Logged out successfully"}), 200
-##########################################################################
-
-
 # NOTE: generate short live token
 def generate_password_reset_token(user_id):
     token = jwt.encode(
@@ -279,9 +270,6 @@ def forget_password():
         return jsonify({"error": "Email not found"}), 404
 
 
-# TODO: we need to write a method to change user's password after verifying 2-F-A
-
-
 @auth_blueprint.route("/change-password", methods=["POST"])
 def change_password():
     try:
@@ -320,3 +308,26 @@ def change_password():
     except Exception as e:
         print(f"Error changing password: {e}")
         return jsonify({"error": "An error occurred while changing the password"}), 500
+
+
+@auth_blueprint.route("/validate-token", methods=["POST"])
+def validate_token():
+    access_token = request.json.get("access_token")
+    if not access_token:
+        return jsonify({"error": "Access token is missing"}), 400
+
+    try:
+        decoded = jwt.decode(
+            access_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
+
+        # check if the toke has expired
+        exp = decoded.get("exp")
+        # if datetime.fromtimestamp(exp) < datetime.now():
+        if datetime.datetime.now(tz=timezone.utc).timestamp() > exp:
+            return jsonify({"status": "expired"}), 401
+        return jsonify({"status": "valid"})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"status": "expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"status": "invalid token"}), 401

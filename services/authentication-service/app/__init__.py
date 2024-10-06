@@ -30,7 +30,9 @@ def create_app():
     # CORS for connection
     CORS(
         app,
-        resources={r"/*": {"origins": "http://localhost:3000"}},
+        resources={
+            r"/*": {"origins": ["http://108.225.73.225", "http://localhost:3000"]}
+        },
         methods=[
             "GET",
             "POST",

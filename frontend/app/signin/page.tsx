@@ -33,11 +33,11 @@ const SignIn = () => {
         "http://108.225.73.225:8000/auth/login",
         // "http://108.225.73.225/login",
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        // },
       );
 
       // NOTE: login successfully
@@ -48,7 +48,7 @@ const SignIn = () => {
         await axios.post(
           "/api/setAccessToken",
           { access_token },
-          { headers: { "Content-Type": "application/json" } },
+          // { headers: { "Content-Type": "application/json" } },
         );
 
         // safely push user into main-page

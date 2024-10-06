@@ -31,11 +31,11 @@ const SignIn = () => {
         "http://108.225.73.225:8000/login", //We can add API endpoint here
         // "http://108.225.73.225/auth/login",
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
+        // {
+        //   headers: {
+        //     "Content-Type": "application/json",
+        //   },
+        // },
       );
 
       // NOTE: login successfully

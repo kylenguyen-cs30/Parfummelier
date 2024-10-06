@@ -13,3 +13,21 @@ services:
       - name: auth-route
         paths:
           - /auth
+
+plugins:
+  - name: cors
+    config:
+      origins:
+        - http://108.225.73.225 # Your frontend IP or domain
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+      headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Authorization
+      credentials: true
+      max_age: 3600

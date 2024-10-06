@@ -5,10 +5,8 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button/page";
 import Header from "../components/ui/header/page";
-import { useAuth } from "../components/AuthContext";
 
 const SignIn = () => {
-  const { setAccessToken } = useAuth(); // AuthContext
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -61,6 +59,22 @@ const SignIn = () => {
     }
   };
 
+  const handleTestApi = async () => {
+    try {
+      // Make a GET request to your API
+      const response = await axios.get("http://localhost:5002/", {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Log the response to the console (or handle it in any way)
+      console.log("API Response: ", response.data);
+    } catch (error: any) {
+      console.error("Error in Test API Request: ", error);
+    }
+  };
+
   return (
     <div className="container mx-auto">
       <Header />
@@ -102,6 +116,9 @@ const SignIn = () => {
 
         <Button type="submit">Sign In</Button>
       </form>
+      <Button type="button" onClick={handleTestApi}>
+        Test Api
+      </Button>
     </div>
   );
 };

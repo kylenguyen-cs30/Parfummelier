@@ -29,7 +29,7 @@ const SignIn = () => {
     try {
       const response = await axios.post(
         // "http://localhost:5002/login", //We can add API endpoint here
-        "http://authentication-service:5000/login",
+        "http://108.225.73.225/auth/login",
         formData,
         {
           headers: {
@@ -66,7 +66,7 @@ const SignIn = () => {
   const handleTestApi = async () => {
     try {
       // Make a GET request to your API
-      const response = await axios.get("http://authentication-service:5000", {
+      const response = await axios.get("http://108.225.73.225/auth", {
         headers: {
           "Content-Type": "application/json",
         },

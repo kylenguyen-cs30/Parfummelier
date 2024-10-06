@@ -1,19 +1,12 @@
 "use client";
 
-import { GetServerSideProps } from "next";
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/page";
-import Header from "../components/ui/navbar/page";
-import { useAuth } from "../components/AuthContext";
+import Button from "../components/ui/button/Button";
+import Header from "../components/ui/header/Header";
 
-type SignInProps = {
-  initialError?: string;
-};
-
-const SignIn = ({ initialError }: SignInProps) => {
-  const { setAccessToken } = useAuth(); // AuthContext
+const SignIn = () => {
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -35,7 +28,10 @@ const SignIn = ({ initialError }: SignInProps) => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5002/login", //We can add API endpoint here
+        // "http://108.225.73.225:8000/login", //We can add API endpoint here
+        // "http://108.225.73.225/auth/login",
+        "http://108.225.73.225:8000/auth/login",
+        // "http://108.225.73.225/login",
         formData,
         {
           headers: {
@@ -47,14 +43,51 @@ const SignIn = ({ initialError }: SignInProps) => {
       // NOTE: login successfully
       if (response.status === 200) {
         const { access_token } = response.data;
-        setAccessToken(access_token);
+
+        // ensure user access_token set in cookie
+        await axios.post(
+          "/api/setAccessToken",
+          { access_token },
+          { headers: { "Content-Type": "application/json" } },
+        );
+
+        // safely push user into main-page
         router.push("/main-page");
       }
-    } catch (error: any) {
-      console.error("Error logging in: ", error);
-      setError(
-        error.response?.data?.error || "An error occurred while signing in.",
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
+    }
+  };
+
+  const handleTestApi = async () => {
+    try {
+      // Make a GET request to your API
+      const response = await axios.get(
+        "http://108.225.73.225:8000/auth",
+        // "http://108.225.73.225/auth",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
       );
+
+      // Log the response to the console (or handle it in any way)
+      console.log("API Response: ", response.data);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 
@@ -99,33 +132,11 @@ const SignIn = ({ initialError }: SignInProps) => {
 
         <Button type="submit">Sign In</Button>
       </form>
+      <Button type="button" onClick={handleTestApi}>
+        Test Api
+      </Button>
     </div>
   );
-};
-
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  try {
-    // Optionally check for any pre-existing cookies or tokens
-    const accessToken = context.req.cookies.accessToken;
-    if (accessToken) {
-      return {
-        redirect: {
-          destination: "/main-page",
-          permanent: false,
-        },
-      };
-    }
-    return {
-      props: {},
-    };
-  } catch (error) {
-    console.error("Error during SSR: ", error);
-    return {
-      props: {
-        initialError: "Failed to load the page ",
-      },
-    };
-  }
 };
 
 export default SignIn;

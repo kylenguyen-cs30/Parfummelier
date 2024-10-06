@@ -1,19 +1,10 @@
 "use client";
-import React, { useEffect } from "react";
-import Button from "./components/ui/button/page";
+import React from "react";
+import Button from "./components/ui/button/Button";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./components/AuthContext";
 
 export default function Home() {
   const router = useRouter();
-  const { accessToken } = useAuth();
-
-  // NOTE: if user's browser have token already, navigate user to /main-page
-  useEffect(() => {
-    if (accessToken) {
-      router.push("/main-page");
-    }
-  }, [accessToken, router]);
 
   const handleClick = (type: "signin" | "signup") => {
     //TODO: if it register, router.push("/signup") otherwise, router.push("/signin")
@@ -31,10 +22,10 @@ export default function Home() {
             Welcome to Parfummelier
           </h1>
           <div className="flex flex-row gap-4">
-            <Button type="Button" onClick={() => handleClick("signup")}>
+            <Button type="button" onClick={() => handleClick("signup")}>
               Register
             </Button>
-            <Button type="Button" onClick={() => handleClick("signin")}>
+            <Button type="button" onClick={() => handleClick("signin")}>
               Sign in
             </Button>
           </div>

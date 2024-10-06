@@ -1,5 +1,19 @@
 _format_version: "1.1"
 services:
+  # Authentication Service
+  - name: authentication-service
+    url: http://authentication-service:5000
+    routes:
+      - name: auth-route
+        paths:
+          - /auth
+          - /login # Direct access to /login
+          - /auth/refresh # For token refresh
+          - /auth/verify-code # For 2FA verification
+          - /forget-password
+          - /change-password
+          - /validate-token
+
   - name: user-service
     url: http://user-service:5000
     routes:
@@ -7,9 +21,21 @@ services:
         paths:
           - /users
 
-  - name: authentication-service
-    url: http://authentication-service:5000
-    routes:
-      - name: auth-route
-        paths:
-          - /auth
+plugins:
+  - name: cors
+    config:
+      origins:
+        - http://108.225.73.225 # Your frontend IP or domain
+      methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      headers:
+        - Authorization
+        - Content-Type
+      exposed_headers:
+        - Authorization
+      credentials: true
+      max_age: 3600

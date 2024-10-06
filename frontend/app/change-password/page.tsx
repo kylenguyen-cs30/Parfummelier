@@ -1,45 +1,47 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-// import { useRouter } from "next/router";
 import axios from "axios";
-import Button from "../components/ui/button/page";
-import { useAuth } from "../components/AuthContext";
+import Button from "../components/ui/button/Button";
+
+//-------------------------------------------------------------------------//
+// NOTE:
+// this page help user to change the password when user passed their 2-F-A
+// and verify their email.
+//
+// WARNING:
+// this page need test before testing with network layer and API call
+// traceroute.
+//
+//-------------------------------------------------------------------------//
 
 const ChangePassword = () => {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
-  // const { isVerified, setIsVerified } = useAuth(); // Using AuthContext
-  const { resetToken, setResetToken } = useAuth();
 
   // NOTE: router search params
 
   const router = useRouter();
 
-  // NOTE: handle case no reset_token
-  useEffect(() => {
-    const token = localStorage.getItem("resetToken");
-    if (!token) {
-      router.push("/"); // Redirect if no token is found
-    } else {
-      setResetToken(token); // Update the context state
-    }
-  }, [router, setResetToken]);
-
   const handleChangePassword = async () => {
     if (newPassword !== confirmPassword) {
-      setError("password do not match");
+      setError("Passwords do not match");
       return;
     }
+
     try {
-      const token = resetToken || localStorage.getItem("resetToken");
+      const token = document.cookie
+        .split("; ")
+        .find((row) => row.startsWith("reset_token="))
+        ?.split("=")[1];
 
       if (!token) {
         setError("Reset token is missing");
         return;
       }
+
       const response = await axios.post(
         "http://localhost:5002/change-password",
         { reset_token: token, new_password: newPassword },
@@ -47,15 +49,19 @@ const ChangePassword = () => {
 
       if (response.status === 200) {
         setMessage(response.data.message);
-        localStorage.removeItem("resetToken");
-        setResetToken(null);
-        // setResetToken(null);
-        // clear verifcation status after changing the password
-        // setIsVerified(false);
+
+        // set reset token back to null
+        await axios.post("/api/setResetToken", { reset_token: null });
         router.push("/signin");
       }
-    } catch (error: any) {
-      setError("Failed to change password");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 

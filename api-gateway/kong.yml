@@ -7,7 +7,7 @@ services:
       - name: auth-route
         paths:
           - /auth
-          - /login # Direct access to /login
+          - /auth/login # Direct access to /login
           - /auth/refresh # For token refresh
           - /auth/verify-code # For 2FA verification
           - /forget-password

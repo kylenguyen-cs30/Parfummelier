@@ -1,18 +1,25 @@
 _format_version: "1.1"
 services:
-  - name: user-service
-    url: http://user-service:5000
-    routes:
-      - name: user-route
-        paths:
-          - /users
-
+  # Authentication Service
   - name: authentication-service
     url: http://authentication-service:5000
     routes:
       - name: auth-route
         paths:
           - /auth
+          - /login # Direct access to /login
+          - /refresh # For token refresh
+          - /verify-code # For 2FA verification
+          - /forget-password
+          - /change-password
+          - /validate-token
+
+  - name: user-service
+    url: http://user-service:5000
+    routes:
+      - name: user-route
+        paths:
+          - /users
 
 plugins:
   - name: cors

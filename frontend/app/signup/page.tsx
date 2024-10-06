@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/page";
-import Header from "../components/ui/navbar/page";
+import Button from "../components/ui/button/Button";
+import Header from "../components/ui/header/Header";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -47,10 +47,14 @@ const SignUp = () => {
         setSuccessMessage("User Register Successfully!");
         router.push("/signin");
       }
-    } catch (error: any) {
-      setError(
-        error.response?.data?.error || "An error occurred while registering.",
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 

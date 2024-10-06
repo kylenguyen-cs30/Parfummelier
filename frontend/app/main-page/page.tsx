@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import Header from "../components/ui/header/page";
-import Navbar from "../components/ui/navbar/page";
-import Content from "../components/ui/content/page";
-import Footer from "../components/ui/footer/page";
-import Button from "../components/ui/button/page";
+import Header from "../components/ui/header/Header";
+import Navbar from "../components/ui/navbar/NavBar";
+import Content from "../components/ui/content/Content";
+import Footer from "../components/ui/footer/Footer";
+import Button from "../components/ui/button/Button";
 import { useAuth } from "../components/AuthContext";
 
 export default function Home() {

@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/page";
-import Header from "../components/ui/header/page";
+import Button from "../components/ui/button/Button";
+import Header from "../components/ui/header/Header";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -28,7 +28,8 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5002/login", //We can add API endpoint here
+        // "http://localhost:5002/login", //We can add API endpoint here
+        "http://108.225.73.225/login",
         formData,
         {
           headers: {
@@ -51,18 +52,21 @@ const SignIn = () => {
         // safely push user into main-page
         router.push("/main-page");
       }
-    } catch (error: any) {
-      console.error("Error logging in: ", error);
-      setError(
-        error.response?.data?.error || "An error occurred while signing in.",
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 
   const handleTestApi = async () => {
     try {
       // Make a GET request to your API
-      const response = await axios.get("http://localhost:5002/", {
+      const response = await axios.get("http://108.225.73.225/", {
         headers: {
           "Content-Type": "application/json",
         },
@@ -70,8 +74,14 @@ const SignIn = () => {
 
       // Log the response to the console (or handle it in any way)
       console.log("API Response: ", response.data);
-    } catch (error: any) {
-      console.error("Error in Test API Request: ", error);
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 

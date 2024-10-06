@@ -2,8 +2,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/page";
-import Header from "../components/ui/header/page";
+import Button from "../components/ui/button/Button";
+import Header from "../components/ui/header/Header";
 import { useAuth } from "../components/AuthContext";
 
 //-------------------------------------------------------------------------//
@@ -45,10 +45,14 @@ const ForgetPassword = () => {
       } else {
         console.log("email not found");
       }
-    } catch (error: any) {
-      setError(
-        error.response?.data?.error || "An Error occured while verfiying",
-      );
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 
@@ -72,8 +76,14 @@ const ForgetPassword = () => {
         setError("Invalid 2FA Code");
         return;
       }
-    } catch (error: any) {
-      setError("An Error occured while verifying 2FA code");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 
@@ -83,8 +93,14 @@ const ForgetPassword = () => {
       if (response.status === 200) {
         alert("backend is online");
       }
-    } catch (error: any) {
-      setMessage("Failed to fetch message");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 

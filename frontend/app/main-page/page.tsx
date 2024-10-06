@@ -6,7 +6,7 @@ import Content from "../components/ui/content/Content";
 import Footer from "../components/ui/footer/Footer";
 import Button from "../components/ui/button/Button";
 import { useAuth } from "../components/AuthContext";
-import Sidebar from "../components/ui/Sidebar";
+import Sidebar from "../components/ui/sidebar/Sidebar";
 
 export default function Home() {
   const { logout } = useAuth();

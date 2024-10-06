@@ -28,8 +28,8 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        // "http://localhost:5002/login", //We can add API endpoint here
-        "http://108.225.73.225/auth/login",
+        "http://localhost:8000/login", //We can add API endpoint here
+        // "http://108.225.73.225/auth/login",
         formData,
         {
           headers: {
@@ -66,11 +66,15 @@ const SignIn = () => {
   const handleTestApi = async () => {
     try {
       // Make a GET request to your API
-      const response = await axios.get("http://108.225.73.225/auth", {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await axios.get(
+        "http://localhost:8000/auth",
+        // "http://108.225.73.225/auth",
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       // Log the response to the console (or handle it in any way)
       console.log("API Response: ", response.data);

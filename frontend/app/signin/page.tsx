@@ -23,21 +23,16 @@ const SignIn = () => {
     });
   };
 
+  // "http://108.225.73.225:8000/auth/login",
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     try {
       const response = await axios.post(
-        // "http://108.225.73.225:8000/login", //We can add API endpoint here
-        // "http://108.225.73.225/auth/login",
-        "http://108.225.73.225:8000/auth/login",
-        // "http://108.225.73.225/login",
+        // "http://108.225.73.225:8000/auth/login",
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         formData,
-        // {
-        //   headers: {
-        //     "Content-Type": "application/json",
-        //   },
-        // },
       );
 
       // NOTE: login successfully
@@ -45,11 +40,7 @@ const SignIn = () => {
         const { access_token } = response.data;
 
         // ensure user access_token set in cookie
-        await axios.post(
-          "/api/setAccessToken",
-          { access_token },
-          // { headers: { "Content-Type": "application/json" } },
-        );
+        await axios.post("/api/setAccessToken", { access_token });
 
         // safely push user into main-page
         router.push("/main-page");
@@ -65,31 +56,31 @@ const SignIn = () => {
     }
   };
 
-  const handleTestApi = async () => {
-    try {
-      // Make a GET request to your API
-      const response = await axios.get(
-        "http://108.225.73.225:8000/auth",
-        // "http://108.225.73.225/auth",
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      // Log the response to the console (or handle it in any way)
-      console.log("API Response: ", response.data);
-    } catch (error: unknown) {
-      if (axios.isAxiosError(error)) {
-        setError(
-          error.response?.data?.error || "An Error occured while verfiying",
-        );
-      } else {
-        setError("An Error occurred");
-      }
-    }
-  };
+  // const handleTestApi = async () => {
+  //   try {
+  //     // Make a GET request to your API
+  //     const response = await axios.get(
+  //       "http://108.225.73.225:8000/auth",
+  //       // "http://108.225.73.225/auth",
+  //       {
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //       },
+  //     );
+  //
+  //     // Log the response to the console (or handle it in any way)
+  //     console.log("API Response: ", response.data);
+  //   } catch (error: unknown) {
+  //     if (axios.isAxiosError(error)) {
+  //       setError(
+  //         error.response?.data?.error || "An Error occured while verfiying",
+  //       );
+  //     } else {
+  //       setError("An Error occurred");
+  //     }
+  //   }
+  // };
 
   return (
     <div className="container mx-auto">
@@ -132,9 +123,9 @@ const SignIn = () => {
 
         <Button type="submit">Sign In</Button>
       </form>
-      <Button type="button" onClick={handleTestApi}>
-        Test Api
-      </Button>
+      {/* <Button type="button" onClick={handleTestApi}> */}
+      {/*   Test Api */}
+      {/* </Button> */}
     </div>
   );
 };

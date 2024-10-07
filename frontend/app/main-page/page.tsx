@@ -8,7 +8,7 @@ import Button from "../components/ui/button/Button";
 import { useAuth } from "../components/AuthContext";
 import Sidebar from "../components/ui/sidebar/Sidebar";
 
-export default function Home() {
+export default function Main() {
   const { logout } = useAuth();
 
   return (

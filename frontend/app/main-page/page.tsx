@@ -6,6 +6,7 @@ import Content from "../components/ui/content/Content";
 import Footer from "../components/ui/footer/Footer";
 import Button from "../components/ui/button/Button";
 import { useAuth } from "../components/AuthContext";
+import Sidebar from "../components/ui/sidebar/Sidebar";
 
 export default function Home() {
   const { logout } = useAuth();
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <div>
       <Header />
+      <Sidebar />
       <Navbar>
         <div className="flex flex-row">
           <ul>

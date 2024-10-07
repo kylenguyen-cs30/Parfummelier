@@ -30,8 +30,8 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        // "http://108.225.73.225:8000/auth/login",
-        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        "http://localhost:5002/login",
+        // `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         formData,
       );
 
@@ -55,32 +55,6 @@ const SignIn = () => {
       }
     }
   };
-
-  // const handleTestApi = async () => {
-  //   try {
-  //     // Make a GET request to your API
-  //     const response = await axios.get(
-  //       "http://108.225.73.225:8000/auth",
-  //       // "http://108.225.73.225/auth",
-  //       {
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     );
-  //
-  //     // Log the response to the console (or handle it in any way)
-  //     console.log("API Response: ", response.data);
-  //   } catch (error: unknown) {
-  //     if (axios.isAxiosError(error)) {
-  //       setError(
-  //         error.response?.data?.error || "An Error occured while verfiying",
-  //       );
-  //     } else {
-  //       setError("An Error occurred");
-  //     }
-  //   }
-  // };
 
   return (
     <div className="container mx-auto">

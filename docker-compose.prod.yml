@@ -1,0 +1,57 @@
+services:
+  user-service:
+    build: ./services/user-service/
+    ports:
+      - "5001:5000"
+    environments:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+    command: gunicorn -w 4 -b 0.0.0.0:5000 app:app # use gunicorn in production
+    depends_on:
+      - db
+  authentication-service:
+    build: ./services/authentication-service
+    ports:
+      - "5002:5000"
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+    command: gunicorn -w 4 -b 0.0.0.0:5000 app:app # Use Gunicorn in production
+    depends_on:
+      - db
+
+  api-gateway:
+    build: ./api-gateway/
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+    depends_on:
+      - user-service
+      - authentication-service
+    volumes:
+      - ./api-gateway/kong.yml:/app/kong.yml
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    command: yarn start # Use Next.js in production mode
+
+volumes:
+  postgres_data:

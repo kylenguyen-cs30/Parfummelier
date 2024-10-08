@@ -157,6 +157,7 @@ def list_users():
 # WARNING: Don't uncomment this line
 # @user_blueprint.route("/user/<int:user_id>/scentbank", methods=["PUT", "POST"])
 @user_blueprint.route("/user/scentbank", methods=["PUT", "POST"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @token_required
 def update_scentbank_for_user(current_user):
     try:
@@ -294,6 +295,7 @@ def scentbank_details(f):
 
 
 @user_blueprint.route("/user/scentbank/details", methods=["GET"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @scentbank_details
 # def get_user_scentbank_details(scent_bank_details, user_id):
 def get_user_scentbank_details(scent_bank_details):

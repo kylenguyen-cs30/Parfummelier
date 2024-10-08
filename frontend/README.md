@@ -29,3 +29,9 @@
 
 - Display User's favorite Perfume
 - Display User's Tran
+
+## About Us Page
+
+- Display information of Perfummelier
+
+##

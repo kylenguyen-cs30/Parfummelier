@@ -58,10 +58,10 @@ scentBank_accords = db.Table(
     db.Column("accord_id", db.Integer, db.ForeignKey("accord.id")),
 )
 
-scentBank_scents = db.Table(
-    "scentBank_scents",
+scentBank_products = db.Table(
+    "scentBank_products",
     db.Column("scentBank_id", db.Integer, db.ForeignKey("scent_bank.id")),
-    db.Column("scent_id", db.Integer, db.ForeignKey("scent.id")),
+    db.Column("product_id", db.Integer, db.ForeignKey("product.id")),
 )
 
 scentBank_seasons = db.Table(
@@ -70,10 +70,15 @@ scentBank_seasons = db.Table(
     db.Column("season_id", db.Integer, db.ForeignKey("season.id")),
 )
 
+scentBank_collections = db.Table(
+    "scentBank_collections",
+    db.Column("scentBank_id", db.Integer, db.ForeignKey("scent_bank.id")),
+    db.Column("collection_id", db.Integer, db.ForeignKey("season.id")),
+)
+
 
 class ScentBank(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    # collection_overview = db.relationship()
     favorite_notes = db.relationship(
         "Note",
         secondary=scentBank_notes,
@@ -84,9 +89,9 @@ class ScentBank(db.Model):
         secondary=scentBank_accords,
         backref=db.backref("scentBanks", lazy="dynamic"),
     )
-    favorite_scents = db.relationship(
-        "Scent",
-        secondary=scentBank_scents,
+    favorite_products = db.relationship(
+        "Product",
+        secondary=scentBank_products,
         backref=db.backref("scentBanks", lazy="dynamic"),
     )
     favorite_seasons = db.relationship(
@@ -94,30 +99,41 @@ class ScentBank(db.Model):
         secondary=scentBank_seasons,
         backref=db.backref("scentBanks", lazy="dynamic"),
     )
+    favorite_collections = db.relationship(
+        "Collection",
+        secondary=scentBank_collections,
+        backref=db.backref("scentBanks", lazy="dynamic"),
+    )
 
     def __repr__(self):
         return f"ScentBank {self.id}"
 
 
-# NOTE: Perfume Note Table
+# NOTE: Note Table
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
-# NOTE: Perfume Accords Table
+# NOTE: Accords Table
 class Accord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
-# NOTE: Perfume Scent Table
-class Scent(db.Model):
+# NOTE: Product Table
+class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
-# NOTE: Perfume Season Table
+# NOTE: Season Table
 class Season(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), unique=True, nullable=True)
+
+
+# NOTE: Collection Table
+class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)

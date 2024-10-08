@@ -10,9 +10,10 @@ from .models import (
     ScentBank,
     User,
     Note,
-    Scent,
     Accord,
     Season,
+    Product,
+    Collection,
 )
 from app import db
 
@@ -172,8 +173,10 @@ def update_scentbank_for_user(current_user):
         favorite_accords = request.json.get("favorite_accords", [])
         favorite_scents = request.json.get("favorite_scents", [])
         favorite_seasons = request.json.get("favorite_seasons", [])
+        favorite_products = request.json.get("favorite_products", [])
+        favorite_collections = request.json.get("favorite_collections", [])
 
-        # Validate and retrieve the corresponding objects from the database or create new ones
+        # Add new Note into ScentBank
         note_objects = []
         for note in favorite_notes:  # extract elements from the favorite_notes array
             note_obj = Note.query.filter_by(
@@ -184,6 +187,7 @@ def update_scentbank_for_user(current_user):
                 db.session.add(note_obj)
             note_objects.append(note_obj)
 
+        # Add new Accord into ScentBank
         accord_objects = []
         for accord in favorite_accords:
             accord_obj = Accord.query.filter_by(name=accord).first()
@@ -192,14 +196,15 @@ def update_scentbank_for_user(current_user):
                 db.session.add(accord_obj)
             accord_objects.append(accord_obj)
 
-        scent_objects = []
-        for scent in favorite_scents:
-            scent_obj = Scent.query.filter_by(name=scent).first()
-            if not scent_obj:
-                scent_obj = Scent(name=scent)
-                db.session.add(scent_obj)
-            scent_objects.append(scent_obj)
+        # scent_objects = []
+        # for scent in favorite_scents:
+        #     scent_obj = Scent.query.filter_by(name=scent).first()
+        #     if not scent_obj:
+        #         scent_obj = Scent(name=scent)
+        #         db.session.add(scent_obj)
+        #     scent_objects.append(scent_obj)
 
+        # Add new Season into ScentBank
         season_objects = []
         for season in favorite_seasons:
             season_obj = Season.query.filter_by(name=season).first()
@@ -208,13 +213,34 @@ def update_scentbank_for_user(current_user):
                 db.session.add(season_obj)
             season_objects.append(season_obj)
 
+        # Add new Product into ScentBank
+        product_objects = []
+        for product in favorite_products:
+            product_obj = Product.query.filter_by(name=product).first()
+            if not product_obj:
+                product_obj = Product(name=product)
+                db.session.add(product_obj)
+            product_objects.append(product_obj)
+
+        # Add new Collection into ScentBank
+        collection_objects = []
+        for collection in favorite_collections:
+            collection_obj = Collection.query.filter_by(name=collection).first()
+            if not collection_obj:
+                collection_obj = Collection(name=collection)
+                db.session.add(collection_obj)
+            collection_objects.append(collection_obj)
+
         # Commit the new objects to the database
         db.session.commit()
+
         # Update the User's ScentBank with their custom data
         scent_bank.favorite_notes = note_objects
         scent_bank.favorite_accords = accord_objects
-        scent_bank.favorite_scents = scent_objects
+        # scent_bank.favorite_scents = scent_objects
         scent_bank.favorite_seasons = season_objects
+        scent_bank.favorite_products = product_objects
+        scent_bank.favorite_collections = collection_objects
 
         db.session.commit()
 

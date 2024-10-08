@@ -23,8 +23,6 @@ const SignIn = () => {
     });
   };
 
-  // "http://108.225.73.225:8000/auth/login",
-
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);

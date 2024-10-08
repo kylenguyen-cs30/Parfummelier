@@ -2,15 +2,19 @@ import os
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
+from flask_migrate import Migrate
 
 db = SQLAlchemy()
+
+migrate = Migrate()
 
 
 def create_app():
     app = Flask(__name__)
+    # NOTE: For Development
     CORS(
         app,
-        resources={r"/*": {"origins": "http://localhost:3000"}},
+        resources={r"/*": {"origins": "http://localhost:3000/"}},
         methods=[
             "GET",
             "POST",
@@ -18,12 +22,35 @@ def create_app():
             "DELETE",
             "OPTIONS",
         ],
+        supports_credentials=True,
         allow_headers=[
             "Content-Type",
             "Authorization",
             "Access-Control-Allow-Credentials",
         ],
     )
+
+    # NOTE: For Deployment
+
+    # -----------------------------------------------------------------------#
+    # CORS(
+    #     app,
+    #     resources={r"/*": {"origins": os.getenv("REACT_APP_API_URL")}},
+    #     methods=[
+    #         "GET",
+    #         "POST",
+    #         "PUT",
+    #         "DELETE",
+    #         "OPTIONS",
+    #     ],
+    #     supports_credentials=True,
+    #     allow_headers=[
+    #         "Content-Type",
+    #         "Authorization",
+    #         "Access-Control-Allow-Credentials",
+    #     ],
+    # )
+    # -----------------------------------------------------------------------#
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"

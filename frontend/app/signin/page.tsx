@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button";
-import Header from "../components/Navbar";
+import Button from "../components/ui/button/Button";
+import Header from "../components/ui/header/Header";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +13,6 @@ const SignIn = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string | null>(null); // State to store message from home API
-
   const router = useRouter();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,36 +23,36 @@ const SignIn = () => {
     });
   };
 
+  // "http://108.225.73.225:8000/auth/login",
+
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setError(null);
     try {
       const response = await axios.post(
-        "http://localhost:5002/login", //We can add API endpoint here
+        "http://localhost:5002/login",
+        // `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
         formData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
       );
 
+      // NOTE: login successfully
       if (response.status === 200) {
+        const { access_token } = response.data;
+
+        // ensure user access_token set in cookie
+        await axios.post("/api/setAccessToken", { access_token });
+
+        // safely push user into main-page
         router.push("/main-page");
       }
-    } catch (error: any) {
-      setError(
-        error.response?.data?.error || "An error occurred while signing in.",
-      );
-    }
-  };
-
-  const handleTestApi = async () => {
-    try {
-      const response = await axios.get("http://localhost:5002/");
-      setMessage(response.data.message); // Assuming the response is { message: "authentication service launched !!!" }
-    } catch (error: any) {
-      setMessage("Failed to fetch message.");
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        setError(
+          error.response?.data?.error || "An Error occured while verfiying",
+        );
+      } else {
+        setError("An Error occurred");
+      }
     }
   };
 
@@ -63,7 +61,6 @@ const SignIn = () => {
       <Header />
       <h1 className="text-2xl font-bold mb-6">Sign In</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      {message && <div className="text-green-500 mb-4">{message}</div>}{" "}
       {/* Display message */}
       {/* Sign-In Form */}
       <form onSubmit={handleSubmit}>
@@ -93,16 +90,16 @@ const SignIn = () => {
 
         {/* "Forget My Password" Link */}
         <div>
-          <a href="/forgot-password" className="text-blue-500">
+          <a href="/forget-password" className="text-blue-500">
             Forgot My Password?
           </a>
         </div>
 
         <Button type="submit">Sign In</Button>
       </form>
-      <Button type="button" onClick={handleTestApi}>
-        Test API
-      </Button>
+      {/* <Button type="button" onClick={handleTestApi}> */}
+      {/*   Test Api */}
+      {/* </Button> */}
     </div>
   );
 };

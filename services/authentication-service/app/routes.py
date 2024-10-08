@@ -6,9 +6,12 @@ from .models import User
 from app import db
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
+from datetime import datetime, timezone
 import jwt
 import datetime
-
+import random
+import smtplib
+import os
 
 auth_blueprint = Blueprint("auth", __name__)
 
@@ -82,8 +85,6 @@ def login():
 # NOTE: refresh access_token route:
 @auth_blueprint.route("/refresh", methods=["POST"])
 def refresh():
-    # token = request.json.get("refresh_token")
-    # old_refresh_token = request.json.get("refresh_token") NOTE: we don't need this
 
     try:
         old_refresh_token = request.cookies.get("refresh_token")
@@ -108,7 +109,7 @@ def refresh():
         access_token = jwt.encode(
             {
                 "user_id": user.id,
-                "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=15),
+                "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
             },
             current_app.config["SECRET_KEY"],
             algorithm="HS256",
@@ -143,14 +144,91 @@ def refresh():
         return jsonify({"error": "Invalid token"}), 401
 
 
-# NOTE: Logout Route
-# WARNING: No need this route anymore
-#
-###########################################################################
-# @auth_blueprint.route("/logout", methods=["POST"])
-# def logout():
-#     return jsonify({"message": "Logged out successfully"}), 200
-##########################################################################
+# NOTE: generate short live token
+def generate_password_reset_token(user_id):
+    token = jwt.encode(
+        {
+            "user_id": user_id,
+            "exp": datetime.datetime.now() + datetime.timedelta(minutes=10),
+        },
+        current_app.config["SECRET_KEY"],
+        algorithm="HS256",
+    )
+    return token
+
+
+# NOTE: generate code for 2fa
+def generate_2fa_code():
+    return str(random.randint(100000, 999999))
+
+
+# NOTE: map to map the code to the email
+codes = {}
+
+
+# NOTE:  send verification code to email for verificaiton:
+def send_email(to_email, code):
+    email_user = os.getenv("EMAIL_USER")
+    email_pass = os.getenv("EMAIL_PASS")
+    smtp_server = os.getenv("SMTP_SERVER", "smtp.gmail.com")
+
+    print(f"Connecting to SMTP Server: {smtp_server}")
+
+    try:
+        # NOTE: Use email service to email the code
+        server = smtplib.SMTP(smtp_server, 587)
+        server.starttls()
+        server.login(email_user, email_pass)
+        # NOTE: Content of message
+        subject = "Parfummelier Verfication Code"
+        message = f"Subject: {subject} \n\n Your Verfication Code : {code}"
+        server.sendmail(email_user, to_email, message)
+        server.quit()
+
+    except Exception as e:
+        print(f"Failed to send email : {str(e)}")
+
+
+# NOTE: Verify Code Route
+
+
+@auth_blueprint.route("/verify-code", methods=["POST", "OPTIONS"])
+def verify_code():
+    if request.method == "OPTIONS":
+        return "", 200
+
+    email = request.json.get("email")
+    entered_code = request.json.get("code")
+
+    # No Code Exit
+    if email not in codes:
+        return jsonify({"Error": "No Verification Code"}), 400
+
+    store_code_info = codes[email]
+    # No more time 🕧
+    if datetime.datetime.now() > store_code_info["expires"]:
+        return jsonify({"Error": "Time Has expired"}), 400
+
+    # Invalid Code ❌
+    if entered_code != store_code_info["code"]:
+        return jsonify({"Error": "Invalid Code"}), 400
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"error": "user not found"}), 404
+    reset_token = generate_password_reset_token(user.id)
+
+    del codes[email]
+
+    return (
+        jsonify(
+            {
+                "message": "2-F-A verified. user can change the password now ",
+                "reset_token": reset_token,
+            },
+        ),
+        200,
+    )
 
 
 # TODO:
@@ -164,31 +242,92 @@ def refresh():
 # user send request to server check email and username to check
 # if the userName and email matched. if they are matched, client change
 # the website to the different page.
-@auth_blueprint.route("/forget-password", methods=["POST"])
+@auth_blueprint.route("/forget-password", methods=["POST", "OPTIONS"])
 def forget_password():
+    if request.method == "OPTIONS":
+        return "", 200
+
     email = request.json.get("email")
     user = User.query.filter_by(email=email).first()
 
     if user:
-        # WARNING: We have to implement duo authentications and resetlink
-        # so user can reset safely
-        return jsonify({"message": "password reset link send to your email"}), 200
+        code = generate_2fa_code()
+        print(f"code is {code}")
+        exp_time = datetime.datetime.now() + datetime.timedelta(minutes=4)
+        codes[email] = {"code": code, "expires": exp_time}
+        send_email(email, code)
+
+        # TODO: we send user's email a 6 digit code to confirm
+        return (
+            jsonify(
+                {
+                    "message": "6 digits code send to user's email. Pop up 2-F-A verification"
+                }
+            ),
+            200,
+        )
     else:
         return jsonify({"error": "Email not found"}), 404
 
 
-# NOTE: After verifying user's information. we help user change the password
-# from old password to new password. this
 @auth_blueprint.route("/change-password", methods=["POST"])
 def change_password():
-    data = request.json
-    old_pass = data.get("old_password")
-    new_pass = data.get("new_password")
+    try:
+        data = request.json
+        reset_token = data.get("reset_token")  # Token provided by client
+        new_password = data.get("new_password")
 
-    if current_user.check_password(old_pass):
-        # Update the password
-        current_user.set_password(new_pass)
+        if not reset_token or not new_password:
+            return jsonify({"error": "reset_token and new_password are required"}), 400
+
+        # Verify the token
+        try:
+            decoded_token = jwt.decode(
+                reset_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+            )
+            user_id = decoded_token["user_id"]
+        except jwt.ExpiredSignatureError:
+            return jsonify({"error": "Reset token has expired"}), 401
+        except jwt.InvalidTokenError:
+            return jsonify({"error": "Invalid reset token"}), 401
+
+        # Query the user by user_id
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        # Hash the new password and update the user's password
+        hashed_password = generate_password_hash(new_password)
+        user.password_hash = hashed_password
+
+        # Commit the change to the database
         db.session.commit()
-        return jsonify({"message": "password changed successfully"}), 200
-    else:
-        return jsonify({"error": "old password is incorrect"}), 401
+
+        return jsonify({"message": "Password updated successfully"}), 200
+
+    except Exception as e:
+        print(f"Error changing password: {e}")
+        return jsonify({"error": "An error occurred while changing the password"}), 500
+
+
+@auth_blueprint.route("/validate-token", methods=["POST"])
+def validate_token():
+    access_token = request.json.get("access_token")
+    if not access_token:
+        return jsonify({"error": "Access token is missing"}), 400
+
+    try:
+        decoded = jwt.decode(
+            access_token, current_app.config["SECRET_KEY"], algorithms=["HS256"]
+        )
+
+        # check if the toke has expired
+        exp = decoded.get("exp")
+        # if datetime.fromtimestamp(exp) < datetime.now():
+        if datetime.datetime.now(tz=timezone.utc).timestamp() > exp:
+            return jsonify({"status": "expired"}), 401
+        return jsonify({"status": "valid"})
+    except jwt.ExpiredSignatureError:
+        return jsonify({"status": "expired"}), 401
+    except jwt.InvalidTokenError:
+        return jsonify({"status": "invalid token"}), 401

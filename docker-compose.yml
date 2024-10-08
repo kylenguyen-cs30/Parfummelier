@@ -18,6 +18,10 @@ services:
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
+      - SMTP_SERVER=${SMTP_SERVER}
+      - EMAIL_USER=${EMAIL_USER}
+      - EMAIL_PASS=${EMAIL_PASS}
+      - REACT_APP_API_URL=${REACT_APP_API_URL}
   #
   # product-service:
   #   build: ./services/product-service/
@@ -55,6 +59,9 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
+    environment:
+      - NODE_ENV=${NODE_ENV}
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 volumes:
   postgres_data:

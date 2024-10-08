@@ -4,6 +4,7 @@ import os
 
 # import smtplib [optional]
 from flask import Blueprint, request, jsonify, current_app
+from flask_cors import cross_origin
 from functools import wraps
 from .models import (
     ScentBank,
@@ -67,8 +68,12 @@ def token_required(f):
 
 
 # NOTE: Add new user route
-@user_blueprint.route("/register", methods=["POST"])
+@user_blueprint.route("/register", methods=["POST", "OPTIONS"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 def register_user():
+    if request.method == "OPTIONS":
+        return _build_cors_prelight_response()
+
     try:
         firstName = request.json.get("firstName")
         lastName = request.json.get("lastName")

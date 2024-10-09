@@ -16,7 +16,7 @@ def create_app():
     # NOTE: For Development
     CORS(
         app,
-        resources={r"/*": {"origins": "http://localhost:3000/"}},
+        resources={r"/*": {"origins": "*"}},
         methods=[
             "GET",
             "POST",
@@ -31,28 +31,6 @@ def create_app():
             "Access-Control-Allow-Credentials",
         ],
     )
-
-    # NOTE: For Deployment
-
-    # -----------------------------------------------------------------------#
-    # CORS(
-    #     app,
-    #     resources={r"/*": {"origins": os.getenv("REACT_APP_API_URL")}},
-    #     methods=[
-    #         "GET",
-    #         "POST",
-    #         "PUT",
-    #         "DELETE",
-    #         "OPTIONS",
-    #     ],
-    #     supports_credentials=True,
-    #     allow_headers=[
-    #         "Content-Type",
-    #         "Authorization",
-    #         "Access-Control-Allow-Credentials",
-    #     ],
-    # )
-    # -----------------------------------------------------------------------#
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
         "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
@@ -69,3 +47,26 @@ def create_app():
     app.register_blueprint(user_blueprint)
 
     return app
+
+
+# NOTE: For Deployment
+
+# -----------------------------------------------------------------------#
+# CORS(
+#     app,
+#     resources={r"/*": {"origins": os.getenv("REACT_APP_API_URL")}},
+#     methods=[
+#         "GET",
+#         "POST",
+#         "PUT",
+#         "DELETE",
+#         "OPTIONS",
+#     ],
+#     supports_credentials=True,
+#     allow_headers=[
+#         "Content-Type",
+#         "Authorization",
+#         "Access-Control-Allow-Credentials",
+#     ],
+# )
+# -----------------------------------------------------------------------#

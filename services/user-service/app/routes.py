@@ -70,7 +70,10 @@ def token_required(f):
 
 # NOTE: Add new user route
 @user_blueprint.route("/register", methods=["POST", "OPTIONS"])
-@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
+# @cross_origin(
+#     origins="http://localhost:3000", headers=["Content-Type", "Authorization"]
+# )
+@cross_origin(origins="*", headers=["Content-Type", "Authorization"])
 def register_user():
     if request.method == "OPTIONS":
         return _build_cors_prelight_response()
@@ -149,7 +152,7 @@ def list_users():
         ]
         return jsonify(user_list), 200
     except Exception as e:
-        return jsonify({"error": f"Error fetching users: {str(e)}"}), 500
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 
 
 # NOTE: Update ScentBank
@@ -171,7 +174,6 @@ def update_scentbank_for_user(current_user):
         # Collect the new data from the request (allow users to add their own custom data)
         favorite_notes = request.json.get("favorite_notes", [])
         favorite_accords = request.json.get("favorite_accords", [])
-        favorite_scents = request.json.get("favorite_scents", [])
         favorite_seasons = request.json.get("favorite_seasons", [])
         favorite_products = request.json.get("favorite_products", [])
         favorite_collections = request.json.get("favorite_collections", [])
@@ -195,14 +197,6 @@ def update_scentbank_for_user(current_user):
                 accord_obj = Accord(name=accord)
                 db.session.add(accord_obj)
             accord_objects.append(accord_obj)
-
-        # scent_objects = []
-        # for scent in favorite_scents:
-        #     scent_obj = Scent.query.filter_by(name=scent).first()
-        #     if not scent_obj:
-        #         scent_obj = Scent(name=scent)
-        #         db.session.add(scent_obj)
-        #     scent_objects.append(scent_obj)
 
         # Add new Season into ScentBank
         season_objects = []
@@ -237,7 +231,6 @@ def update_scentbank_for_user(current_user):
         # Update the User's ScentBank with their custom data
         scent_bank.favorite_notes = note_objects
         scent_bank.favorite_accords = accord_objects
-        # scent_bank.favorite_scents = scent_objects
         scent_bank.favorite_seasons = season_objects
         scent_bank.favorite_products = product_objects
         scent_bank.favorite_collections = collection_objects

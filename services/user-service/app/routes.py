@@ -68,11 +68,13 @@ def token_required(f):
     return decorated
 
 
-# NOTE: Add new user route
-@user_blueprint.route("/register", methods=["POST", "OPTIONS"])
 # @cross_origin(
 #     origins="http://localhost:3000", headers=["Content-Type", "Authorization"]
 # )
+
+
+# NOTE: Add new user route
+@user_blueprint.route("/register", methods=["POST", "OPTIONS"])
 @cross_origin(origins="*", headers=["Content-Type", "Authorization"])
 def register_user():
     if request.method == "OPTIONS":

@@ -1,8 +1,9 @@
 import requests
 
 # Base URLs for the services
-user_service_url = "http://localhost:5001"
-auth_service_url = "http://localhost:5002"
+user_service_url = "http://localhost:8000/user"
+# user_service_url = "http://api-gateway:8000/user"
+auth_service_url = "http://api-gateway:8000/auth"
 
 
 # Test: Register user

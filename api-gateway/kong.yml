@@ -8,34 +8,29 @@ services:
         paths:
           - /auth
           - /login # Direct access to /login
-          - /auth/refresh # For token refresh
-          - /auth/verify-code # For 2FA verification
-          - /forget-password
-          - /change-password
-          - /validate-token
 
   - name: user-service
     url: http://user-service:5000
     routes:
       - name: user-route
         paths:
-          - /users
-
-plugins:
-  - name: cors
-    config:
-      origins:
-        - http://108.225.73.225 # Your frontend IP or domain
-      methods:
-        - GET
-        - POST
-        - PUT
-        - DELETE
-        - OPTIONS
-      headers:
-        - Authorization
-        - Content-Type
-      exposed_headers:
-        - Authorization
-      credentials: true
-      max_age: 3600
+          - /user
+          - /user/register
+# plugins:
+#   - name: cors
+#     config:
+#       origins:
+#         - http://108.225.73.225 # Your frontend IP or domain
+#       methods:
+#         - GET
+#         - POST
+#         - PUT
+#         - DELETE
+#         - OPTIONS
+#       headers:
+#         - Authorization
+#         - Content-Type
+#       exposed_headers:
+#         - Authorization
+#       credentials: true
+#       max_age: 3600

@@ -1,0 +1,15 @@
+services:
+  test:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+    networks:
+      - parfummelier_default
+    command: pytest
+
+networks:
+  parfummelier_default:
+    external: true

@@ -1,41 +1,97 @@
+# routes.py
+
 from flask import Blueprint, request, jsonify
-from .models import Post, Comment
+from .models import User, Post, Thread, Comment, Message
 
+forum_blueprint = Blueprint('forum_blueprint', __name__)
 
-forum_blueprint = Blueprint('forum', __name__)
+# Routes for forum services
 
-#Create post
-@forum_blueprint.route('/posts', methods=['POST'])
-def create_post():
+# Messaging route
+@forum_blueprint.route('/send_message', methods=['POST'])
+def send_message():
     data = request.json
-    new_post = Post(
-        author=data['author'],
-        title=data['title'],
-        content=data['content']
-    )
-    new_post.save()  # Save post
-    return jsonify(new_post.to_json()), 201
+    try:
+        sender = User.objects.get(id=data['sender_id'])
+        receiver = User.objects.get(id=data['receiver_id'])
+        message = Message(sender=sender, receiver=receiver, content=data['content'])
+        message.save()
+        return jsonify({"message": "Message sent successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-# Fetch all posts
-@forum_blueprint.route('/posts', methods=['GET'])
-def get_posts():
-    posts = Post.objects()  # Fetch all posts from MongoDB
-    return jsonify([post.to_json() for post in posts]), 200
-
-#Add comment
-@forum_blueprint.route('/posts/<post_id>/comment', methods=['POST'])
-def add_comment(post_id):
+# Update relationship (add/remove friends)
+@forum_blueprint.route('/update_relationship', methods=['POST'])
+def update_relationship():
     data = request.json
-    post = Post.objects(id=post_id).first()
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
+    try:
+        user1 = User.objects.get(id=data['user1_id'])
+        user2 = User.objects.get(id=data['user2_id'])
+        if data['action'] == 'add_friend':
+            user1.friends.append(user2)
+            user2.friends.append(user1)
+        elif data['action'] == 'remove_friend':
+            user1.friends.remove(user2)
+            user2.friends.remove(user1)
+        user1.save()
+        user2.save()
+        return jsonify({"message": "Relationship status updated successfully!"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-    new_comment = Comment(
-        author=data['author'],
-        content=data['content']
-    )
-    new_comment.save()
-    post.comments.append(new_comment)
-    post.save()
+# for returning friend list
+@forum_blueprint.route('/friends/<user_id>', methods=['GET'])
+def get_friends(user_id):
+    try:
+        user = User.objects.get(id=user_id)
+        friends = [{"username": friend.username, "email": friend.email} for friend in user.friends]
+        return jsonify(friends), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
-    return jsonify(post.to_json()), 201
+# rating post function
+@forum_blueprint.route('/rate_post', methods=['POST'])
+def rate_post():
+    data = request.json
+    try:
+        post = Post.objects.get(id=data['post_id'])
+        post.rating += data['rating']
+        post.save()
+        return jsonify({"message": "Post rating updated!"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# create thread/post
+@forum_blueprint.route('/create_thread', methods=['POST'])
+def create_thread():
+    data = request.json
+    try:
+        user = User.objects.get(id=data['user_id'])
+        thread = Thread(title=data['title'], created_by=user)
+        thread.save()
+        return jsonify({"message": "Thread created successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# add comment to post
+@forum_blueprint.route('/add_comment', methods=['POST'])
+def add_comment():
+    data = request.json
+    try:
+        user = User.objects.get(id=data['user_id'])
+        post = Post.objects.get(id=data['post_id'])
+        comment = Comment(author=user, post=post, content=data['content'])
+        comment.save()
+        return jsonify({"message": "Comment added successfully!"}), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+# return posts in thread
+@forum_blueprint.route('/related_posts/<thread_id>', methods=['GET'])
+def get_related_posts(thread_id):
+    try:
+        thread = Thread.objects.get(id=thread_id)
+        related_posts = [{"title": post.title, "content": post.content, "author": post.author.username} for post in thread.posts]
+        return jsonify(related_posts), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

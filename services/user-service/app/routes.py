@@ -125,8 +125,11 @@ def register_user():
         )
 
     except Exception as e:
-        print(f"Error registering user: {e}")
-        return jsonify({"error": f"Failed to register user : {str(e)}"}), 501
+        # print(f"Error registering user: {e}")
+        import traceback
+
+        traceback.print_exc()
+        return jsonify({"error": f"Failed to register user: {str(e)}"}), 501
 
 
 # NOTE: Home route

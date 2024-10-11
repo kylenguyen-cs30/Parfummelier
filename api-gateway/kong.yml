@@ -15,7 +15,7 @@ services:
       - name: user-route
         paths:
           - /user
-          - /user/register
+          # - /register
 # plugins:
 #   - name: cors
 #     config:

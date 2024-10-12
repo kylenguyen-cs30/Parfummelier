@@ -35,6 +35,7 @@ export default function Main() {
       </Navbar>
       <Content>
         <h1>This is main page</h1>
+        {/* <Card></Card> */}
       </Content>
       <Footer />
     </div>

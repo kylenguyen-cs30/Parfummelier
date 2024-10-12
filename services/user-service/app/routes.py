@@ -21,9 +21,11 @@ user_blueprint = Blueprint("user", __name__)
 logging.basicConfig(level=logging.INFO)
 
 # TODO:
+#
 ##########################################################################################################################################
 # Token Required for JWT request
 # Service to  service user need to go through JWT Checking point
+#
 ##########################################################################################################################################
 
 # NOTE:
@@ -273,7 +275,7 @@ def reset_db():
         return jsonify({"error": f"Failed to reset database: {str(e)}"}), 500
 
 
-##########################################################################################################################################
+# ------------------------------------------------------------------------------------------------#
 # NOTE: Test PUT API
 @user_blueprint.route("/test-put", methods=["PUT"])
 @token_required
@@ -290,7 +292,7 @@ def test_put(current_user):
         return jsonify({"error": f"Fail to test the PUT METHOD: {str(e)}"}), 500
 
 
-##########################################################################################################################################
+# ------------------------------------------------------------------------------------------------#
 
 
 # NOTE:  scent bank detail decorator
@@ -311,7 +313,12 @@ def scentbank_details(f):
             "favorite_notes": [note.name for note in scent_bank.favorite_notes],
             "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
             "favorite_seasons": [season.name for season in scent_bank.favorite_seasons],
-            "favorite_scents": [scent.name for scent in scent_bank.favorite_scents],
+            "favorite_products": [
+                product.name for product in scent_bank.favorite_products
+            ],
+            "favorite_collections": [
+                collection.name for collection in scent_bank.favorite_collections
+            ],
         }
         return f(scent_bank_details, *arg, **kwargs)
 

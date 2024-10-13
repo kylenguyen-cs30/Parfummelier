@@ -55,7 +55,7 @@ def get_product(id):
 
 
 # Add a new product
-@product_blueprint.route("/products", methods=["POST"])
+@product_blueprint.route("/add_product", methods=["POST"])
 def add_product():
     data = request.json
     collection_id = data.get("collection_id")

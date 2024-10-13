@@ -35,7 +35,8 @@ const ContactForm: React.FC = () => {
     <div className="max-w-xl mx-auto p-6 bg-gray-800 text-white rounded-lg shadow-lg">
       <h2 className="text-2xl font-bold mb-4">Send Us a Message</h2>
       <p className="mb-6">
-        Fill out the form below, and we’ll get back to you as soon as possible.
+        Fill out the form below, and we will get back to you as soon as
+        possible.
       </p>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

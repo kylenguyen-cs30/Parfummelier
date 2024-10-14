@@ -57,30 +57,70 @@ def get_product(id):
 # Add a new product
 @product_blueprint.route("/add_product", methods=["POST"])
 def add_product():
-    data = request.json
-    collection_id = data.get("collection_id")
-    new_product = Product(
-        name=data["name"],
-        designer=data.get("designer"),
-        year_released=data.get("year_released"),
-        collection_id=collection_id,
-    )
-    db.session.add(new_product)
-    db.session.commit()
-    return (
-        jsonify(
-            {
-                "id": new_product.id,
-                "name": new_product.name,
-                "designer": new_product.designer,
-                "year_released": new_product.year_released,
-                "collection": (
-                    new_product.collection.name if new_product.collection else None
-                ),
-            }
-        ),
-        201,
-    )
+    try:
+        data = request.json
+        # Retrieve collectoin if provided
+        collection_id = data.get("collection_id")
+        collection = Collection.query.get(collection_id) if collection_id else None
+
+        # Create a new product
+        new_product = Product(
+            name=data["name"],
+            manufacturer=data["manufacturer"],
+            designer=data.get("designer"),
+            collection=collection,
+        )
+
+        # Handle Notes
+        note_objects = []
+        for note_name in data.get("note", []):
+            note_obj = Note.query.filter_by(name=note_name).first()
+            if not note_obj:
+                note_obj = Note(name=note_name)
+                db.session.add(note_obj)
+            note_objects.append(note_obj)
+        new_product.notes = note_objects
+
+        # Handle Accords
+        accord_objects = []
+        for accord_name in data.get("accords", []):
+            accord_obj = Accord.query.filter_by(name=accord_name).first()
+            if not accord_obj:
+                accord_obj = Accord(name=accord_name)
+                db.session.add(accord_obj)
+            accord_objects.append(accord_obj)
+        new_product.accords = accord_objects
+
+        # Handle Seasons
+        season_objects = []
+        for season_name in data.get("seasons", []):
+            season_obj = Season.query.filter_by(name=season_name).first()
+            if not season_obj:
+                season_obj = Season(name=season_name)
+                db.session.add(season_obj)
+            season_objects.append(season_obj)
+        new_product.seasons = season_objects
+
+        db.session.add(new_product)
+        db.session.commit()
+
+        return (
+            jsonify(
+                {
+                    "id": new_product.id,
+                    "name": new_product.name,
+                    "manufacturer": new_product.manufacturer,
+                    "designer": new_product.designer,
+                    "collection": new_product.collection,
+                    "notes": [note.name for note in new_product.notes],
+                    "accords": [accord.name for accord in new_product.accords],
+                    "seasons": [season.name for season in new_product.seasons],
+                },
+            ),
+            201,
+        )
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 # Update a product
@@ -202,3 +242,8 @@ def list_notes():
             for note in notes
         ]
     )
+
+
+# ----------------------------- #
+#          COLLECTIONS          #
+# ----------------------------- #

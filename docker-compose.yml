@@ -22,15 +22,16 @@ services:
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - REACT_APP_API_URL=${REACT_APP_API_URL}
-  #
-  # product-service:
-  #   build: ./services/product-service/
-  #   ports:
-  #     - "5003:5000"
-  #   depends_on:
-  #     - db
-  #   environment:
-  #     - DATABASE_URL=${DATABASE_URL}
+
+  product-service:
+    build: ./services/product-service/
+    ports:
+      - "5003:5000"
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
 
   api-gateway:
     build: ./api-gateway/

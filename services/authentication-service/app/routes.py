@@ -24,7 +24,7 @@ serializer = URLSafeTimedSerializer("SECRET_KEY")
 # NOTE: Home route
 @auth_blueprint.route("/", methods=["get"])
 def home():
-    return jsonify({"message": "authentication service launched !!!"})
+    return jsonify({"message": "authentication service launched"})
 
 
 # NOTE: New Login Route

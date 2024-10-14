@@ -3,12 +3,18 @@ from app.models import db, Product, Collection, Note, Accord, Season, Review
 
 product_blueprint = Blueprint("products", __name__)
 
+
+@product_blueprint.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Product Service launched"}), 200
+
+
 # ----------------------------- #
 #           PRODUCTS            #
 # ----------------------------- #
 
 
-# List all products with their associated notes, accord, season and review
+# NOTE: List all products with their associated notes, accord, season and review
 @product_blueprint.route("/products", methods=["GET"])
 def list_products():
     products = Product.query.all()
@@ -32,7 +38,7 @@ def list_products():
     )
 
 
-# Retrieve a product by ID
+# NOTE: Retrieve a product by ID
 @product_blueprint.route("/products/<int:id>", methods=["GET"])
 def get_product(id):
     product = Product.query.get_or_404(id)
@@ -54,14 +60,28 @@ def get_product(id):
     )
 
 
-# Add a new product
+# NOTE: Add a new product
 @product_blueprint.route("/add_product", methods=["POST"])
 def add_product():
     try:
         data = request.json
         # Retrieve collectoin if provided
-        collection_id = data.get("collection_id")
-        collection = Collection.query.get(collection_id) if collection_id else None
+        # collection_id = data.get("collection_id")
+        # collection = Collection.query.get(collection_id) if collection_id else None
+
+        collection_name = data.get("collection")
+        collection = None
+
+        # NOTE: check if there is collection name or not
+        if collection_name:
+            # query the collection name if there is existing one
+            collection = Collection.query.filter_by(name=collection_name).first()
+            # if not creating a brand new collection
+            if not collection:
+                collection = Collection(name=collection_name)
+                db.session.add(collection)
+        else:
+            return jsonify({"error": "Collection name is missing"}), 404
 
         # Create a new product
         new_product = Product(
@@ -144,6 +164,35 @@ def update_product(id):
     )
 
 
+# NOTE: Add Review
+@product_blueprint.route("/add_review/<int:product_id>", methods=["POST"])
+def add_review(product_id):
+    try:
+        data = request.json
+
+        # Find the product ID
+        product = Product.query.get_or_404(product_id)
+
+        # Create a new review
+        new_review = Review(
+            rating=data["rating"], content=data.get("content"), product_id=product.id
+        )
+
+        # Add the review to the product's review relationship
+        db.session.add(new_review)
+        db.session.commit()
+
+        return jsonify(
+            {
+                "review_id": new_review.id,
+                "product_id": new_review.product_id,
+            }
+        )
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
+
+
 # Delete a product
 @product_blueprint.route("/products/<int:id>", methods=["DELETE"])
 def delete_product(id):
@@ -160,18 +209,18 @@ def delete_product(id):
 
 # List all collections
 @product_blueprint.route("/collections", methods=["GET"])
-def list_collections():
-    collections = Collection.query.all()
-    return jsonify(
-        [
-            {
-                "id": collection.id,
-                "name": collection.name,
-                "designer": collection.designer,
-            }
-            for collection in collections
+def get_all_collections():
+    try:
+        collections = Collection.query.all()
+
+        # Format collections data for response
+        collection_list = [
+            {"id": collection.id, "name": collection.name} for collection in collections
         ]
-    )
+
+        return jsonify(collection_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 
 # Create a new collection

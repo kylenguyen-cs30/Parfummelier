@@ -39,7 +39,7 @@ def create_app():
 
     from app.routes import product_blueprint
 
-    app.register_blueprint(product_blueprint, url_prefix="/api")
+    app.register_blueprint(product_blueprint)
 
     return app
 

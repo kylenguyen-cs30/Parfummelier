@@ -4,10 +4,13 @@ services:
     ports:
       - "5001:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
+    # command: >
+    #   bash -c "flask db init || true && flask db migrate -m 'initial migration' || true && flask db upgrade && flask run --host=0.0.0.0"
 
   authentication-service:
     build: ./services/authentication-service/
@@ -28,10 +31,13 @@ services:
     ports:
       - "5003:5000"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
+    # command: >
+    #   bash -c "flask db init || true && flask db migrate -m 'initial migration' || true && flask db upgrade && flask run --host=0.0.0.0"
 
   api-gateway:
     build: ./api-gateway/
@@ -55,6 +61,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
 
   frontend:
     build: ./frontend

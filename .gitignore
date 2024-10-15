@@ -17,7 +17,6 @@ venv/
 *.env
 
 # Docker
-**/Dockerfile
 *.log
 docker-compose.override.yml
 

@@ -22,11 +22,11 @@ logging.basicConfig(level=logging.INFO)
 
 # TODO:
 #
-#------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------#
 # Token Required for JWT request
 # Service to  service user need to go through JWT Checking point
 #
-#------------------------------------------------------------------------------------------#
+# ------------------------------------------------------------------------------------------#
 
 # NOTE:
 # Database reset is neccessary if the token authentication are not accepted or invalid
@@ -38,7 +38,6 @@ logging.basicConfig(level=logging.INFO)
 @user_blueprint.route("/")
 def home():
     return jsonify("user-service launched!!")
-
 
 
 # NOTE: Token Check point
@@ -141,8 +140,8 @@ def register_user():
 
 # NOTE: list all users
 # WARNING: This route should be disabled
-# 
-#----------------------------------------------------------------#
+#
+# ----------------------------------------------------------------#
 # @user_blueprint.route("/users", methods=["GET"])
 # def list_users():
 #     try:
@@ -162,7 +161,7 @@ def register_user():
 #     except Exception as e:
 #         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 #
-#----------------------------------------------------------------#
+# ----------------------------------------------------------------#
 
 # NOTE: Update ScentBank
 
@@ -191,13 +190,19 @@ def update_scentbank_for_user(current_user):
         accord_objects = scent_bank.favorite_accords if favorite_accords else None
         season_objects = scent_bank.favorite_seasons if favorite_seasons else None
         product_objects = scent_bank.favorite_products if favorite_products else None
-        collection_objects = scent_bank.favorite_collections if favorite_collections else None
+        collection_objects = (
+            scent_bank.favorite_collections if favorite_collections else None
+        )
 
         # Add new Note into ScentBank
         if favorite_notes:
             note_objects = []
-            for note in favorite_notes:  # extract elements from the favorite_notes array
-                note_obj = Note.query.filter_by(name=note).first()  # query to see whether user already have Note or not
+            for (
+                note
+            ) in favorite_notes:  # extract elements from the favorite_notes array
+                note_obj = Note.query.filter_by(
+                    name=note
+                ).first()  # query to see whether user already have Note or not
                 if not note_obj:
                     note_obj = Note(name=note)
                     db.session.add(note_obj)
@@ -246,7 +251,7 @@ def update_scentbank_for_user(current_user):
         # Commit the new objects to the database
         db.session.commit()
 
-         # Update the User's ScentBank with their custom data
+        # Update the User's ScentBank with their custom data
         if note_objects:
             scent_bank.favorite_notes = note_objects
         if accord_objects:
@@ -353,35 +358,32 @@ def get_user_scentbank_details(scent_bank_details):
 # let me know if you need to open this route
 
 
-# NOTE: Return all basic informations based on one user 
+# NOTE: Return all basic informations based on one user
 @user_blueprint.route("/user", methods=["GET"])
-@token_required 
+@token_required
 def get_user_details(current_user):
     try:
         user_details = {
-            "firstName" : current_user.firstName,
+            "firstName": current_user.firstName,
             "lastName": current_user.lastName,
-            "email" : current_user.email,
-            "dateOfBirth":current_user.dateOfBirth.strftime("%Y-%m-%d") 
+            "email": current_user.email,
+            "dateOfBirth": current_user.dateOfBirth.strftime("%Y-%m-%d"),
         }
         return jsonify(user_details), 200
     except Exception as e:
-        return jsonify({"error" : f"Error fetching users: {str(e)}"}), 501  
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 
 
+# NOTE: Return the Favortite Products
+#
+# @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
+# @token_required
+# def return_favorite_product(current_user):
+#
+#
 
 
-# NOTE: Return the Favortite Products 
-@user_blueprint.route("/user/favoriteproduct", methods=["GET"])
-@token_required 
-def return_favorite_product(current_user):
-
-     
-
-
-
-
-# NOTE: Return Favorite Collections 
+# NOTE: Return Favorite Collections
 
 # NOTE: Delete a user
 #
@@ -408,5 +410,5 @@ def return_favorite_product(current_user):
 #         db.session.rollback()
 #         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
 #
-
+#
 ##########################################################################################################################################

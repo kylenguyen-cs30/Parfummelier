@@ -3,8 +3,8 @@ import pytest
 
 @pytest.fixture
 def api_base_url():
-    return "http://localhost:8000/"
-    # return "http://api-gateway:8000"
+    # return "http://localhost:8000/"
+    return "http://api-gateway:8000"
 
 
 @pytest.fixture

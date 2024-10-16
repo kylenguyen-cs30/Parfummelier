@@ -1,11 +1,10 @@
 from app import db
 
 
-# Collection model: Represents a collection of products (e.g., Bleu de Chanel)
+# NOTE: Collection model: Represents a collection of products (e.g., Bleu de Chanel)
 class Collection(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
-    # NOTE: considering adding "description"
     products = db.relationship("Product", backref="collection", lazy="dynamic")
 
 
@@ -35,6 +34,12 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     manufacturer = db.Column(db.String(100), nullable=False)
     designer = db.Column(db.String(100), nullable=False)
+
+    # One-To-Many relationship
+    collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
+    # collection = db.relationship("Collection", backref="products")
+
+    # many-to-many relationship
     notes = db.relationship(
         "Note", secondary=product_note, backref=db.backref("products", lazy="dynamic")
     )

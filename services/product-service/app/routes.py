@@ -128,7 +128,12 @@ def add_product():
                     "name": new_product.name,
                     "manufacturer": new_product.manufacturer,
                     "designer": new_product.designer,
-                    "collection": new_product.collection,
+                    # "collection": new_product.collection,
+                    "collection": (
+                        {"id": collection.id, "name": collection.name}
+                        if collection
+                        else None
+                    ),
                     "notes": [note.name for note in new_product.notes],
                     "accords": [accord.name for accord in new_product.accords],
                     "seasons": [season.name for season in new_product.seasons],

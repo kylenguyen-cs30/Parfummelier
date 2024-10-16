@@ -50,7 +50,7 @@ services:
       - user-service
       - authentication-service
     volumes:
-      - ./api-gateway/kong.yml:/app/kong.yml
+      - ./api-gateway/kong.yml:/kong.yml
 
   # NOTE: USER_DB
   user_db:

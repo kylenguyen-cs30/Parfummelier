@@ -1,12 +1,53 @@
 services:
-  test:
-    build:
-      context: ./test
-      dockerfile: Dockerfile
+  # User Service for testing
+  user-service:
+    build: ./services/user-service
+    ports:
+      - "5001:5000"
+    depends_on:
+      - user_db
+        # condition: service_healthy
+    environment:
+      # - DATABASE_URL=postgresql://testuser:testpassword@user_db:5432/testdb
+      - DATABASE_URL=${DATABASE_USER_URL}
+      - SECRET_KEY=mytestsecretkey
     networks:
-      - app_network
+      - test-network
+
+  # Postgres Database for User Service
+  user_db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=testuser
+      - POSTGRES_PASSWORD=testpassword
+      - POSTGRES_DB=testdb
+    ports:
+      - "5432:5432"
+    volumes:
+      - user_data:/var/lib/postgresql/data
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready -U testuser -d testdb"]
+    #   interval: 10s
+    #   retries: 5
+    #   start_period: 30s
+    networks:
+      - test-network
+
+        # Test container that runs the tests
+  test:
+    build: ./test # Assuming your tests are in a 'test' directory with a Dockerfile
+    depends_on:
+      - user-service
+      - user_db
+    # environment:
+    #   - USER_SERVICE_URL=http://user-service:5000 # Internal service URL
+    command: pytest # Command to run tests using pytest
+    networks:
+      - test-network
 
 networks:
-  app_network:
-    name: parfummelier_default
-    external: true
+  test-network:
+    driver: bridge
+
+volumes:
+  user_data:

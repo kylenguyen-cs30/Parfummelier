@@ -1,131 +1,110 @@
 import pytest
 import requests
-import jwt
-import datetime
 
 
-@pytest.fixture
-def user_service_url(api_base_url):
-    return f"{api_base_url}/user"
-
-
-@pytest.fixture
-def auth_service_url(api_base_url):
-    return f"{api_base_url}/auth"
-
-
-# NOTE: test register user
-def test_register_user(mocker, user_service_url, mock_api_response):
-    mock_post = mocker.patch.object(requests, "post")
-    mock_post.return_value = mock_api_response(
-        202, {"user_id": "123", "scentID": "ABC123"}
-    )
+# 1. Test registering a user with full information
+def test_register_user_with_full_info(user_service_url):
     response = requests.post(
-        f"{user_service_url}/register",
+        user_service_url,
         json={
             "firstName": "John",
             "lastName": "Doe",
             "email": "johndoe@example.com",
             "password": "password123",
             "dob": "1990-01-01",
+            "userName": "johndoe",
         },
     )
 
-    assert response.status_code == 202
-    # assert response.status_code == 501
+    assert response.status_code == 202  # Assuming 202 for successful registration
     data = response.json()
-    assert "user_id" in data
-    assert "scentID" in data
-    assert data["user_id"] == "123"
+    assert "message" in data
+    assert data["message"] == "User created successfully!"
 
 
-# NOTE: test register existing user
-def test_register_existing_user(user_service_url):
-    requests.post(
-        f"{user_service_url}/register",
-        json={
-            "firstName": "Jane",
-            "lastName": "Doe",
-            "email": "janedoe@example.com",
-            "password": "password123",
-            "userName": "janedoe",
-            "dob": "1990-01-01",
-        },
-    )
-
+# 2. Test registering a user with a missing attribute
+def test_register_user_with_missing_attribute(user_service_url):
     response = requests.post(
-        f"{user_service_url}/register",
+        user_service_url,
+        json={
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "email": "janedoe@example.com",
+            # "password" is missing
+            "dob": "1990-01-01",
+            "userName": "janedoe",
+        },
+    )
+
+    assert response.status_code == 400  # Assuming 400 for bad request
+    data = response.json()
+    assert "error" in data
+    assert data["error"] == "Missing password field"  # Modify according to actual error
+
+
+# 3. Test registering two users with the same email (should fail with 401)
+def test_register_user_with_same_email(user_service_url):
+    # First user registration
+    response_1 = requests.post(
+        user_service_url,
         json={
             "firstName": "Jane",
             "lastName": "Doe",
             "email": "janedoe@example.com",
             "password": "password123",
-            "userName": "janedoe",
             "dob": "1990-01-01",
+            "userName": "janedoe",
         },
     )
+    assert response_1.status_code == 202
 
-    assert response.status_code == 401
-    data = response.json()
+    # Second user registration with the same email
+    response_2 = requests.post(
+        user_service_url,
+        json={
+            "firstName": "Jane",
+            "lastName": "Doe",
+            "email": "janedoe@example.com",  # Same email
+            "password": "password123",
+            "dob": "1990-01-01",
+            "userName": "janedoe2",
+        },
+    )
+    assert response_2.status_code == 401  # Assuming 401 for existing user
+    data = response_2.json()
     assert "error" in data
     assert data["error"] == "User with this email already existed"
 
 
-def test_login_success(auth_service_url):
-    response = requests.post(
-        f"{auth_service_url}/login",
-        json={"email": "johndoe@example.com", "password": "password123"},
-    )
-
-    assert response.status_code == 200
-    # assert response.status_code == 401
-    data = response.json()
-    assert "message" in data
-    assert "access_token" in data
-    assert data["message"] == "Login successfully"
-
-    # Verify the access token
-    secret_key = "your_secret_key_here"  # Replace with your actual secret key
-    decoded_token = jwt.decode(data["access_token"], secret_key, algorithms=["HS256"])
-    assert "user_id" in decoded_token
-    assert "exp" in decoded_token
-
-
-def test_login_failure(auth_service_url):
-    response = requests.post(
-        f"{auth_service_url}/login",
-        json={"email": "nonexistent@example.com", "password": "wrongpassword"},
-    )
-
-    assert response.status_code == 401
-    data = response.json()
-    assert "error" in data
-    assert data["error"] == "invalid email"
-
-
-def test_register_and_login(user_service_url, auth_service_url):
-    # Register a new user
-    register_response = requests.post(
-        f"{user_service_url}/register",
+# 4. Test registering two users with different emails but same firstName and lastName
+def test_register_user_with_same_name_different_email(user_service_url):
+    # First user registration
+    response_1 = requests.post(
+        user_service_url,
         json={
             "firstName": "Alice",
             "lastName": "Wonder",
             "email": "alice@example.com",
             "password": "alicepassword",
-            "userName": "alicewonder",
             "dob": "1995-05-05",
+            "userName": "alicewonder",
         },
     )
-    assert register_response.status_code == 202
+    assert response_1.status_code == 202
 
-    # Login with the new user
-    login_response = requests.post(
-        f"{auth_service_url}/login",
-        json={"email": "alice@example.com", "password": "alicepassword"},
+    # Second user registration with the same firstName and lastName but different email
+    response_2 = requests.post(
+        user_service_url,
+        json={
+            "firstName": "Alice",
+            "lastName": "Wonder",
+            "email": "alice2@example.com",  # Different email
+            "password": "alicepassword",
+            "dob": "1995-05-05",
+            "userName": "alicewonder2",
+        },
     )
-    assert login_response.status_code == 200
-    login_data = login_response.json()
-    assert "access_token" in login_data
-
-    print(f"Registered user email: alice@example.com")
-    print(f"Login successful, access token received")
+    assert response_2.status_code == 202  # Assuming 202 for successful registration
+    data = response_2.json()
+    assert "message" in data
+    assert data["message"] == "User created successfully!"

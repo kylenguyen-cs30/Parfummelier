@@ -37,7 +37,6 @@ class Product(db.Model):
 
     # One-To-Many relationship
     collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
-    # collection = db.relationship("Collection", backref="products")
 
     # many-to-many relationship
     notes = db.relationship(

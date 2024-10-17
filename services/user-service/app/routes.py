@@ -1,6 +1,7 @@
 # import logging
-# import jwt
-# import os
+import jwt
+import os
+
 #
 # # import smtplib [optional]
 from flask import Blueprint, request, jsonify, current_app
@@ -18,7 +19,7 @@ from .models import (
 from app import db
 
 user_blueprint = Blueprint("user", __name__)
-logging.basicConfig(level=logging.INFO)
+# logging.basicConfig(level=logging.INFO)
 
 # TODO:
 #

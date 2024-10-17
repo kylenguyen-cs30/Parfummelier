@@ -1,15 +1,46 @@
-_format_version: "1.1"
+_format_version: "3.0"
+_transform: true
+
 services:
+  - name: user-service
+    url: http://user-service:5000
+    plugins:
+      - name: key-auth
+    routes:
+      - name: user-register-route
+        paths:
+          - /register
+        methods:
+          - POST
+        strip_path: false
+        preserve_host: false
+
   - name: authentication-service
     url: http://authentication-service:5000
+    plugins:
+      - name: key-auth
     routes:
       - name: auth-route
         paths:
           - /auth
+        methods:
+          - POST
+        strip_path: false
+        preserve_host: false
 
-  - name: user-service
-    url: http://user-service:5000
+  - name: product-service
+    url: http://product-service:5000
+    plugins:
+      - name: key-auth
     routes:
-      - name: user-route
+      - name: product-route
         paths:
-          - /user
+          - /products
+        methods:
+          - GET
+        strip_path: false
+        preserve_host: false
+# consumers:
+#   - username: my-user
+#     keyauth_credentials:
+#       - key: my-key

@@ -49,8 +49,11 @@ services:
     depends_on:
       - user-service
       - authentication-service
+    environment:
+      - KONG_DATABASE=off
     volumes:
       - ./api-gateway/kong.yml:/kong.yml
+      - ./api-gateway/kong.conf:/etc/kong/kong.conf
 
   # NOTE: USER_DB
   user_db:

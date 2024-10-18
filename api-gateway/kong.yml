@@ -4,8 +4,8 @@ _transform: true
 services:
   - name: user-service
     url: http://user-service:5000
-    plugins:
-      - name: key-auth
+    # plugins:
+    #   - name: key-auth
     routes:
       - name: user-register-route
         paths:
@@ -17,8 +17,8 @@ services:
 
   - name: authentication-service
     url: http://authentication-service:5000
-    plugins:
-      - name: key-auth
+    # plugins:
+    #   - name: key-auth
     routes:
       - name: auth-route
         paths:
@@ -30,8 +30,8 @@ services:
 
   - name: product-service
     url: http://product-service:5000
-    plugins:
-      - name: key-auth
+    # plugins:
+    #   - name: key-auth
     routes:
       - name: product-route
         paths:

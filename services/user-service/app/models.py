@@ -73,7 +73,7 @@ scentBank_seasons = db.Table(
 scentBank_collections = db.Table(
     "scentBank_collections",
     db.Column("scentBank_id", db.Integer, db.ForeignKey("scent_bank.id")),
-    db.Column("collection_id", db.Integer, db.ForeignKey("season.id")),
+    db.Column("collection_id", db.Integer, db.ForeignKey("collection.id")),
 )
 
 

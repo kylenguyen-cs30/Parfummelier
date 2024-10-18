@@ -41,6 +41,7 @@ services:
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - SECRET_KEY=${SECRET_KEY}
 
+  # NOTE: API Gateway
   api-gateway:
     build: ./api-gateway/
     ports:
@@ -50,7 +51,8 @@ services:
       - user-service
       - authentication-service
     environment:
-      - KONG_DATABASE=off
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "kong.yml"
     volumes:
       - ./api-gateway/kong.yml:/kong.yml
       - ./api-gateway/kong.conf:/etc/kong/kong.conf

@@ -1,38 +1,47 @@
 services:
+  # NOTE: User Service
   user-service:
     build: ./services/user-service
     ports:
       - "5001:5000"
     depends_on:
-      - db
+      user_db:
+        condition: service_healthy
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      # - DATABASE_USER_URL=${DATABASE_USER_URL}
+      - DATABASE_URL=${DATABASE_USER_URL}
       - SECRET_KEY=${SECRET_KEY}
 
+  # NOTE: Authentication Service
   authentication-service:
     build: ./services/authentication-service/
     ports:
       - "5002:5000"
     depends_on:
-      - db
+      user_db:
+        condition: service_healthy
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=${DATABASE_USER_URL}
       - SECRET_KEY=${SECRET_KEY}
       - SMTP_SERVER=${SMTP_SERVER}
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - REACT_APP_API_URL=${REACT_APP_API_URL}
 
+  # NOTE: Product Service
   product-service:
     build: ./services/product-service/
     ports:
       - "5003:5000"
     depends_on:
-      - db
+      product_db:
+        condition: service_healthy
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      # - DATABASE_PRODUCT_URL=${DATABASE_PRODUCT_URL}
+      - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - SECRET_KEY=${SECRET_KEY}
 
+  # NOTE: Api Gateway
   api-gateway:
     build: ./api-gateway/
     ports:
@@ -42,19 +51,47 @@ services:
       - user-service
       - authentication-service
     volumes:
-      - ./api-gateway/kong.yml:/app/kong.yml
+      # - ./api-gateway/kong.yml:/app/kong.yml
+      - ./api-gateway/kong.yml:/kong.yml
 
-  db:
+  # NOTE: USER_DB
+  user_db:
     image: postgres:latest
     environment:
       - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-
+      - POSTGRES_DB=${POSTGRES_USER_DB}
     ports:
       - "5432:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - user_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_USER_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+
+  # NOTE: PRODUCT_DB
+  product_db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_PRODUCT_DB}
+    ports:
+      - "5433:5432" # Expose different port for product database
+    volumes:
+      - products_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_PRODUCT_DB}",
+        ]
+      interval: 10s
+      retries: 5
+      start_period: 30s
 
   frontend:
     build: ./frontend
@@ -65,4 +102,5 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
 
 volumes:
-  postgres_data:
+  user_data:
+  products_data:

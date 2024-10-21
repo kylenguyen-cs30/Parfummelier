@@ -1,7 +1,7 @@
 from flask import Blueprint, request, jsonify
 from app.models import db, Product, Collection, Note, Accord, Season, Review
 
-product_blueprint = Blueprint("products", __name__)
+product_blueprint = Blueprint("product", __name__)
 
 
 @product_blueprint.route("/", methods=["GET"])
@@ -65,10 +65,7 @@ def get_product(id):
 def add_product():
     try:
         data = request.json
-        # Retrieve collectoin if provided
-        # collection_id = data.get("collection_id")
-        # collection = Collection.query.get(collection_id) if collection_id else None
-
+        # Collection creation
         collection_name = data.get("collection")
         collection = None
 
@@ -131,7 +128,12 @@ def add_product():
                     "name": new_product.name,
                     "manufacturer": new_product.manufacturer,
                     "designer": new_product.designer,
-                    "collection": new_product.collection,
+                    # "collection": new_product.collection,
+                    "collection": (
+                        {"id": collection.id, "name": collection.name}
+                        if collection
+                        else None
+                    ),
                     "notes": [note.name for note in new_product.notes],
                     "accords": [accord.name for accord in new_product.accords],
                     "seasons": [season.name for season in new_product.seasons],
@@ -143,7 +145,8 @@ def add_product():
         return jsonify({"error": str(e)}), 400
 
 
-# Update a product
+# ----------------------------------------------------------------------------#
+# NOTE: Update a product [Not sure yet]
 @product_blueprint.route("/products/<int:id>", methods=["PUT"])
 def update_product(id):
     product = Product.query.get_or_404(id)
@@ -164,7 +167,11 @@ def update_product(id):
     )
 
 
+# ----------------------------------------------------------------------------#
+
+
 # NOTE: Add Review
+# TODO: add token_required to attach user
 @product_blueprint.route("/add_review/<int:product_id>", methods=["POST"])
 def add_review(product_id):
     try:
@@ -193,7 +200,7 @@ def add_review(product_id):
         return jsonify({"error": str(e)}), 400
 
 
-# Delete a product
+# NOTE: Delete a product [this part shoud be blocked]
 @product_blueprint.route("/products/<int:id>", methods=["DELETE"])
 def delete_product(id):
     product = Product.query.get_or_404(id)
@@ -207,7 +214,7 @@ def delete_product(id):
 # ----------------------------- #
 
 
-# List all collections
+# NOTE: List all collections
 @product_blueprint.route("/collections", methods=["GET"])
 def get_all_collections():
     try:
@@ -223,7 +230,7 @@ def get_all_collections():
         return jsonify({"error": str(e)}), 400
 
 
-# Create a new collection
+# NOTE: Create a new collection
 @product_blueprint.route("/collections", methods=["POST"])
 def create_collection():
     data = request.json

@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from typing import List, Dict
+from .accord_note_table import get_accord_note_data_json
 
 router = APIRouter()
 
@@ -66,3 +67,7 @@ def submit_quiz(user_id: int, answers: List[str]):
     user_notebanks[user_id] = notebank
 
     return {"message": "Notebank created successfully", "notebank": notebank}
+
+@router.get("/accord-note-data/")
+def get_accord_note_data():
+    return get_accord_note_data_json()

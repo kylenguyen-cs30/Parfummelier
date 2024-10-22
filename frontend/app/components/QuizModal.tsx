@@ -5,6 +5,7 @@
 "use client";
 import React, { useState } from "react";
 import ReactDOM from "react-dom";
+import "../components/quiz-modal.css"; // Import vanilla CSS
 
 interface QuizModalProps {
   isOpen: boolean; //Controls whether the modal is open or closed. When true, the modal is visible; when false, it is hidden.
@@ -53,22 +54,18 @@ const QuizModal: React.FC<QuizModalProps> = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg max-w-lg w-full">
-        <h2 className="text-2xl font-bold mb-4">
-          Question {currentQuestionIndex + 1}
-        </h2>
-        <p className="font-bold mb-4">{currentQuestion.question}</p>
+    <div className="modal-overlay">
+      <div className="modal-container">
+        <h2 className="modal-header">Quiz {currentQuestionIndex + 1}</h2>
+        <p className="modal-question">{currentQuestion.question}</p>
 
-        <div className="space-y-4">
+        <div className="options-container">
           {currentQuestion.options.map((option, index) => (
             <button
               key={index}
-              onClick={() => handleOptionClick(option)} // Pass the string value of the option
-              className={`block w-full text-left p-2 rounded-md ${
-                selectedOption === option
-                  ? "bg-blue-200"
-                  : "bg-gray-100 hover:bg-gray-200"
+              onClick={() => handleOptionClick(option)}
+              className={`option-button ${
+                selectedOption === option ? "selected" : ""
               }`}
             >
               {option}
@@ -76,15 +73,11 @@ const QuizModal: React.FC<QuizModalProps> = ({
           ))}
         </div>
 
-        <div className="mt-6 text-right">
+        <div className="text-right">
           <button
             onClick={handleNextQuestion}
             disabled={selectedOption === null}
-            className={`${
-              selectedOption === null
-                ? "bg-gray-400 cursor-not-allowed"
-                : "bg-blue-600 hover:bg-blue-500"
-            } text-white py-2 px-4 rounded-md`}
+            className="next-button"
           >
             {currentQuestionIndex < questions.length - 1
               ? "Next Question"

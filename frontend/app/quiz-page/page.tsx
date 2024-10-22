@@ -6,6 +6,7 @@
 "use client";
 import React, { useState } from "react";
 import QuizModal from "../components/QuizModal"; // Import the modal
+import "../styles/quiz-page.css";
 
 const QuizPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -108,12 +109,9 @@ const QuizPage = () => {
   const closeModal = () => setModalOpen(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200 p-4">
-      <h1 className="text-4xl font-bold mb-8">Parfummelier</h1>
-      <button
-        onClick={openModal}
-        className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500"
-      >
+    <div className="quiz-page-container">
+      <h1 className="quiz-title">Parfummelier</h1>
+      <button onClick={openModal} className="start-quiz-button">
         Start Quiz
       </button>
 

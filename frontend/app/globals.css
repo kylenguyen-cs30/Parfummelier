@@ -81,35 +81,3 @@ input[type="date"] {
   border-radius: 5px;
   font-size: 1rem;
 }
-
-.product-title {
-  font-size: 2rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-}
-
-.product-description {
-  color: #bbb;
-  margin-bottom: 1rem;
-}
-
-.product-rating {
-  color: #ffcc00; /* Yellow for stars */
-  margin-right: 0.5rem;
-}
-
-.card-title {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-}
-
-ul {
-  list-style-type: disc;
-  list-style-position: inside;
-  color: #ccc;
-}
-
-li {
-  margin-bottom: 0.5rem;
-}

@@ -1,0 +1,85 @@
+/* Container for the product page */
+.product-page-container {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+  min-height: 100vh; /* Fills the entire viewport height */
+  padding: 20px;
+  background-color: #171717;
+  color: #f8f4ef;
+}
+
+/* Inner container for the product content */
+.product-content {
+  max-width: 1200px;
+  display: grid;
+  grid-template-columns: 1fr; /* Single column for mobile */
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .product-content {
+    grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
+    gap: 4rem;
+  }
+}
+
+/* Image styling */
+.product-image {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Title styling */
+.product-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #ffffff;
+}
+
+/* Description styling */
+.product-description {
+  font-size: 1.1rem;
+  color: #bbb;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+/* Review section */
+.review-section {
+  margin-top: 2rem;
+}
+
+.review-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.review-list {
+  list-style-type: disc;
+  list-style-position: inside;
+  margin-left: 1rem;
+  color: #ccc;
+}
+
+.review-item {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Review Stars Styling */
+.product-rating {
+  font-size: 1.2rem;
+  color: #ffcc00; /* Yellow for stars */
+  margin-right: 0.5rem;
+  cursor: pointer; /* Makes the cursor change to pointer */
+  transition: color 0.3s, transform 0.2s;
+}
+
+.product-rating:hover {
+  color: #ffd700; /* Bright yellow on hover */
+  transform: scale(1.2); /* Scales up slightly on hover */
+}

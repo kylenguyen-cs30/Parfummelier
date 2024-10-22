@@ -1,0 +1,86 @@
+/* Main Container for Sign In Page */
+.signin-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  background-color: #f8f4ef; /* Light beige background */
+  padding: 80px 20px 20px; /* Padding to avoid overlap with the header */
+  flex-direction: column;
+}
+
+/* Form Container */
+.signin-form-container {
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+  margin-top: 20px; /* Adjusted for consistent vertical spacing */
+}
+
+/* Title Styling */
+.signin-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  color: #333;
+}
+
+/* Error Styling */
+.signin-error {
+  color: red;
+  margin-bottom: 1rem;
+}
+
+/* Form Group Styling */
+.form-group {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: bold;
+}
+
+.form-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+/* Link Styling */
+.form-link {
+  margin-top: 0.5rem;
+}
+
+.forgot-password {
+  color: #4a69bd;
+  font-size: 0.9rem;
+  display: inline-block;
+}
+
+/* Sign In Button Styling */
+.signin-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #4a69bd;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.3s;
+}
+
+.signin-button:hover {
+  background-color: #3b55a5;
+}

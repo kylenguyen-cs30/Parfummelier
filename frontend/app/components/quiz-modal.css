@@ -1,0 +1,88 @@
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Slightly lighter overlay */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.modal-container {
+  background-color: #4fbdba; /* Brighter teal color */
+  padding: 30px;
+  border-radius: 12px; /* Rounded corners */
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  color: #fff;
+}
+
+/* Modal Header */
+.modal-header {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+/* Modal Question */
+.modal-question {
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
+  color: #fff;
+}
+
+/* Options Container */
+.options-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Option Button */
+.option-button {
+  padding: 15px;
+  background-color: #f5f5f5; /* Brighter light gray */
+  color: #333;
+  border: none;
+  border-radius: 8px; /* Rounded corners */
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.option-button:hover {
+  background-color: #e0e0e0; /* Slightly darker on hover */
+}
+
+.option-button.selected {
+  background-color: #cce5ff; /* Light blue for selected option */
+  color: #333;
+}
+
+/* Next Button */
+.next-button {
+  margin-top: 20px;
+  padding: 10px 20px;
+  background-color: #4a69bd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.next-button:hover {
+  background-color: #3b55a5;
+}
+
+.next-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}

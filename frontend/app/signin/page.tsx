@@ -5,6 +5,7 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "../components/ui/button/Button";
 import Header from "../components/ui/header/Header";
+import "../styles/signin.css";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -32,7 +33,7 @@ const SignIn = () => {
         // "http://localhost:8000/auth/login", // TODO: Need to test this endpoint
         // "http://localhost:5002/login",
         // `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
-        formData,
+        formData
       );
 
       // NOTE: login successfully
@@ -48,7 +49,7 @@ const SignIn = () => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setError(
-          error.response?.data?.error || "An Error occured while verfiying",
+          error.response?.data?.error || "An Error occured while verfiying"
         );
       } else {
         setError("An Error occurred");
@@ -57,49 +58,46 @@ const SignIn = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <Header />
-      <h1 className="text-2xl font-bold mb-6">Sign In</h1>
-      {error && <div className="text-red-500 mb-4">{error}</div>}
-      {/* Display message */}
-      {/* Sign-In Form */}
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label className="block">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-2 py-1"
-          />
-        </div>
+    <div className="signin-container">
+      <div className="signin-form-container">
+        <h1 className="signin-title">Sign In</h1>
+        {error && <div className="signin-error">{error}</div>}
+        <form onSubmit={handleSubmit} className="signin-form">
+          <div className="form-group">
+            <label>Email</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+              className="form-input"
+            />
+          </div>
 
-        <div>
-          <label className="block">Password</label>
-          <input
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            required
-            className="w-full border rounded px-2 py-1"
-          />
-        </div>
+          <div className="form-group">
+            <label>Password</label>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+              className="form-input"
+            />
+          </div>
 
-        {/* "Forget My Password" Link */}
-        <div>
-          <a href="/forget-password" className="text-blue-500">
-            Forgot My Password?
-          </a>
-        </div>
+          <div className="form-link">
+            <a href="/forget-password" className="forgot-password">
+              Forgot My Password?
+            </a>
+          </div>
 
-        <Button type="submit">Sign In</Button>
-      </form>
-      {/* <Button type="button" onClick={handleTestApi}> */}
-      {/*   Test Api */}
-      {/* </Button> */}
+          <Button type="submit" className="signin-button">
+            Sign In
+          </Button>
+        </form>
+      </div>
     </div>
   );
 };

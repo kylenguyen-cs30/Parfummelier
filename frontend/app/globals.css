@@ -1,12 +1,26 @@
-@tailwind base;
+/* @tailwind base;
 @tailwind components;
-@tailwind utilities;
+@tailwind utilities; */
+
+/* Import Google Font - Sofia Pro-like style */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap");
+/* Poppins is used as an alternative since Sofia Pro isn't freely available on Google Fonts */
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 
 :root {
   /* --background: #171717; */
   /* --foreground: #ffffff; */
   --background: #ffffff;
   --foreground: #171717;
+  --primary-color: #2c2f3f; /* Dark blue */
+  --accent-color: #4a69bd; /* Blue accent */
+  --light-bg: #f8f4ef; /* Light beige */
 }
 
 /* @media (prefers-color-scheme: dark) { */
@@ -16,16 +30,18 @@
 /*   } */
 /* } */
 
+/* Body Styling */
 body {
+  font-family: "Poppins", "Trebuchet MS", Verdana, sans-serif;
+  background-color: var(--light-bg);
   color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Utility Classes */
+.text-balance {
+  text-wrap: balance;
 }
 
 .font-handwritten {
@@ -37,4 +53,63 @@ body {
   background-image: url("/images/background1.webp");
   background-size: cover;
   background-position: center;
+}
+
+button {
+  padding: 10px 20px;
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #3b55a5;
+}
+
+/* General Form Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="date"] {
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.product-title {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+}
+
+.product-description {
+  color: #bbb;
+  margin-bottom: 1rem;
+}
+
+.product-rating {
+  color: #ffcc00; /* Yellow for stars */
+  margin-right: 0.5rem;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+ul {
+  list-style-type: disc;
+  list-style-position: inside;
+  color: #ccc;
+}
+
+li {
+  margin-bottom: 0.5rem;
 }

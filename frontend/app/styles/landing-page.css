@@ -1,0 +1,54 @@
+/* Full-screen container */
+.full-screen-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("/images/background1.webp"); /* Replace with your background image */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Welcome box container */
+.welcome-box {
+  margin-left: 9rem;
+  display: flex;
+  flex-direction: column;
+  background-color: rgba(255, 255, 255, 0.9); /* White with slight opacity */
+  padding: 2.5rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+/* Title styling */
+.welcome-title {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+/* Button container styling */
+.buttons-container {
+  display: flex;
+  gap: 1rem;
+  flex-direction: row;
+  justify-content: center;
+}
+
+/* Button styling */
+.custom-button {
+  padding: 10px 20px;
+  background-color: #4a69bd; /* Blue color */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.custom-button:hover {
+  background-color: #3b55a5;
+}

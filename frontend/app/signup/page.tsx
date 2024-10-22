@@ -12,6 +12,7 @@ const SignUp = () => {
     lastName: "",
     email: "",
     password: "",
+    confirmPassword: "",
     userName: "",
     dob: "",
   });
@@ -32,6 +33,13 @@ const SignUp = () => {
     event.preventDefault();
     setError(null);
     setSuccessMessage(null);
+
+    //Check if passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords do not match!");
+      return;
+    }
+
     try {
       const response = await axios.post(
         "http://localhost:5001/register",
@@ -40,7 +48,7 @@ const SignUp = () => {
           headers: {
             "Content-Type": "application/json",
           },
-        },
+        }
       );
 
       if (response.status === 202) {
@@ -50,7 +58,7 @@ const SignUp = () => {
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setError(
-          error.response?.data?.error || "An Error occured while verfiying",
+          error.response?.data?.error || "An Error occured while verfiying"
         );
       } else {
         setError("An Error occurred");
@@ -109,6 +117,18 @@ const SignUp = () => {
             type="password"
             name="password"
             value={formData.password}
+            onChange={handleChange}
+            required
+            className="w-full border rounded px-2 py-1"
+          />
+        </div>
+
+        <div>
+          <label className="block">Confirm Password</label>
+          <input
+            type="password"
+            name="confirmPassword"
+            value={formData.confirmPassword}
             onChange={handleChange}
             required
             className="w-full border rounded px-2 py-1"

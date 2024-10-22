@@ -2,6 +2,7 @@
 import React from "react";
 import Button from "./components/ui/button/Button";
 import { useRouter } from "next/navigation";
+import "./styles/landing-page.css";
 
 export default function Home() {
   const router = useRouter();
@@ -15,20 +16,24 @@ export default function Home() {
     }
   };
   return (
-    <div className="h-screen  bg-cover flex  items-center bg-main-background">
-      <div className="ml-36 ">
-        <div className="justify-between flex flex-col bg-white bg-opacity-90 p-10 rounded-lg text-center shadow-lg  ">
-          <h1 className="text-2xl font-semibold mb-4">
-            Welcome to Parfummelier
-          </h1>
-          <div className="flex flex-row gap-4">
-            <Button type="button" onClick={() => handleClick("signup")}>
-              Register
-            </Button>
-            <Button type="button" onClick={() => handleClick("signin")}>
-              Sign in
-            </Button>
-          </div>
+    <div className="full-screen-container">
+      <div className="welcome-box">
+        <h1 className="welcome-title">Welcome to Parfummelier</h1>
+        <div className="buttons-container">
+          <Button
+            className="custom-button"
+            type="button"
+            onClick={() => handleClick("signup")}
+          >
+            Register
+          </Button>
+          <Button
+            className="custom-button"
+            type="button"
+            onClick={() => handleClick("signin")}
+          >
+            Sign in
+          </Button>
         </div>
       </div>
     </div>

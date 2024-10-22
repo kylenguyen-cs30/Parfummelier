@@ -7,7 +7,7 @@
 import React, { useState } from "react";
 import QuizModal from "../components/QuizModal"; // Import the modal
 
-const QuizPage: React.FC = () => {
+const QuizPage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
 
   // Example quiz/survey questions

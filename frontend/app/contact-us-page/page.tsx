@@ -2,7 +2,7 @@
 import React from "react";
 import ContactForm from "../components/ContactForm";
 
-const ContactUs: React.FC = () => {
+const ContactUs = () => {
   return (
     <div>
       <div>

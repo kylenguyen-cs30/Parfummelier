@@ -15,7 +15,7 @@ const products: Product[] = [
   { id: 4, name: "Fragrance D", price: "$120", image: "/images/perfume1.webp" },
 ];
 
-const AllProducts: React.FC = () => {
+const AllProducts = () => {
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4">

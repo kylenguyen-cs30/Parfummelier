@@ -33,8 +33,14 @@
 .buttons-container {
   display: flex;
   gap: 1rem;
-  flex-direction: row;
+  flex-wrap: wrap; /* Allows wrapping to create a new row */
   justify-content: center;
+}
+
+/* Row break */
+.row-break {
+  flex-basis: 100%; /* Forces a new row */
+  height: 0;
 }
 
 /* Button styling */

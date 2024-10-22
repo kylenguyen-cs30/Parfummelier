@@ -7,12 +7,15 @@ import "./styles/landing-page.css";
 export default function Home() {
   const router = useRouter();
 
-  const handleClick = (type: "signin" | "signup") => {
+  const handleClick = (type: "signin" | "signup" | "profile") => {
+    console.log(`Redirecting to ${type}`);
     //TODO: if it register, router.push("/signup") otherwise, router.push("/signin")
     if (type === "signup") {
       router.push("/signup");
-    } else {
+    } else if (type === "signin") {
       router.push("/signin");
+    } else {
+      router.push("/user-profile-page");
     }
   };
   return (
@@ -33,6 +36,13 @@ export default function Home() {
             onClick={() => handleClick("signin")}
           >
             Sign in
+          </Button>
+          <Button
+            className="custom-button"
+            type="button"
+            onClick={() => handleClick("profile")}
+          >
+            Profile
           </Button>
         </div>
       </div>

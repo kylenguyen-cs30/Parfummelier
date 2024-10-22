@@ -21,15 +21,23 @@ user_blueprint = Blueprint("user", __name__)
 logging.basicConfig(level=logging.INFO)
 
 # TODO:
-##########################################################################################################################################
+#
+# ------------------------------------------------------------------------------------------#
 # Token Required for JWT request
 # Service to  service user need to go through JWT Checking point
-##########################################################################################################################################
+#
+# ------------------------------------------------------------------------------------------#
 
 # NOTE:
 # Database reset is neccessary if the token authentication are not accepted or invalid
 # make sure writing the documentaion if there are unprecedented case. This service is
 # reponsible for creating user account, return user's json information for client side
+
+
+# NOTE: Home route
+@user_blueprint.route("/")
+def home():
+    return jsonify("user-service launched!!")
 
 
 # NOTE: Token Check point
@@ -117,8 +125,6 @@ def register_user():
             jsonify(
                 {
                     "message": "User created successfully!",
-                    "user_id": new_user.id,
-                    "scentID": new_scent_bank.id,
                 }
             ),
             202,
@@ -132,33 +138,30 @@ def register_user():
         return jsonify({"error": f"Failed to register user: {str(e)}"}), 501
 
 
-# NOTE: Home route
-@user_blueprint.route("/")
-def home():
-    return jsonify("user-service launched!!")
-
-
 # NOTE: list all users
 # WARNING: This route should be disabled
-@user_blueprint.route("/users", methods=["GET"])
-def list_users():
-    try:
-        users = User.query.all()
-        user_list = [
-            {
-                "id": user.id,
-                "firstName": user.firstName,
-                "lastName": user.lastName,
-                "email": user.email,
-                "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
-                "scentID": user.scentID,
-            }
-            for user in users
-        ]
-        return jsonify(user_list), 200
-    except Exception as e:
-        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
-
+#
+# ----------------------------------------------------------------#
+# @user_blueprint.route("/users", methods=["GET"])
+# def list_users():
+#     try:
+#         users = User.query.all()
+#         user_list = [
+#             {
+#                 "id": user.id,
+#                 "firstName": user.firstName,
+#                 "lastName": user.lastName,
+#                 "email": user.email,
+#                 "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
+#                 "scentID": user.scentID,
+#             }
+#             for user in users
+#         ]
+#         return jsonify(user_list), 200
+#     except Exception as e:
+#         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+#
+# ----------------------------------------------------------------#
 
 # NOTE: Update ScentBank
 
@@ -183,62 +186,82 @@ def update_scentbank_for_user(current_user):
         favorite_products = request.json.get("favorite_products", [])
         favorite_collections = request.json.get("favorite_collections", [])
 
+        note_objects = scent_bank.favorite_notes if favorite_notes else None
+        accord_objects = scent_bank.favorite_accords if favorite_accords else None
+        season_objects = scent_bank.favorite_seasons if favorite_seasons else None
+        product_objects = scent_bank.favorite_products if favorite_products else None
+        collection_objects = (
+            scent_bank.favorite_collections if favorite_collections else None
+        )
+
         # Add new Note into ScentBank
-        note_objects = []
-        for note in favorite_notes:  # extract elements from the favorite_notes array
-            note_obj = Note.query.filter_by(
-                name=note
-            ).first()  # query to see whether user already have Note or not
-            if not note_obj:
-                note_obj = Note(name=note)
-                db.session.add(note_obj)
+        if favorite_notes:
+            note_objects = []
+            for (
+                note
+            ) in favorite_notes:  # extract elements from the favorite_notes array
+                note_obj = Note.query.filter_by(
+                    name=note
+                ).first()  # query to see whether user already have Note or not
+                if not note_obj:
+                    note_obj = Note(name=note)
+                    db.session.add(note_obj)
             note_objects.append(note_obj)
 
         # Add new Accord into ScentBank
-        accord_objects = []
-        for accord in favorite_accords:
-            accord_obj = Accord.query.filter_by(name=accord).first()
-            if not accord_obj:
-                accord_obj = Accord(name=accord)
-                db.session.add(accord_obj)
+        if favorite_accords:
+            accord_objects = []
+            for accord in favorite_accords:
+                accord_obj = Accord.query.filter_by(name=accord).first()
+                if not accord_obj:
+                    accord_obj = Accord(name=accord)
+                    db.session.add(accord_obj)
             accord_objects.append(accord_obj)
 
         # Add new Season into ScentBank
-        season_objects = []
-        for season in favorite_seasons:
-            season_obj = Season.query.filter_by(name=season).first()
-            if not season_obj:
-                season_obj = Season(name=season)
-                db.session.add(season_obj)
+        if favorite_seasons:
+            season_objects = []
+            for season in favorite_seasons:
+                season_obj = Season.query.filter_by(name=season).first()
+                if not season_obj:
+                    season_obj = Season(name=season)
+                    db.session.add(season_obj)
             season_objects.append(season_obj)
 
         # Add new Product into ScentBank
-        product_objects = []
-        for product in favorite_products:
-            product_obj = Product.query.filter_by(name=product).first()
-            if not product_obj:
-                product_obj = Product(name=product)
-                db.session.add(product_obj)
+        if favorite_products:
+            product_objects = []
+            for product in favorite_products:
+                product_obj = Product.query.filter_by(name=product).first()
+                if not product_obj:
+                    product_obj = Product(name=product)
+                    db.session.add(product_obj)
             product_objects.append(product_obj)
 
         # Add new Collection into ScentBank
-        collection_objects = []
-        for collection in favorite_collections:
-            collection_obj = Collection.query.filter_by(name=collection).first()
-            if not collection_obj:
-                collection_obj = Collection(name=collection)
-                db.session.add(collection_obj)
+        if favorite_collections:
+            collection_objects = []
+            for collection in favorite_collections:
+                collection_obj = Collection.query.filter_by(name=collection).first()
+                if not collection_obj:
+                    collection_obj = Collection(name=collection)
+                    db.session.add(collection_obj)
             collection_objects.append(collection_obj)
 
         # Commit the new objects to the database
         db.session.commit()
 
         # Update the User's ScentBank with their custom data
-        scent_bank.favorite_notes = note_objects
-        scent_bank.favorite_accords = accord_objects
-        scent_bank.favorite_seasons = season_objects
-        scent_bank.favorite_products = product_objects
-        scent_bank.favorite_collections = collection_objects
+        if note_objects:
+            scent_bank.favorite_notes = note_objects
+        if accord_objects:
+            scent_bank.favorite_accords = accord_objects
+        if season_objects:
+            scent_bank.favorite_seasons = season_objects
+        if product_objects:
+            scent_bank.favorite_products = product_objects
+        if collection_objects:
+            scent_bank.favorite_collections = collection_objects
 
         db.session.commit()
 
@@ -273,7 +296,7 @@ def reset_db():
         return jsonify({"error": f"Failed to reset database: {str(e)}"}), 500
 
 
-##########################################################################################################################################
+# ------------------------------------------------------------------------------------------------#
 # NOTE: Test PUT API
 @user_blueprint.route("/test-put", methods=["PUT"])
 @token_required
@@ -290,7 +313,7 @@ def test_put(current_user):
         return jsonify({"error": f"Fail to test the PUT METHOD: {str(e)}"}), 500
 
 
-##########################################################################################################################################
+# ------------------------------------------------------------------------------------------------#
 
 
 # NOTE:  scent bank detail decorator
@@ -311,7 +334,12 @@ def scentbank_details(f):
             "favorite_notes": [note.name for note in scent_bank.favorite_notes],
             "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
             "favorite_seasons": [season.name for season in scent_bank.favorite_seasons],
-            "favorite_scents": [scent.name for scent in scent_bank.favorite_scents],
+            "favorite_products": [
+                product.name for product in scent_bank.favorite_products
+            ],
+            "favorite_collections": [
+                collection.name for collection in scent_bank.favorite_collections
+            ],
         }
         return f(scent_bank_details, *arg, **kwargs)
 
@@ -329,6 +357,33 @@ def get_user_scentbank_details(scent_bank_details):
 # WARNING: This route should be disabled for security reason.
 # let me know if you need to open this route
 
+
+# NOTE: Return all basic informations based on one user
+@user_blueprint.route("/user", methods=["GET"])
+@token_required
+def get_user_details(current_user):
+    try:
+        user_details = {
+            "firstName": current_user.firstName,
+            "lastName": current_user.lastName,
+            "email": current_user.email,
+            "dateOfBirth": current_user.dateOfBirth.strftime("%Y-%m-%d"),
+        }
+        return jsonify(user_details), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+
+
+# NOTE: Return the Favortite Products
+#
+# @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
+# @token_required
+# def return_favorite_product(current_user):
+#
+#
+
+
+# NOTE: Return Favorite Collections
 
 # NOTE: Delete a user
 #
@@ -355,5 +410,5 @@ def get_user_scentbank_details(scent_bank_details):
 #         db.session.rollback()
 #         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
 #
-
+#
 ##########################################################################################################################################

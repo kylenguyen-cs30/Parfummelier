@@ -31,8 +31,8 @@ def test_register_user(mocker, user_service_url, mock_api_response):
         },
     )
 
-    # assert response.status_code == 202
-    assert response.status_code == 501
+    assert response.status_code == 202
+    # assert response.status_code == 501
     data = response.json()
     assert "user_id" in data
     assert "scentID" in data
@@ -77,8 +77,8 @@ def test_login_success(auth_service_url):
         json={"email": "johndoe@example.com", "password": "password123"},
     )
 
-    # assert response.status_code == 200
-    assert response.status_code == 401
+    assert response.status_code == 200
+    # assert response.status_code == 401
     data = response.json()
     assert "message" in data
     assert "access_token" in data

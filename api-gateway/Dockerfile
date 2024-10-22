@@ -3,7 +3,7 @@
 FROM kong:latest
 
 # COPY Configuration file into Dockfer
-COPY kong.yml /app/kong.yml
+COPY kong.yml /etc/kong/kong.yml
 
 # Turn off Kong Database 
 ENV KONG_DATABASE=off

@@ -1,41 +1,54 @@
 from flask import Blueprint, request, jsonify
+from flask_socketio import emit, join_room, leave_room
 from .models import Post, Comment
-
+from . import socketio  # Import socketio from __init__.py
 
 forum_blueprint = Blueprint('forum', __name__)
 
-#Create post
-@forum_blueprint.route('/posts', methods=['POST'])
-def create_post():
-    data = request.json
-    new_post = Post(
-        author=data['author'],
-        title=data['title'],
-        content=data['content']
-    )
-    new_post.save()  # Save post
-    return jsonify(new_post.to_json()), 201
+# Existing routes for posts and comments...
 
-# Fetch all posts
-@forum_blueprint.route('/posts', methods=['GET'])
-def get_posts():
-    posts = Post.objects()  # Fetch all posts from MongoDB
-    return jsonify([post.to_json() for post in posts]), 200
+# --------------------
+# WebSocket Chat Routes
+# --------------------
 
-#Add comment
-@forum_blueprint.route('/posts/<post_id>/comment', methods=['POST'])
-def add_comment(post_id):
-    data = request.json
-    post = Post.objects(id=post_id).first()
-    if not post:
-        return jsonify({"error": "Post not found"}), 404
+# Handle when a user joins a chat room
+@socketio.on('join')
+def handle_join(data):
+    username = data.get('username')
+    room = data.get('room')
+    if not username or not room:
+        return emit('error', {'msg': 'Username and room name required'})
 
-    new_comment = Comment(
-        author=data['author'],
-        content=data['content']
-    )
-    new_comment.save()
-    post.comments.append(new_comment)
-    post.save()
+    join_room(room)
+    emit('message', {'msg': f'{username} has joined the room.'}, room=room)
 
-    return jsonify(post.to_json()), 201
+# Handle when a user leaves a chat room
+@socketio.on('leave')
+def handle_leave(data):
+    username = data.get('username')
+    room = data.get('room')
+    leave_room(room)
+    emit('message', {'msg': f'{username} has left the room.'}, room=room)
+
+from datetime import datetime
+
+# Handle sending a chat message to the room
+@socketio.on('send_message')
+def handle_send_message(data):
+    room = data['room']
+    message = data['msg']
+    username = data['username']
+    
+    # Get the current time
+    timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+
+    # Send the message with the timestamp
+    emit('message', {'msg': message, 'username': username, 'time': timestamp}, room=room)
+
+
+# Handle user typing event
+@socketio.on('typing')
+def handle_typing(data):
+    room = data['room']
+    username = data['username']
+    emit('typing', {'username': username}, room=room, broadcast=True)

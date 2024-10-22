@@ -1,85 +1,112 @@
-/* Container for the product page */
+/* Main Container for Product Page */
 .product-page-container {
   display: flex;
-  justify-content: center; /* Centers content horizontally */
-  align-items: center; /* Centers content vertically */
-  min-height: 100vh; /* Fills the entire viewport height */
-  padding: 20px;
-  background-color: #171717;
-  color: #f8f4ef;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  background-color: #f8f4ef; /* Light beige background */
+  min-height: 100vh;
 }
 
-/* Inner container for the product content */
+/* Content Wrapper */
 .product-content {
-  max-width: 1200px;
-  display: grid;
-  grid-template-columns: 1fr; /* Single column for mobile */
-  gap: 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  max-width: 800px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-@media (min-width: 768px) {
-  .product-content {
-    grid-template-columns: 1fr 1fr; /* Two columns for larger screens */
-    gap: 4rem;
-  }
-}
-
-/* Image styling */
+/* Product Image */
 .product-image {
-  width: 100%;
-  height: auto;
   border-radius: 8px;
 }
 
-/* Title styling */
+/* Product Details */
+.product-details {
+  text-align: left;
+  width: 100%;
+}
+
 .product-title {
-  font-size: 2.5rem;
+  font-size: 2rem;
   font-weight: bold;
   margin-bottom: 1rem;
-  color: #ffffff;
 }
 
-/* Description styling */
 .product-description {
-  font-size: 1.1rem;
-  color: #bbb;
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
+  font-size: 1rem;
+  margin-bottom: 1rem;
 }
 
-/* Review section */
+.additional-info p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  color: #555;
+}
+
+/* Review Section */
 .review-section {
-  margin-top: 2rem;
+  margin-top: 20px;
 }
 
 .review-title {
   font-size: 1.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: 10px;
 }
 
 .review-list {
-  list-style-type: disc;
-  list-style-position: inside;
-  margin-left: 1rem;
-  color: #ccc;
+  list-style: none;
+  padding: 0;
 }
 
 .review-item {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
+  margin-bottom: 8px;
 }
 
-/* Review Stars Styling */
+.review-content {
+  display: block;
+  margin-bottom: 4px;
+}
+
+.review-stars {
+  color: #ffc107; /* Star color (gold) */
+  font-size: 1.1rem;
+}
+
+/* Product Rating and Reviews */
 .product-rating {
   font-size: 1.2rem;
-  color: #ffcc00; /* Yellow for stars */
-  margin-right: 0.5rem;
-  cursor: pointer; /* Makes the cursor change to pointer */
-  transition: color 0.3s, transform 0.2s;
+  margin-right: 10px;
 }
 
-.product-rating:hover {
-  color: #ffd700; /* Bright yellow on hover */
-  transform: scale(1.2); /* Scales up slightly on hover */
+.product-reviews {
+  font-size: 0.9rem;
+  color: #888;
+}
+
+/* Review Stars Hover Effect */
+.review-stars {
+  color: #ffc107; /* Star color (gold) */
+  font-size: 1.1rem;
+  transition: color 0.3s; /* Smooth transition */
+  display: inline-block;
+}
+
+.review-stars:hover {
+  color: #e0a800; /* Slightly darker gold on hover */
+}
+
+.review-stars span {
+  cursor: pointer; /* Pointer cursor to indicate interactivity */
+  margin-right: 2px;
+}
+
+.review-stars span:hover {
+  color: #e0a800; /* Change color on hover */
+  transform: scale(1.1); /* Slightly increase size */
 }

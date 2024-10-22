@@ -1,41 +1,53 @@
 import React from "react";
 import Image from "next/image";
+import "../styles/user-profile.css"; // Import specific CSS for user profile page
 
-interface UserProfileProps {
-  user: {
-    name: string;
-    email: string;
-    profileImage: string;
-    scentId: number;
-  };
-}
-
-const UserProfile: React.FC<UserProfileProps> = () => {
+const UserProfile = () => {
   // Example user data (this would typically come from props or state)
   const user = {
     name: "John Doe",
     email: "john.doe@example.com",
-    profileImage: "/images/profile1.png", // Path to profile image
-    scentId: 123,
+    profileImage: "/images/profile1.png",
+    note: "Rose",
+    accord: "Floral",
+    season: "Spring",
+    scents: "Light and Fresh",
+    collection: "Luxury Collection",
+    product: "Rose Petal Elegance",
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 py-8">
-      <div className="container mx-auto px-4">
-        <div className="bg-white p-6 rounded-lg shadow-md max-w-sm mx-auto text-center">
-          <div className="relative w-32 h-32 mx-auto mb-4">
-            <Image
-              src={user.profileImage}
-              alt={`${user.name}'s profile image`}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-full"
-            />
-          </div>
-          <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
-          <p className="text-gray-600">{user.email}</p>
-          <p className="text-gray-600">Scent ID: {user.scentId}</p>
+    <div className="user-profile-container">
+      <div className="user-profile-card">
+        <div className="user-profile-image">
+          <Image
+            src={user.profileImage}
+            alt={`${user.name}'s profile image`}
+            layout="fill"
+            objectFit="cover"
+            className="rounded-full"
+          />
         </div>
+        <h1 className="user-profile-name">{user.name}</h1>
+        <p className="user-profile-email">{user.email}</p>
+        <p className="user-profile-info">
+          <strong>Note:</strong> {user.note}
+        </p>
+        <p className="user-profile-info">
+          <strong>Accord:</strong> {user.accord}
+        </p>
+        <p className="user-profile-info">
+          <strong>Season:</strong> {user.season}
+        </p>
+        <p className="user-profile-info">
+          <strong>Scents:</strong> {user.scents}
+        </p>
+        <p className="user-profile-info">
+          <strong>Collection:</strong> {user.collection}
+        </p>
+        <p className="user-profile-info">
+          <strong>Product:</strong> {user.product}
+        </p>
       </div>
     </div>
   );

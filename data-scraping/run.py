@@ -15,6 +15,14 @@ with open("result.txt", "w") as result_file:
     for url in urls:
         url = url.strip()  # Remove any extra whitespace/newline characters
 
+        if not url:  # Check if the URL is empty
+            print("Empty URL encountered. Skipping...")
+            continue
+
+        if not url.startswith(("http://", "https://")):  # Validate URL schema
+            print(f"Invalid URL: {url}. Skipping...")
+            continue
+
         print(f"Processing: {url}")
 
         # Send an HTTP request to get the page content with headers
@@ -59,7 +67,8 @@ with open("result.txt", "w") as result_file:
         if notes_divs:
             print(f"Found {len(notes_divs)} notes elements.")
             for note_div in notes_divs:
-                note_name_tag = note_div.find("div", recursive=False)
+                # Look for the <div> containing the <a> tag which holds the note name
+                note_name_tag = note_div.find("a")
                 if note_name_tag:
                     note_name = note_name_tag.text.strip()
                     print(f"Note: {note_name}")

@@ -1,18 +1,16 @@
+version: "3.8"
 services:
   # User Service for testing
   user-service:
     build: ./services/user-service
     ports:
       - "5001:5000"
-    depends_on:
-      - user_db
-        # condition: service_healthy
     environment:
-      # - DATABASE_URL=postgresql://testuser:testpassword@user_db:5432/testdb
-      - DATABASE_URL=${DATABASE_USER_URL}
+      - DATABASE_URL=postgresql://testuser:testpassword@user_db:5432/testdb
       - SECRET_KEY=mytestsecretkey
     networks:
       - test-network
+    command: pytest # Run pytest directly in the user-service container
 
   # Postgres Database for User Service
   user_db:
@@ -25,23 +23,6 @@ services:
       - "5432:5432"
     volumes:
       - user_data:/var/lib/postgresql/data
-    # healthcheck:
-    #   test: ["CMD-SHELL", "pg_isready -U testuser -d testdb"]
-    #   interval: 10s
-    #   retries: 5
-    #   start_period: 30s
-    networks:
-      - test-network
-
-        # Test container that runs the tests
-  test:
-    build: ./test # Assuming your tests are in a 'test' directory with a Dockerfile
-    depends_on:
-      - user-service
-      - user_db
-    # environment:
-    #   - USER_SERVICE_URL=http://user-service:5000 # Internal service URL
-    command: pytest # Command to run tests using pytest
     networks:
       - test-network
 

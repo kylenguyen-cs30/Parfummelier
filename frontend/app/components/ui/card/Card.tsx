@@ -9,8 +9,8 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ title, value, image }) => {
   return (
-    <div className="border border-gray-300 p-4 rounded-lg mb-6 w-72 h-96">
-      <div className="relative w-full h-48 mb-4">
+    <div className="card-container">
+      <div className="image-wrapper">
         <Image
           src={image}
           alt={title}
@@ -19,8 +19,8 @@ const Card: React.FC<CardProps> = ({ title, value, image }) => {
           className="rounded-lg"
         />
       </div>
-      <h3 className="text-lg font-bold mb-2">{title}</h3>
-      <p className="text-2xl font-semibold">{value}</p>
+      <h3 className="card-title">{title}</h3>
+      <p className="card-value">{value}</p>
     </div>
   );
 };

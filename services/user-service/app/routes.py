@@ -18,7 +18,6 @@ from .models import (
 from app import db
 
 user_blueprint = Blueprint("user", __name__)
-logging.basicConfig(level=logging.INFO)
 
 # TODO:
 #

@@ -9,6 +9,6 @@ COPY kong.yml /etc/kong/kong.yml
 ENV KONG_DATABASE=off
 
 # create Kong Declarative Configuration with Docker
-ENV KONG_DECLARATIVE_CONFIG=/app/kong.yml
+ENV KONG_DECLARATIVE_CONFIG=/etc/kong/kong.yml
 
 CMD ["kong", "docker-start"]

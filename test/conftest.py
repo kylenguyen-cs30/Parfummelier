@@ -24,6 +24,7 @@ import requests
 
 
 @pytest.fixture
+<<<<<<< HEAD
 def api_url():
     # Use the provided base URL
     return "http://user-service:5000"
@@ -32,7 +33,6 @@ def api_url():
 @pytest.fixture
 def user_service_url(api_url):
     return f"{api_url}/register"
-
 
 @pytest.fixture
 def mock_api_response(mocker):

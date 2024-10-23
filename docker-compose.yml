@@ -41,6 +41,7 @@ services:
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - SECRET_KEY=${SECRET_KEY}
 
+  # NOTE: Api Gateway
   api-gateway:
     build: ./api-gateway/
     ports:
@@ -50,6 +51,7 @@ services:
       - user-service
       - authentication-service
     volumes:
+      # - ./api-gateway/kong.yml:/app/kong.yml
       - ./api-gateway/kong.yml:/kong.yml
 
   # NOTE: USER_DB

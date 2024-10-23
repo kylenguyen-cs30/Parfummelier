@@ -379,7 +379,6 @@ def get_user_details(current_user):
 # @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
 # @token_required
 # def return_favorite_product(current_user):
-#
 
 
 # NOTE: Return Favorite Collections
@@ -409,5 +408,5 @@ def get_user_details(current_user):
 #         db.session.rollback()
 #         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
 #
-
+#
 ##########################################################################################################################################

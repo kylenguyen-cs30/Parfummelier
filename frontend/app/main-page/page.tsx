@@ -33,6 +33,8 @@ export default function Main() {
           </Button>
         </div>
       </Navbar>
+
+      {/* Content Section  */}
       <Content>
         <h1>This is main page</h1>
         {/* <Card></Card> */}

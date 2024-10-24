@@ -118,6 +118,26 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     networks:
       - parfummelier-network
+  # NOTE: Forum Service
+  forum-service:
+    build: ./services/forum-service
+    ports:
+      - "5004:5000" # Expose the forum service on port 5004
+    depends_on:
+      - mongo
+    environment:
+      - MONGO_URI=mongodb://mongo:27017/chat_database
+      - SECRET_KEY=${SECRET_KEY}
+    networks:
+      - parfummelier-network
+
+  # MongoDB service (for storing chat data)
+  mongo:
+    image: mongo:latest
+    ports:
+      - "27017:27017" # Expose the default MongoDB port
+    networks:
+      - parfummelier-network
 
 networks:
   parfummelier-network:
@@ -126,3 +146,5 @@ networks:
 volumes:
   user_data:
   products_data:
+  mongo_data:
+    driver: local

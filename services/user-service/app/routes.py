@@ -11,7 +11,6 @@ from .models import (
     User,
     Note,
     Accord,
-    Season,
     Product,
     Collection,
 )
@@ -181,13 +180,11 @@ def update_scentbank_for_user(current_user):
         # Collect the new data from the request (allow users to add their own custom data)
         favorite_notes = request.json.get("favorite_notes", [])
         favorite_accords = request.json.get("favorite_accords", [])
-        favorite_seasons = request.json.get("favorite_seasons", [])
         favorite_products = request.json.get("favorite_products", [])
         favorite_collections = request.json.get("favorite_collections", [])
 
         note_objects = scent_bank.favorite_notes if favorite_notes else None
         accord_objects = scent_bank.favorite_accords if favorite_accords else None
-        season_objects = scent_bank.favorite_seasons if favorite_seasons else None
         product_objects = scent_bank.favorite_products if favorite_products else None
         collection_objects = (
             scent_bank.favorite_collections if favorite_collections else None
@@ -217,16 +214,6 @@ def update_scentbank_for_user(current_user):
                     db.session.add(accord_obj)
             accord_objects.append(accord_obj)
 
-        # Add new Season into ScentBank
-        if favorite_seasons:
-            season_objects = []
-            for season in favorite_seasons:
-                season_obj = Season.query.filter_by(name=season).first()
-                if not season_obj:
-                    season_obj = Season(name=season)
-                    db.session.add(season_obj)
-            season_objects.append(season_obj)
-
         # Add new Product into ScentBank
         if favorite_products:
             product_objects = []
@@ -255,8 +242,6 @@ def update_scentbank_for_user(current_user):
             scent_bank.favorite_notes = note_objects
         if accord_objects:
             scent_bank.favorite_accords = accord_objects
-        if season_objects:
-            scent_bank.favorite_seasons = season_objects
         if product_objects:
             scent_bank.favorite_products = product_objects
         if collection_objects:
@@ -332,7 +317,6 @@ def scentbank_details(f):
             "email": current_user.email,
             "favorite_notes": [note.name for note in scent_bank.favorite_notes],
             "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
-            "favorite_seasons": [season.name for season in scent_bank.favorite_seasons],
             "favorite_products": [
                 product.name for product in scent_bank.favorite_products
             ],

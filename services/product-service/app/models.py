@@ -1,14 +1,6 @@
 from app import db
 
 
-# NOTE: Collection model: Represents a collection of products (e.g., Bleu de Chanel)
-#
-# class Collection(db.Model):
-#     id = db.Column(db.Integer, primary_key=True)
-#     name = db.Column(db.String(100), nullable=False, unique=True)
-#     products = db.relationship("Product", backref="collection", lazy="dynamic")
-#
-
 # NOTE: Accociation table for many-to-many relationship
 
 product_note = db.Table(
@@ -21,11 +13,6 @@ product_accord = db.Table(
     "product_accord",
     db.Column("product_id", db.Integer, db.ForeignKey("product.id")),
     db.Column("accord_id", db.Integer, db.ForeignKey("accord.id")),
-)
-product_season = db.Table(
-    "product_season",
-    db.Column("product_id", db.Integer, db.ForeignKey("product.id")),
-    db.Column("season_id", db.Integer, db.ForeignKey("season.id")),
 )
 
 
@@ -47,11 +34,7 @@ class Product(db.Model):
         secondary=product_accord,
         backref=db.backref("products", lazy="dynamic"),
     )
-    seasons = db.relationship(
-        "Season",
-        secondary=product_season,
-        backref=db.backref("products", lazy="dynamic"),
-    )
+
     review = db.relationship("Review", backref="product", lazy="dynamic")
 
 
@@ -71,11 +54,5 @@ class Accord(db.Model):
 
 # PERF: Note model: Represents a fragrance note belonging to a specific accord
 class Note(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-
-
-# PERF: Note model: Represents a fragrance note belonging to a specific accord
-class Season(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)

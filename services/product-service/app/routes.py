@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from app.models import db, Product, Collection, Note, Accord, Season, Review
+from app.models import db, Product, Note, Accord, Review
 
 product_blueprint = Blueprint("product", __name__)
 
@@ -27,7 +27,6 @@ def list_products():
                 "manufacture": product.manufacture,
                 "notes": [note.name for note in product.notes],
                 "accords": [accord.name for accord in product.accords],
-                "seasons": [season.name for season in product.seasons],
                 "reviews": [
                     {"rating": review.rating, "content": review.content}
                     for review in product.review
@@ -51,7 +50,6 @@ def get_product(id):
             "collection": product.collection.name if product.collection else None,
             "notes": [note.name for note in product.notes],
             "accords": [accord.name for accord in product.accords],
-            "seasons": [season.name for season in product.seasons],
             "reviews": [
                 {"rating": review.rating, "content": review.content}
                 for review in product.reviews
@@ -110,16 +108,6 @@ def add_product():
             accord_objects.append(accord_obj)
         new_product.accords = accord_objects
 
-        # Handle Seasons
-        season_objects = []
-        for season_name in data.get("seasons", []):
-            season_obj = Season.query.filter_by(name=season_name).first()
-            if not season_obj:
-                season_obj = Season(name=season_name)
-                db.session.add(season_obj)
-            season_objects.append(season_obj)
-        new_product.seasons = season_objects
-
         db.session.add(new_product)
         db.session.commit()
 
@@ -131,7 +119,6 @@ def add_product():
                     "designer": new_product.designer,
                     "notes": [note.name for note in new_product.notes],
                     "accords": [accord.name for accord in new_product.accords],
-                    "seasons": [season.name for season in new_product.seasons],
                 },
             ),
             201,
@@ -255,7 +242,6 @@ def list_products_under_collection(id):
                 "name": product.name,
                 "designer": product.designer,
                 "year_released": product.year_released,
-                "season": product.season,
                 "notes": [
                     {"id": note.id, "name": note.name, "accord": note.accord.name}
                     for note in product.notes

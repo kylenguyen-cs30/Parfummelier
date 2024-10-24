@@ -73,7 +73,7 @@ scentBank_seasons = db.Table(
 scentBank_collections = db.Table(
     "scentBank_collections",
     db.Column("scentBank_id", db.Integer, db.ForeignKey("scent_bank.id")),
-    db.Column("collection_id", db.Integer, db.ForeignKey("season.id")),
+    db.Column("collection_id", db.Integer, db.ForeignKey("collection.id")),
 )
 
 
@@ -111,29 +111,34 @@ class ScentBank(db.Model):
 
 # NOTE: Note Table
 class Note(db.Model):
+    __tablename__ = "note"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Accords Table
 class Accord(db.Model):
+    __tablename__ = "accord"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Product Table
 class Product(db.Model):
+    __tablename__ = "product"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Season Table
 class Season(db.Model):
+    __tablename__ = "season"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)
 
 
 # NOTE: Collection Table
 class Collection(db.Model):
+    __tablename__ = "collection"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=True)

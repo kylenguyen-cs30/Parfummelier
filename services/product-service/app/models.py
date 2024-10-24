@@ -2,11 +2,12 @@ from app import db
 
 
 # NOTE: Collection model: Represents a collection of products (e.g., Bleu de Chanel)
-class Collection(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable=False, unique=True)
-    products = db.relationship("Product", backref="collection", lazy="dynamic")
-
+#
+# class Collection(db.Model):
+#     id = db.Column(db.Integer, primary_key=True)
+#     name = db.Column(db.String(100), nullable=False, unique=True)
+#     products = db.relationship("Product", backref="collection", lazy="dynamic")
+#
 
 # NOTE: Accociation table for many-to-many relationship
 
@@ -32,11 +33,10 @@ product_season = db.Table(
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    manufacturer = db.Column(db.String(100), nullable=False)
     designer = db.Column(db.String(100), nullable=False)
 
     # One-To-Many relationship
-    collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
+    # collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
 
     # many-to-many relationship
     notes = db.relationship(

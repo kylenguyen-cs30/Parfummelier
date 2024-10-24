@@ -298,7 +298,7 @@ def reset_db():
 # ------------------------------------------------------------------------------------------------#
 # NOTE: Test PUT API
 @user_blueprint.route("/test-put", methods=["PUT"])
-@token_required
+# @token_required
 def test_put(current_user):
     try:
         return (

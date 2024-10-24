@@ -65,27 +65,29 @@ def get_product(id):
 def add_product():
     try:
         data = request.json
-        # Collection creation
-        collection_name = data.get("collection")
-        collection = None
-
-        # NOTE: check if there is collection name or not
-        if collection_name:
-            # query the collection name if there is existing one
-            collection = Collection.query.filter_by(name=collection_name).first()
-            # if not creating a brand new collection
-            if not collection:
-                collection = Collection(name=collection_name)
-                db.session.add(collection)
-        else:
-            return jsonify({"error": "Collection name is missing"}), 404
+        # ----------------------------------------------------------------------------#
+        # # Collection creation
+        # collection_name = data.get("collection")
+        # collection = None
+        #
+        # # NOTE: check if there is collection name or not
+        #
+        # if collection_name:
+        #     # query the collection name if there is existing one
+        #     collection = Collection.query.filter_by(name=collection_name).first()
+        #     # if not creating a brand new collection
+        #     if not collection:
+        #         collection = Collection(name=collection_name)
+        #         db.session.add(collection)
+        # else:
+        #     return jsonify({"error": "Collection name is missing"}), 404
+        # ----------------------------------------------------------------------------#
 
         # Create a new product
         new_product = Product(
             name=data["name"],
-            manufacturer=data["manufacturer"],
             designer=data.get("designer"),
-            collection=collection,
+            # collection=collection,
         )
 
         # Handle Notes
@@ -126,14 +128,7 @@ def add_product():
                 {
                     "id": new_product.id,
                     "name": new_product.name,
-                    "manufacturer": new_product.manufacturer,
                     "designer": new_product.designer,
-                    # "collection": new_product.collection,
-                    "collection": (
-                        {"id": collection.id, "name": collection.name}
-                        if collection
-                        else None
-                    ),
                     "notes": [note.name for note in new_product.notes],
                     "accords": [accord.name for accord in new_product.accords],
                     "seasons": [season.name for season in new_product.seasons],

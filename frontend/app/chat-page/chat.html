@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Room</title>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+</head>
+<body>
+    <h2>Chat Room</h2>
+
+    <div id="messages"></div>
+
+    <input id="username" type="text" placeholder="Enter your username">
+    <input id="room" type="text" placeholder="Enter room name">
+    <button onclick="joinRoom()">Join Room</button>
+    <br>
+
+    <input id="message" type="text" placeholder="Enter your message">
+    <button onclick="sendMessage()">Send</button>
+
+    <script>
+        const socket = io();
+
+        // Join a room when the user clicks the button
+        function joinRoom() {
+            const username = document.getElementById('username').value;
+            const room = document.getElementById('room').value;
+            socket.emit('join', {username: username, room: room});
+        }
+
+        // Send a message to the room
+        function sendMessage() {
+            const message = document.getElementById('message').value;
+            const username = document.getElementById('username').value;
+            const room = document.getElementById('room').value;
+            socket.emit('send_message', {username: username, msg: message, room: room});
+        }
+
+        // Listen for messages from the server
+        socket.on('message', function(data) {
+            const messagesDiv = document.getElementById('messages');
+            const newMessage = document.createElement('p');
+
+            // Include the timestamp in the message display
+            newMessage.innerHTML = `<b>${data.username || 'Server'}:</b> ${data.msg} <i style="font-size: smaller;">(${data.time})</i>`;
+            messagesDiv.appendChild(newMessage);
+        });
+    </script>
+</body>
+</html>

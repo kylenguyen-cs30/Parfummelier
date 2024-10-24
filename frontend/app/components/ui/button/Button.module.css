@@ -1,9 +1,28 @@
 .button {
-  padding: 6px;
-  border-radius: 5%;
-  background-color: rgb(100, 130, 173);
-  font-family: sans-serif;
-  color: white;
-  text-justify: auto;
-  position: flex;
+  padding: 10px 20px; 
+  border-radius: 8px;  
+  background-color: rgb(100, 130, 173); 
+  color: white; 
+  font-family: sans-serif;  
+  font-size: 16px;  
+  border: none;  
+  cursor: pointer; 
+  transition: background-color 0.3s ease, transform 0.2s ease;  
+}
+
+/* Hover */
+.button:hover {
+  background-color: rgb(80, 110, 160);  
+}
+
+/* Active */
+.button:active {
+  background-color: rgb(60, 90, 140);  
+  transform: scale(0.98);  
+}
+
+/* Focus */
+.button:focus {
+  outline: 3px solid rgba(100, 130, 173, 0.5);  
+  outline-offset: 2px;
 }

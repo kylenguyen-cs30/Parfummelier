@@ -118,6 +118,7 @@ services:
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
     networks:
       - parfummelier-network
+
   # NOTE: Forum Service
   forum-service:
     build: ./services/forum-service
@@ -131,13 +132,21 @@ services:
     networks:
       - parfummelier-network
 
-  # MongoDB service (for storing chat data)
+  # NOTE: MongoDB service (for storing chat data)
   mongo:
     image: mongo:latest
     ports:
       - "27017:27017" # Expose the default MongoDB port
     networks:
       - parfummelier-network
+    volumes:
+      - mongo_data:/data/db
+    healthcheck:
+      test: ["CMD", "mongo", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
 networks:
   parfummelier-network:

@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify
 from flask_socketio import join_room, leave_room, emit
+from app.socketio import socketio
 
 # from app import socketio
 from app.chat_route.models import (
@@ -20,6 +21,11 @@ def init_socketio(sio):
 chat_blueprint = Blueprint("chat", __name__)
 
 
+@chat_blueprint.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Chat service is online"})
+
+
 # NOTE: HTTPE Route to create a new chatroom
 @chat_blueprint.route("/chatroom", methods=["POST"])
 def create_new_chatroom():
@@ -32,7 +38,7 @@ def create_new_chatroom():
     return jsonify({"chatroom": chatroom_id}), 201
 
 
-# HTTP route to get messages from a chatroom
+# NOTE: HTTP route to get messages from a chatroom
 @chat_blueprint.route("/chatroom/<chatroom_id>/messages", methods=["GET"])
 def get_chatroom_messages(chatroom_id):
     messages = get_messages(chatroom_id)
@@ -41,7 +47,20 @@ def get_chatroom_messages(chatroom_id):
     return jsonify(messages), 200
 
 
-# WebSocket route to join a chatroom
+# NOTE: Connect
+@socketio.on("connect")
+def handle_connect():
+    print("Client connected")
+    emit("connection_response", {"data": "Connected"})
+
+
+# NOTE: disconnect
+@socketio.on("disconnect")
+def handle_disconnect():
+    print("Client disconnected")
+
+
+# NOTE: WebSocket route to join a chatroom
 @socketio.on("join")
 def handle_join(data):
     chatroom_id = data["chatroomId"]
@@ -53,7 +72,7 @@ def handle_join(data):
     )
 
 
-# WebSocket route to send a message
+# NOTE: WebSocket route to send a message
 @socketio.on("send_message")
 def handle_message(data):
     chatroom_id = data["chatroomId"]
@@ -67,7 +86,7 @@ def handle_message(data):
     emit("new_message", message, room=chatroom_id)
 
 
-# WebSocket route to leave a chatroom
+# NOTE: WebSocket route to leave a chatroom
 @socketio.on("leave")
 def handle_leave(data):
     chatroom_id = data["chatroomId"]

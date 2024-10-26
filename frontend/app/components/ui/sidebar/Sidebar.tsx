@@ -1,53 +1,21 @@
+import React from "react";
+import "./Sidebar.css";
+
 const Sidebar = () => {
   return (
-    <div
-      style={{
-        width: "200px",
-        background: "#2c3e50",
-        padding: "20px",
-        height: "100vh",
-        color: "white",
-      }}
-    >
-      <h2 style={{ marginBottom: "40px" }}>Dashboard</h2>
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        <li>
-          <a href="home" style={{ color: "white" }}>
-            Home
-          </a>
-        </li>
-        <li>
-          <a href="profile" style={{ color: "white" }}>
-            Profile
-          </a>
-        </li>
-        <li>
-          <a href="products" style={{ color: "white" }}>
-            Products
-          </a>
-        </li>
-        <li>
-          <a href="quiz" style={{ color: "white" }}>
-            Quiz
-          </a>
-        </li>
-        <li>
-          <a href="forum" style={{ color: "white" }}>
-            Forum
-          </a>
-        </li>
-        <li>
-          <a href="settings" style={{ color: "white" }}>
-            Settings
-          </a>
-        </li>
-        <li>
-          <a href="logout" style={{ color: "white" }}>
-            Logout
-          </a>
-        </li>
+    <div className="sidebar-container">
+      <h2 className="sidebar-title">Dashboard</h2>
+      <ul className="sidebar-list">
+        <li><a href="home" className="sidebar-link">Home</a></li>
+        <li><a href="profile" className="sidebar-link">Profile</a></li>
+        <li><a href="products" className="sidebar-link">Products</a></li>
+        <li><a href="quiz" className="sidebar-link">Quiz</a></li>
+        <li><a href="forum" className="sidebar-link">Forum</a></li>
+        <li><a href="settings" className="sidebar-link">Settings</a></li>
+        <li><a href="logout" className="sidebar-link">Logout</a></li>
       </ul>
     </div>
   );
 };
+
 export default Sidebar;

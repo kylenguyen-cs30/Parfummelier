@@ -1,0 +1,25 @@
+.navbar-container {
+    max-width: 100vw;
+    padding: 1rem;
+    margin: 0 auto;
+  }
+  
+  .navbar-content {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .navbar-title {
+    padding: 1rem;
+    font-size: 1.5rem;
+    color: black;
+  }
+  
+  .navbar-children {
+    width: 100%;
+    margin-left: 2rem;
+  }
+  

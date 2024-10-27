@@ -14,11 +14,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Expose the port the service will run on
 EXPOSE 5004
 
-# Define environment variables (you can modify these as needed)
-ENV MONGO_URI=mongodb://mongo:27018/chat_database
-ENV FLASK_APP=run.py
-ENV FLASK_ENV=production
-
 # Run the command to start the Flask app
 # CMD ["flask", "run", "--host=1.0.0.0"]
 # CMD ["flask", "run"]

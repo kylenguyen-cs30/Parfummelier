@@ -24,7 +24,6 @@ import requests
 
 
 @pytest.fixture
-<<<<<<< HEAD
 def api_url():
     # Use the provided base URL
     return "http://user-service:5000"

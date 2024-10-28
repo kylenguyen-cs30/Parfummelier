@@ -1532,6 +1532,17 @@ ACCORD_NOTE_TABLE = [
     {"note": "Yeast", "accord": "Natural and Synthetic, Popular and Weird"},
 ]
 
+def get_accords_from_notebank(notebank):
+    
+    found_accords = set()
+
+    for note in notebank:
+        for entry in ACCORD_NOTE_TABLE:
+            if entry["note"].lower() == note.lower():
+                found_accords.add(entry["accord"])
+
+    return list(found_accords)
+
 # Return the accord-note data as JSON
 def get_accord_note_data_json():
     return json.dumps(ACCORD_NOTE_TABLE, indent=4)

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from typing import List, Dict
-from .accord_note_table import get_accord_note_data_json
+from .accord_note_table import get_accord_note_data_json, get_accords_from_notebank
 
 router = APIRouter()
 
@@ -67,6 +67,21 @@ def submit_quiz(user_id: int, answers: List[str]):
     user_notebanks[user_id] = notebank
 
     return {"message": "Notebank created successfully", "notebank": notebank}
+
+@router.get("/user-accords/{user_id}")
+def get_user_accords(user_id: int):
+    # Check if the user's notebank exists
+    if user_id not in user_notebanks:
+        raise HTTPException(status_code=404, detail="User notebank not found")
+
+    # Retrieve the user's notebank
+    notebank = user_notebanks[user_id]
+
+    # Get the corresponding accords
+    accords = get_accords_from_notebank(notebank)
+
+    # Return the results as JSON
+    return {"user_id": user_id, "accords": accords}
 
 @router.get("/accord-note-data/")
 def get_accord_note_data():

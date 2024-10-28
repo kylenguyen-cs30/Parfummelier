@@ -1,4 +1,5 @@
 import React, { ReactNode } from "react";
+import "./Content.css";  // Import the CSS file
 
 interface ContentProps {
   children: ReactNode;
@@ -6,7 +7,7 @@ interface ContentProps {
 
 const Content: React.FC<ContentProps> = ({ children }) => {
   return (
-    <div className="flex justify-center items-center h-64 bg-gray-200">
+    <div className="content-container">  {/* Use new CSS class */}
       {children}
     </div>
   );

@@ -71,12 +71,13 @@ def submit_quiz(user_id: int, answers: List[str]):
 @router.get("/user-accords/{user_id}")
 def get_user_accords(user_id: int):
     # Check if the user's notebank exists
-    if user_id not in user_notebanks:
+    if user_id not in user_notebanks: 
         raise HTTPException(status_code=404, detail="User notebank not found")
 
     # Retrieve the user's notebank
     notebank = user_notebanks[user_id]
 
+    # send request to "http://localhost:5001/"
     # Get the corresponding accords
     accords = get_accords_from_notebank(notebank)
 

@@ -1,8 +1,9 @@
 # import logging
-# import jwt
+import jwt
 # import os
 #
 # # import smtplib [optional]
+from flask_migrate import current
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
 from functools import wraps
@@ -357,6 +358,36 @@ def get_user_details(current_user):
         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 
 
+"""
+This route will return user's information when a chat is initialized
+"""
+@user_blueprint.route("/user/chat-info", methods=["GET"])
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+@token_required
+def get_user_chat_info(current_user):
+    """
+    Get minimal user information needed for chat features.
+    """
+    try:
+        user_details = {
+            "firstName": current_user.firstName,
+            "lastName": current_user.lastName,
+            "userName": current_user.userName,
+            "userId": current_user.id,
+        }
+        
+        return jsonify(user_details),200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+        
+
+
+
+        
+    
+
+
+
 # NOTE: Return the Favortite Products
 #
 # @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
@@ -367,8 +398,6 @@ def get_user_details(current_user):
 # NOTE: Return Favorite Collections
 
 # NOTE: Delete a user
-#
-##########################################################################################################################################
 # @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
 # def delete_user(user_id):
 #     try:
@@ -391,5 +420,3 @@ def get_user_details(current_user):
 #         db.session.rollback()
 #         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
 #
-#
-##########################################################################################################################################

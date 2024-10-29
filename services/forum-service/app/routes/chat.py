@@ -79,35 +79,48 @@ async def get_messages(chatroom_id: str):
 @router.websocket("/ws/{chatroom_id}")
 async def websocket_endpoint(websocket: WebSocket, chatroom_id: str):
     """
-    WebSocket endpoint handling real-time chat connections
+    WebSocket endpoint for chat connections.
+    URL format: ws://localhost:5004/chat/ws/CHATROOM_ID?token=JWT_TOKEN
     
-    Args:
-        websocket (WebSocket): FastAPI WebSocket connection
-        chatroom_id (str): ID of the chatroom to connect to
-    
-    This endpoint:
-    1. Establishes WebSocket connection
-    2. Maintains connection and handles incoming messages
-    3. Handles disconnection and cleanup
+    Flow:
+    1. Client connects with token in URL query
+    2. Validate token presence
+    3. Accept connection and add to chat service
+    4. Enter message listening loop
+    5. Handle disconnection
     """
+    
+    # First try block: Connection setup
     try:
-        # Accept and store the WebSocket connection
+        # Extract token from URL query parameters
+        # Example URL: ws://localhost:5004/chat/ws/123?token=abc123
+        token = websocket.query_params.get("token")
+        
+        # If no token provided, reject the connection
+        if not token:
+            await websocket.close(code=1008)  # 1008 = Policy violation
+            return
+        
+        # Accept the connection and add to chat service
         await chat_service.connect(websocket, chatroom_id)
+        
+        # Second try block: Message handling loop
         try:
             # Infinite loop to handle incoming messages
             while True:
-                # Wait for and process incoming messages
+                # Wait for and parse JSON message from client
                 data = await websocket.receive_json()
-                await chat_service.handle_message(chatroom_id, data)
+                # Example data: {"content": "Hello everyone!"}
+                
+                # Handle the message with user's token
+                await chat_service.handle_message(chatroom_id, data, token)
+                
         except WebSocketDisconnect:
-            # Clean up when client disconnects
+            # Handle client disconnection gracefully
             await chat_service.disconnect(websocket, chatroom_id)
-        except Exception as e:
-            # Handle other errors during message processing
-            print(f"Error in websocket connection: {e}")
-            await chat_service.disconnect(websocket, chatroom_id)
+            
     except Exception as e:
-        # Handle connection establishment errors
-        print(f"Failed to establish websocket connection: {e}")
+        # Handle any other errors
+        print(f"WebSocket error: {e}")
         if websocket.client_state.CONNECTED:
-            await websocket.close(code=1000)
+            await websocket.close(code=1011)  # 1011 = Internal error

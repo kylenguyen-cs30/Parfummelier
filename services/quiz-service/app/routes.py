@@ -1,8 +1,12 @@
-from fastapi import APIRouter, HTTPException
+from flask import Blueprint, request, jsonify, abort
 from typing import List, Dict
 from .accord_note_table import get_accord_note_data_json, get_accords_from_notebank
 
-router = APIRouter()
+quiz_blueprint = Blueprint("quiz", __name__)
+
+@quiz_blueprint.route("/", methods=["GET"])
+def home():
+    return jsonify({"message": "Quiz Service launched"}), 200
 
 # In-memory dictionary for user notebanks
 user_notebanks: Dict[int, List[str]] = {}
@@ -51,38 +55,42 @@ ANSWER_TO_NOTES = {
     "A fantasy with magical creatures and faraway lands": ["Orange", "Pineapple", "Musk"],
 }
 
-@router.post("/submit-quiz/")
-def submit_quiz(user_id: int, answers: List[str]):
-    if len(answers) != 10:
-        raise HTTPException(status_code=400, detail="Quiz must have exactly 10 answers.")
+# NOTE: Submit quiz responses
 
-    # Build the user's notebank based on answers
+@quiz_blueprint.route("/submit-quiz/", methods=["POST"])
+def submit_quiz():
+    data = request.json
+    answers = data.get("answers", [])
+
+    if len(answers) != 10:
+        abort(400, description="Quiz must have exactly 10 answers.")
+
+    # Build the notebank based on answers
     notebank = []
     for answer in answers:
         if answer not in ANSWER_TO_NOTES:
-            raise HTTPException(status_code=400, detail=f"Invalid answer: {answer}")
+            abort(400, description=f"Invalid answer: {answer}")
         notebank.extend(ANSWER_TO_NOTES[answer])
 
-    # Store the notebank in the in-memory dictionary
-    user_notebanks[user_id] = notebank
+    # Store the notebank in localhost
+    user_notebanks["localhost:5005"] = notebank
 
-    return {"message": "Notebank created successfully", "notebank": notebank}
+    return jsonify({"message": "Notebank created successfully", "notebank": notebank})
 
-@router.get("/user-accords/{user_id}")
-def get_user_accords(user_id: int):
-    # Check if the user's notebank exists
-    if user_id not in user_notebanks:
-        raise HTTPException(status_code=404, detail="User notebank not found")
+@quiz_blueprint.route("/user-accords", methods=["GET"])
+def get_user_accords():
+    
+    if "localhost:5005" not in user_notebanks:
+        abort(404, description="Local notebank not found")
 
-    # Retrieve the user's notebank
-    notebank = user_notebanks[user_id]
+    # Retrieve the notebank
+    notebank = user_notebanks["localhost:5005"]
 
     # Get the corresponding accords
     accords = get_accords_from_notebank(notebank)
 
-    # Return the results as JSON
-    return {"user_id": user_id, "accords": accords}
+    return jsonify({"accords": accords})
 
-@router.get("/accord-note-data/")
+@quiz_blueprint.route("/accord-note-data/", methods=["GET"])
 def get_accord_note_data():
-    return get_accord_note_data_json()
+    return jsonify(get_accord_note_data_json())

@@ -25,46 +25,7 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // BUG:
-  // this part still have bugs. we need to investigate
-  //
-  // if (path === "/main-page") {
-  //   if (!accessToken) {
-  //     return NextResponse.redirect(new URL("/signin", request.url)); // If no access token, redirect to login
-  //   }
-  //
-  //   // Check if the access token is valid
-  //   const validateTokenResponse = await fetch(
-  //     "http://localhost:5002/validate-token",
-  //     {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ access_token: accessToken }),
-  //     },
-  //   );
-  //
-  //   if (validateTokenResponse.status === 401) {
-  //     const responseData = await validateTokenResponse.json();
-  //
-  //     // If the token is expired, refresh it
-  //     if (responseData.status === "expired" && refreshToken) {
-  //       // Call the /refresh endpoint to get a new access_token and refresh_token
-  //       const refreshResponse = await fetch("http://localhost:5002/refresh", {
-  //         method: "POST",
-  //         headers: { "Content-Type": "application/json" },
-  //         credentials: "include", // Ensure cookies are sent with the request
-  //       });
-  //
-  //       if (refreshResponse.status === 200) {
-  //         return NextResponse.next(); // Proceed if the token is refreshed successfully
-  //       } else {
-  //         return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if refresh failed
-  //       }
-  //     } else {
-  //       return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if no refresh token
-  //     }
-  //   }
-  // }
+
   // For routes that require token refresh logic
   if (path === "/protected-resource") {
     if (!accessToken && refreshToken) {
@@ -81,3 +42,45 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ["/change-password", "/main-page", "/protected-resource"], // Protect routes
 };
+
+
+// BUG:
+// this part still have bugs. we need to investigate
+//
+// if (path === "/main-page") {
+//   if (!accessToken) {
+//     return NextResponse.redirect(new URL("/signin", request.url)); // If no access token, redirect to login
+//   }
+//
+//   // Check if the access token is valid
+//   const validateTokenResponse = await fetch(
+//     "http://localhost:5002/validate-token",
+//     {
+//       method: "POST",
+//       headers: { "Content-Type": "application/json" },
+//       body: JSON.stringify({ access_token: accessToken }),
+//     },
+//   );
+//
+//   if (validateTokenResponse.status === 401) {
+//     const responseData = await validateTokenResponse.json();
+//
+//     // If the token is expired, refresh it
+//     if (responseData.status === "expired" && refreshToken) {
+//       // Call the /refresh endpoint to get a new access_token and refresh_token
+//       const refreshResponse = await fetch("http://localhost:5002/refresh", {
+//         method: "POST",
+//         headers: { "Content-Type": "application/json" },
+//         credentials: "include", // Ensure cookies are sent with the request
+//       });
+//
+//       if (refreshResponse.status === 200) {
+//         return NextResponse.next(); // Proceed if the token is refreshed successfully
+//       } else {
+//         return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if refresh failed
+//       }
+//     } else {
+//       return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if no refresh token
+//     }
+//   }
+// }

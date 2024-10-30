@@ -38,3 +38,5 @@ const ChatInput: React.FC<ChatInputProps> = ({ onSendMessage, isConnected }) => 
     </form>
   );
 };
+
+export default ChatInput;

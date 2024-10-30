@@ -28,7 +28,7 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://api-gateway:8000/auth/login",
+        "http://localhost:8000/auth/login",
         // "http://localhost:8000/auth/login", // TODO: Need to test this endpoint
         // "http://localhost:5002/login",
         // `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,

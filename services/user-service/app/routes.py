@@ -141,9 +141,18 @@ def register_user():
 # WARNING: This route should be disabled
 #
 # ----------------------------------------------------------------#
-@user_blueprint.route("/users", methods=["GET"])
+@user_blueprint.route("/users", methods=["GET", "OPTIONS"])
+@cross_origin(
+    origins=["http://localhost:3000"],
+    methods=["GET", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    supports_credentials=True
+)
 @token_required
-def list_users():
+def list_users(current_user):  # Added current_user parameter
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+        
     try:
         users = User.query.all()
         user_list = [

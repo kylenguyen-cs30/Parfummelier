@@ -1,13 +1,13 @@
 "use client"
 import React, { useEffect, useState } from "react"
 import axios from "axios"
-import { useRouter } from "next/router"
+import { useRouter } from "next/navigation"
 
 interface User {
-  id: string;
+  id: number;
   firstName: string;
   lastName: string;
-  emai: string;
+  email: string;
 }
 
 interface ForumPost {
@@ -48,23 +48,58 @@ export default function ForumPage() {
   const router = useRouter();
 
   useEffect(() => {
-
     const fetchUsers = async () => {
       try {
+        // First get the access token
+        const tokenResponse = await axios.get('/api/getAccessToken');
+        const { access_token } = tokenResponse.data;
+
+        console.log('Making request with token:', access_token); // Debug log
+
         const response = await axios.get('http://localhost:8000/user/users', {
+          headers: {
+            'Authorization': `Bearer ${access_token}`,
+            'Content-Type': 'application/json',
+          },
           withCredentials: true
-        })
-        setUsers(response.data)
-
+        });
+        
+        setUsers(response.data);
       } catch (err) {
-        setError('Failed to load users')
-        console.error("Error fetching users: ", err)
+        if (axios.isAxiosError(err)) {
+          if (err.response) {
+            // The request was made and the server responded with a status code
+            // that falls out of the range of 2xx
+            console.error('Error response:', {
+              data: err.response.data,
+              status: err.response.status,
+              headers: err.response.headers,
+            });
+            
+            if (err.response.status === 401) {
+              setError('Please sign in to view users');
+              router.push('/signin');
+            } else {
+              setError(`Server error: ${err.response.data?.error || 'Unknown error'}`);
+            }
+          } else if (err.request) {
+            // The request was made but no response was received
+            console.error('No response received:', err.request);
+            setError('No response from server');
+          } else {
+            // Something happened in setting up the request
+            console.error('Error setting up request:', err.message);
+            setError('Failed to make request');
+          }
+        } else {
+          console.error('Non-Axios error:', err);
+          setError('An unexpected error occurred');
+        }
       }
-    }
-    fetchUsers()
+    };
 
-  }, [])
-
+    fetchUsers();
+  }, [router]);
 
   const handleUserClick = (user: User) => {
     setSelectedUser(user);
@@ -74,21 +109,32 @@ export default function ForumPage() {
     if (!selectedUser) return;
 
     try {
-      // Create a new chat room
-      const response = await axios.post('http://api-gateway:8000/chat/create-room', {
+      // Get the access token
+      const tokenResponse = await axios.get('/api/getAccessToken');
+      const { access_token } = tokenResponse.data;
+
+      // Create chatroom with authorization header
+      const response = await axios.post('http://localhost:5004/chat/chatroom', {
         participants: [selectedUser.id]
       }, {
-        withCredentials: true
+        withCredentials: true,
+        headers: {
+          'Authorization': `Bearer ${access_token}`
+        }
       });
 
-      const { roomId } = response.data;
-
-      // Navigate to chat page with the room ID
-      router.push(`/chat-page?roomId=${roomId}`);
+      const { chatroom_id } = response.data;
+      router.push(`/chat-page?roomId=${chatroom_id}`);
     } catch (err) {
-      setError('Failed to create chat room');
-      console.error('Error creating chat room:', err);
+      if (axios.isAxiosError(err) && err.response?.status === 401) {
+        setError('Please sign in to start a chat');
+        router.push('/signin');
+      } else {
+        setError('Failed to create chat room');
+        console.error('Error creating chat room:', err);
+      }
     }
+
   };
 
   return (

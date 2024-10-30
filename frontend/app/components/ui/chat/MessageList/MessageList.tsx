@@ -33,3 +33,5 @@ const Message: React.FC<MessageListProps> = ({ messages }) => {
     </div>
   );
 }
+
+export default Message;

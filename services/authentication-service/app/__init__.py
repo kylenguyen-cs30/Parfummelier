@@ -20,7 +20,7 @@ def create_app():
     # NOTE: For Development
     CORS(
         app,
-        resources={r"/*": {"origins": "http://localhost:3000/"}},
+        resources={r"/*": {"origins": "*"}},
         methods=[
             "GET",
             "POST",

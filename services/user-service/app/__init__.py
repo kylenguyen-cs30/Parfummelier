@@ -14,22 +14,20 @@ def create_app():
     app = Flask(__name__)
 
     # NOTE: For Development
+    # Updated CORS configuration
     CORS(
         app,
-        resources={r"/*": {"origins": "*"}},
-        methods=[
-            "GET",
-            "POST",
-            "PUT",
-            "DELETE",
-            "OPTIONS",
-        ],
-        supports_credentials=True,
-        allow_headers=[
-            "Content-Type",
-            "Authorization",
-            "Access-Control-Allow-Credentials",
-        ],
+        resources={
+            r"/*": {
+                "origins": "http://localhost:3000",  # Single string instead of list
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+                "expose_headers": ["Content-Type", "Authorization"],
+                "max_age": 600,
+                "send_wildcard": False
+            }
+        }
     )
 
     app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(

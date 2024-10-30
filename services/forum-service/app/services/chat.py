@@ -4,6 +4,7 @@ from app.database import Database
 from typing import Dict, Set
 from datetime import datetime
 from .user_service import UserService
+from bson import ObjectId
 
 import json
 import traceback
@@ -31,68 +32,61 @@ class ChatService:
         self.user_service = UserService()
         self.user_info_cache = {}  # Cache for user information
     
-    async def connect(self, websocket: WebSocket, chatroom_id: str):
-        """
-        Handle new WebSocket connection for a chatroom.
-        """
-        await websocket.accept()
-        if chatroom_id not in self.active_connections:
-            self.active_connections[chatroom_id] = set()
-        self.active_connections[chatroom_id].add(websocket)
     
-    async def disconnect(self, websocket: WebSocket, chatroom_id: str):
-        """
-        Handle WebSocket disconnection from a chatroom.
-        """
-        self.active_connections[chatroom_id].remove(websocket)
-        if not self.active_connections[chatroom_id]:
-            del self.active_connections[chatroom_id]
+    # async def disconnect(self, websocket: WebSocket, chatroom_id: str):
+    #     """
+    #     Handle WebSocket disconnection from a chatroom.
+    #     """
+    #     self.active_connections[chatroom_id].remove(websocket)
+    #     if not self.active_connections[chatroom_id]:
+    #         del self.active_connections[chatroom_id]
     
     async def create_chatroom(self, chatroom_data: dict):
         """
         Create a new chatroom in the database.
         """
-        result = self.db.chatrooms.insert_one(chatroom_data)
-        return {"chatroom_id": str(result.inserted_id)}
-    
+        try:
+            result = self.db.chatrooms.insert_one(chatroom_data)
+            return {"chatroom_id": str(result.inserted_id)}
+        except Exception as e:
+            logger.error(f"Error creating chatroom: {str(e)}")
+            raise    
+
     async def get_messages(self, chatroom_id: str):
         """
         Retrieve all messages for a specific chatroom.
         """
-        messages = list(self.db.messages.find({"chatroom_id": chatroom_id}))
-        for msg in messages:
-            msg["_id"] = str(msg["_id"])
-        return messages
-    
+        try:
+            # Convert chatroom_id to ObjectId for MongoDB query
+            room_id = ObjectId(chatroom_id)
+            messages = list(self.db.messages.find({"chatroom_id": str(room_id)}))
+            for msg in messages:
+                msg["_id"] = str(msg["_id"])
+            return messages
+        except Exception as e:
+            logger.error(f"Error getting messages: {str(e)}")
+            raise    
+
+
+
     # Handle message and store message into mongodb 
     async def handle_message(self, chatroom_id: str, data: dict, access_token: str):
-        """
-        Process and store a new chat message, then broadcast it.
-        Now includes user information from the user service.
-        
-        Args:
-            chatroom_id (str): ID of the chatroom receiving the message
-            data (dict): Message data including content
-            access_token (str): JWT token for user authentication
-        """
         try:
-
-            # Debug logging
             logger.info(f"Processing message for chatroom {chatroom_id}")
             logger.info(f"Message data: {data}")
-            logger.info(f"Using token: {access_token}")
-
 
             # Get user info from token
             user_info = await self.user_service.get_user_chat_info(access_token)
-            logger.info(f"Retrieve user info: {user_info}")
+            logger.info(f"Retrieved user info: {user_info}")
 
-            user_id = user_info["user_id"]
+            # Validate message format
+            if "content" not in data:
+                raise ValueError("Message must contain 'content' field")
 
-            # Create message document with user info
+            # Create message document
             message = {
                 "chatroom_id": chatroom_id,
-                "user_id": user_id,
+                "user_id": user_info["user_id"],
                 "userName": user_info["userName"],
                 "firstName": user_info["firstName"],
                 "lastName": user_info["lastName"],
@@ -100,16 +94,15 @@ class ChatService:
                 "timestamp": datetime.now()
             }
             
-            # Store message in database
+            # Store in database
             result = self.db.messages.insert_one(message)
             message["_id"] = str(result.inserted_id)
             message["timestamp"] = message["timestamp"].isoformat()
             
-            # Broadcast message to all connected clients
+            # Broadcast
             await self.broadcast(chatroom_id, message)
             
         except Exception as e:
-            # Print full error details
             logger.error(f"Error handling message: {str(e)}")
             logger.error(f"Traceback: {traceback.format_exc()}")
             error_message = {
@@ -124,9 +117,28 @@ class ChatService:
         Broadcast a message to all connected clients in a chatroom.
         """
         if chatroom_id in self.active_connections:
+            disconnected = set()
+
+            # Log the broadcast attempt
+            logger.info(f"Broadcasting message {message.get('_id')} to room {chatroom_id}")
+
             for connection in self.active_connections[chatroom_id]:
-                await connection.send_json(message)
-    
+                try:
+                    await connection.send_json(message)
+                except Exception as e:
+                    logger.error(f"Error broadcasting message: {e}")
+                    disconnected.add(connection)
+            
+            # Remove any disconnected clients
+            for connection in disconnected:
+                self.active_connections[chatroom_id].remove(connection)
+                logger.info(f"Removed disconnected client from room {chatroom_id}")
+            if not self.active_connections[chatroom_id]:
+                del self.active_connections[chatroom_id]
+                logger.info(f"Removed empty room {chatroom_id}")
+
+
+
     async def cleanup(self):
         """
         Clean up resources when shutting down.

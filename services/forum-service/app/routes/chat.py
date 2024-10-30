@@ -3,8 +3,11 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, st
 from app.models.chat import ChatroomCreate, Message
 from app.services.chat import ChatService
 from typing import List
-import json
 from bson import ObjectId
+
+import logging
+
+logger = logging.getLogger(__name__)
 
 # Initialize FastAPI router
 router = APIRouter()
@@ -48,18 +51,6 @@ async def create_chatroom(chatroom: ChatroomCreate):
 # Get messages for a specific chatroom
 @router.get("/chatroom/{chatroom_id}/messages")
 async def get_messages(chatroom_id: str):
-    """
-    Retrieves all messages for a specific chatroom
-    
-    Args:
-        chatroom_id (str): MongoDB ObjectId of the chatroom as string
-    
-    Returns:
-        list: List of messages in the chatroom
-    
-    Raises:
-        HTTPException: If chatroom ID is invalid or retrieval fails
-    """
     try:
         # Validate chatroom_id format using MongoDB's ObjectId
         if not ObjectId.is_valid(chatroom_id):
@@ -68,59 +59,76 @@ async def get_messages(chatroom_id: str):
                 detail="Invalid chatroom ID format"
             )
         messages = await chat_service.get_messages(chatroom_id)
-        return messages
+        return {"messages": messages}  # Wrap in dictionary to match frontend expectations
     except Exception as e:
+        logger.error(f"Error getting messages: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
 
-# WebSocket endpoint for real-time chat
 @router.websocket("/ws/{chatroom_id}")
 async def websocket_endpoint(websocket: WebSocket, chatroom_id: str):
     """
     WebSocket endpoint for chat connections.
     URL format: ws://localhost:5004/chat/ws/CHATROOM_ID?token=JWT_TOKEN
-    
-    Flow:
-    1. Client connects with token in URL query
-    2. Validate token presence
-    3. Accept connection and add to chat service
-    4. Enter message listening loop
-    5. Handle disconnection
     """
-    
-    # First try block: Connection setup
     try:
         # Extract token from URL query parameters
-        # Example URL: ws://localhost:5004/chat/ws/123?token=abc123
         token = websocket.query_params.get("token")
+        logger.info(f"WebSocket connection attempt for room {chatroom_id}")
         
-        # If no token provided, reject the connection
         if not token:
-            await websocket.close(code=1008)  # 1008 = Policy violation
+            logger.warning("No token provided in WebSocket connection")
+            await websocket.close(code=4001, reason="No token provided")
             return
+
+        # Accept the connection first
+        await websocket.accept()
+        logger.info(f"WebSocket connection accepted for room {chatroom_id}")
         
-        # Accept the connection and add to chat service
-        await chat_service.connect(websocket, chatroom_id)
-        
-        # Second try block: Message handling loop
         try:
-            # Infinite loop to handle incoming messages
+            # Add to chat service WITHOUT accepting again
+            if chatroom_id not in chat_service.active_connections:
+                chat_service.active_connections[chatroom_id] = set()
+            chat_service.active_connections[chatroom_id].add(websocket)
+            logger.info(f"Added to active connections for room {chatroom_id}")
+            
+            # Message handling loop
             while True:
-                # Wait for and parse JSON message from client
-                data = await websocket.receive_json()
-                # Example data: {"content": "Hello everyone!"}
-                
-                # Handle the message with user's token
-                await chat_service.handle_message(chatroom_id, data, token)
-                
-        except WebSocketDisconnect:
-            # Handle client disconnection gracefully
-            await chat_service.disconnect(websocket, chatroom_id)
+                try:
+                    # Wait for and parse JSON message from client
+                    data = await websocket.receive_json()
+                    logger.info(f"Received message in room {chatroom_id}: {data}")
+                    # Handle the message with user's token
+                    await chat_service.handle_message(chatroom_id, data, token)
+                except WebSocketDisconnect:
+                    logger.info(f"WebSocket disconnected for room {chatroom_id}")
+                    break
+                except Exception as e:
+                    logger.error(f"Error handling message: {e}")
+                    await websocket.send_json({
+                        "type": "error",
+                        "content": "Failed to process message"
+                    })
+                    
+        finally:
+            # Clean up on disconnect
+            if chatroom_id in chat_service.active_connections:
+                chat_service.active_connections[chatroom_id].remove(websocket)
+                if not chat_service.active_connections[chatroom_id]:
+                    del chat_service.active_connections[chatroom_id]
+                logger.info(f"Cleaned up connection for room {chatroom_id}")
             
     except Exception as e:
-        # Handle any other errors
-        print(f"WebSocket error: {e}")
+        logger.error(f"WebSocket error: {str(e)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
         if websocket.client_state.CONNECTED:
-            await websocket.close(code=1011)  # 1011 = Internal error
+            await websocket.close(code=1011)
+
+
+
+
+
+
+

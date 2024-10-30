@@ -141,25 +141,26 @@ def register_user():
 # WARNING: This route should be disabled
 #
 # ----------------------------------------------------------------#
-# @user_blueprint.route("/users", methods=["GET"])
-# def list_users():
-#     try:
-#         users = User.query.all()
-#         user_list = [
-#             {
-#                 "id": user.id,
-#                 "firstName": user.firstName,
-#                 "lastName": user.lastName,
-#                 "email": user.email,
-#                 "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
-#                 "scentID": user.scentID,
-#             }
-#             for user in users
-#         ]
-#         return jsonify(user_list), 200
-#     except Exception as e:
-#         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
-#
+@user_blueprint.route("/users", methods=["GET"])
+@token_required
+def list_users():
+    try:
+        users = User.query.all()
+        user_list = [
+            {
+                "id": user.id,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email,
+                "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
+                "scentID": user.scentID,
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+
 # ----------------------------------------------------------------#
 
 # NOTE: Update ScentBank

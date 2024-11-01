@@ -43,7 +43,7 @@ export default function InboxPage() {
         setChatrooms(response.data.chatrooms);
       } catch (err) {
         console.error("Failed to load chatrooms:", err);
-        setError("Failed tp load conversations");
+        setError("Failed to load conversations");
       } finally {
         setLoading(false);
       }
@@ -83,8 +83,36 @@ export default function InboxPage() {
                 router.push(`/chat-page?roomId=${room.chatroom_id}`)
               }
               className="bg-white p-4 rounded-lg shadow hover:bg-gray-50 cursor-pointer transition-colors"
-            ></div>
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h2 className="font-semibold text-lg">
+                    {room.other_user.firstName} {room.other_user.lastName}
+                  </h2>
+                  <p className="text-gray-500 text-sm">
+                    {room.other_user.userName}
+                  </p>
+
+                  {room.latest_message && (
+                    <p className="text-gray-600 mt-2 line-clamp-1">
+                      {room.latest_message.content}
+                    </p>
+                  )}
+                </div>
+                {room.last_message_at && (
+                  <div className="text-sm text-opacity-500">
+                    {formatTime(room.last_message_at)}
+                  </div>
+                )}
+              </div>
+            </div>
           ))}
+
+          {chatrooms.length === 0 && (
+            <div className="text-center text-gray-500 py-8">
+              No conversations yet
+            </div>
+          )}
         </div>
       )}
     </div>

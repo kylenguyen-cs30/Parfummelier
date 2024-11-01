@@ -52,46 +52,89 @@ class ChatroomCreate(BaseModel):
     participants: List[int]
 
 
-class Message(BaseModel):
+class UserInfo(BaseModel):
     """
-    Pydantic model for chat messages.
-    Represents the structure of chat messages in the system.
-
-    Attributes:
-        id (PyObjectId): MongoDB ObjectId for the message, aliased as '_id'
-        chatroom_id (str): ID of the chatroom this message belongs to
-        user_id (int): ID of the user who sent the message
-        content (str): The actual message content
-        timestamp (datetime): When the message was sent, defaults to current time
-
-    Config:
-        json_encoders: Custom JSON encoding for ObjectId type
-        populate_by_name: Allow population by field name including aliases
+    Pydantic model for user inforamtion in chat context.
     """
 
-    id: PyObjectId = Field(
-        default_factory=PyObjectId,
-        alias="_id",
-        description="Unique identifier for the message",
-    )
-    chatroom_id: str = Field(
-        ...,  # ... means required
-        description="ID of the chatroom containing this message",
-    )
-    user_id: int = Field(..., description="ID of the user who sent the message")
-    content: str = Field(..., description="Content of the message")
-    timestamp: datetime = Field(
-        default_factory=datetime.now, description="Time when the message was sent"
-    )
+    id: int
+    userName: str
+    firstName: str
+    lastName: str
 
     class Config:
-        """
-        Pydantic model configuration.
+        arbitrary_types_allowed = True
 
-        Attributes:
-            json_encoders: Custom JSON encoding rules
-            populate_by_name: Allow population by field name
-        """
 
-        json_encoders = {ObjectId: str}  # Convert ObjectId to string in JSON
-        populate_by_name = True  # Allow both alias and field names
+class MessagePreview:
+    """
+    Simplified message model for previews in chat lists
+    """
+
+    content: str
+    timestamp: datetime
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class Message(BaseModel):
+    """
+    Full message model for chat messages.
+    """
+
+    id: PyObjectId = Field(default_factory=PyObjectId, alias="_id")
+    chatroom_id: str
+    user_id: int
+    content: str
+    timestamp: datetime = Field(default_factory=datetime.now)
+    userName: Optional[str] = None
+    firstName: Optional[str] = None
+    lastName: Optional[str] = None
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+        populate_by_name = True
+
+
+class ChatroomPreview(BaseModel):
+    """
+    Preview model for chatrooms in the inbox.
+    """
+
+    chatroom_id: str
+    other_user: UserInfo
+    latest_message: Optional[MessagePreview]
+    last_message_at: datetime
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class ChatroomList(BaseModel):
+    """
+    Container model for list of chatroom previews.
+    """
+
+    chatrooms: List[ChatroomPreview]
+
+    class Config:
+        arbitrary_types_allowed = True
+        json_encoders = {ObjectId: str}
+
+
+class ChatroomResponse(BaseModel):
+    """
+    Response model for chatroom operations.
+    """
+
+    chatroom_id: str
+    participants: List[int]
+    created_at: datetime
+    last_message_at: Optional[datetime]
+
+    class Config:
+        json_encoders = {ObjectId: str}

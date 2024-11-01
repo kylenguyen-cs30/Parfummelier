@@ -7,6 +7,7 @@ class Settings(BaseSettings):
     DATABASE_NAME: str = "chat_database"
 
     class Config:
+        SECRET_KEY = "some-key-here"
         env_file = ".env"
 
 

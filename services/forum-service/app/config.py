@@ -1,5 +1,6 @@
 from pydantic_settings import BaseSettings
 
+
 class Settings(BaseSettings):
     USER_SERVICE_URL: str = "http://user-service:5000"
     MONGO_URI: str = "mongodb://mongo:27017/chat_database"
@@ -8,5 +9,5 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
-settings = Settings()
 
+settings = Settings()

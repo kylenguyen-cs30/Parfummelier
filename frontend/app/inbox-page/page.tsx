@@ -63,19 +63,6 @@ export default function InboxPage() {
     }
     return date.toLocaleDateString()
   }
-  return (
-    <div>
-      {chatrooms.map((room) => (
-      
-        <div>
-      
-      
-    ))
-
-      }
-
-    </div>
-  )
 
 }
 

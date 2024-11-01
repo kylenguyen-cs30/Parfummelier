@@ -43,10 +43,29 @@ async def create_chatroom(chatroom: ChatroomCreate):
         result = await chat_service.create_chatroom(chatroom.dict())
         return {"chatroom_id": result["chatroom_id"]}
     except Exception as e:
+        logger.error(f"Error creating chatroom: {str(e)}")
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=str(e)
         )
+        
+
+@router.get("/user/chatrooms")
+async def get_user_chatrooms(user_id: int):
+    """
+    Get All chatrooms for a user
+    """
+    try:
+        chatrooms = await chat_service.get_user_chatrooms(user_id)
+        return {"chatrooms" : chatrooms}
+    except Exception as e:
+        logger.error(f"Error gettings user chatrooms: {str(e)}")
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail = str(e)
+        )
+
+
 
 # Get messages for a specific chatroom
 @router.get("/chatroom/{chatroom_id}/messages")
@@ -99,7 +118,6 @@ async def websocket_endpoint(websocket: WebSocket, chatroom_id: str):
                 try:
                     # Wait for and parse JSON message from client
                     data = await websocket.receive_json()
-                    logger.info(f"Received message in room {chatroom_id}: {data}")
                     # Handle the message with user's token
                     await chat_service.handle_message(chatroom_id, data, token)
                 except WebSocketDisconnect:
@@ -122,7 +140,6 @@ async def websocket_endpoint(websocket: WebSocket, chatroom_id: str):
             
     except Exception as e:
         logger.error(f"WebSocket error: {str(e)}")
-        logger.error(f"Traceback: {traceback.format_exc()}")
         if websocket.client_state.CONNECTED:
             await websocket.close(code=1011)
 

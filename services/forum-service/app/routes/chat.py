@@ -6,7 +6,7 @@ from fastapi import (
     status,
     Depends,
 )
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from app.config import Config
 from app.models.chat import ChatroomCreate, Message
 from app.services.chat import ChatService
@@ -28,23 +28,31 @@ security = HTTPBearer()
 
 
 # Dependency function for user authentication
-async def get_current_user(token: str = Depends(security)):
+async def get_current_user(
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    """
+    Dependency function for user authentication
+
+    Returns:
+        credentials : HTTP Authorization credentials containing the token
+    """
     try:
-        # Remove "Bearer " prefix if present
-        if token.credentials.startswith("Bearer "):
-            token_str = token.credentials[7:]
-        else:
-            token_str = token.credentials
+        token_str = credentials.credentials
+        if token_str.startswith("Bearer "):
+            token_str = token_str[7:]
 
         payload = jwt.decode(token_str, Config.SECRET_KEY, algorithms=["HS256"])
+
         return payload
+
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="Token has expired"
         )
     except jwt.JWTError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Token"
         )
 
 

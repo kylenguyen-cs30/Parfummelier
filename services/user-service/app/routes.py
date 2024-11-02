@@ -141,25 +141,35 @@ def register_user():
 # WARNING: This route should be disabled
 #
 # ----------------------------------------------------------------#
-# @user_blueprint.route("/users", methods=["GET"])
-# def list_users():
-#     try:
-#         users = User.query.all()
-#         user_list = [
-#             {
-#                 "id": user.id,
-#                 "firstName": user.firstName,
-#                 "lastName": user.lastName,
-#                 "email": user.email,
-#                 "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
-#                 "scentID": user.scentID,
-#             }
-#             for user in users
-#         ]
-#         return jsonify(user_list), 200
-#     except Exception as e:
-#         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
-#
+@user_blueprint.route("/users", methods=["GET", "OPTIONS"])
+@cross_origin(
+    origins=["http://localhost:3000"],
+    methods=["GET", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    supports_credentials=True
+)
+@token_required
+def list_users(current_user):  # Added current_user parameter
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+        
+    try:
+        users = User.query.all()
+        user_list = [
+            {
+                "id": user.id,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email,
+                "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
+                "scentID": user.scentID,
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+
 # ----------------------------------------------------------------#
 
 # NOTE: Update ScentBank

@@ -84,7 +84,7 @@ def add_product():
         # Create a new product
         new_product = Product(
             name=data["name"],
-            designer=data.get("designer"),
+            # designer=data.get("designer"),
             # collection=collection,
         )
 
@@ -116,7 +116,7 @@ def add_product():
                 {
                     "id": new_product.id,
                     "name": new_product.name,
-                    "designer": new_product.designer,
+                    # "designer": new_product.designer,
                     "notes": [note.name for note in new_product.notes],
                     "accords": [accord.name for accord in new_product.accords],
                 },

@@ -53,12 +53,18 @@ class ChatService:
         try:
             # Extract and sort participant IDs to ensure consistent room lookup
             participant_ids = sorted(chatroom_data.get("participants", []))
+            current_user_id = participant_ids[0]
 
             logger.info(f"Looking for chatroom with participants: {participant_ids}")
 
             # Look for existing chatroom with these participants
             existing_room = self.db.chatrooms.find_one(
-                {"participants": participant_ids}
+                {
+                    "$or": [
+                        {"participants": participant_ids},
+                        {"participants": participant_ids[::-1]},  # Reversed order
+                    ]
+                }
             )
 
             if existing_room:
@@ -112,11 +118,16 @@ class ChatService:
                 )
 
                 try:
+                    # getting other participant id
+                    other_participant_id = next(
+                        pid for pid in room["participants"] if pid != user_id
+                    )
                     # Get user info using your user service
                     other_user = await self.user_service.get_user_chat_info(
                         other_participant_id
                     )
 
+                    # Retrurn an arraof an objects
                     result.append(
                         {
                             "chatroom_id": str(room["_id"]),
@@ -134,6 +145,12 @@ class ChatService:
                             ),
                         }
                     )
+                except (StopIteration, KeyError):
+                    # Skipp chatrooms where we can't find other participant
+                    logger.warning(
+                        f"Skipping chatroom {room['_id']} - no other participants found"
+                    )
+                    continue
                 except Exception as user_err:
                     logger.error(
                         f"Error getting user info for {other_participant_id}: {user_err}"
@@ -212,10 +229,14 @@ class ChatService:
         Update the last_message_at timestamp for a chatroom
         """
         try:
-            await self.db.chatrooms.update_one(
+            result = self.db.chatrooms.update_one(
                 {"_id": ObjectId(chatroom_id)},
                 {"$set": {"last_message_at": datetime.now()}},
             )
+
+            # Don't await the result winsce it's not a coroutine
+            return result
+
         except Exception as e:
             logger.error(f"Error updating last message time: {str(e)}")
 

@@ -20,6 +20,10 @@ app.add_middleware(
 )
 
 
+# NOTE:
+# Initialize the database before FastAPI established
+
+
 @app.on_event("startup")
 async def startup_event():
     """Initialize database on startup"""

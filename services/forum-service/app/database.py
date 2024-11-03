@@ -4,6 +4,34 @@ from app.config import settings
 from motor.motor_asyncio import AsyncIOMotorClient
 from motor.core import AgnosticDatabase
 
+
+# NOTE:
+# ----------------------------------------------------------------------#
+# Agnostic is database migrations system that is agnostic to programming
+# language, framework and database system.
+# ----------------------------------------------------------------------#
+
+
+# NOTE:
+# ----------------------------------------------------------------------#
+# AgnosticIOClient is an asynchronous MongoDB driver provided by Motor
+# library, designed specifically for use with asyncio-based Python
+# Application. It allows your application to interact with MongoDB
+# database asynchrnously, which is crucial for building effiecient and
+# scalable web applications
+# ----------------------------------------------------------------------#
+
+
+# NOTE:
+# ----------------------------------------------------------------------#
+# Agnostic Database is part of the Motor Lib is designed to provide an
+# asynchornous interface for MonggoDB database operations that is agnostic
+# to the specific async frameworks being used.
+# Agnostic Database is an abstract base class that represent a MongoDB
+# database and provides asynchronous methods for database operations
+# ----------------------------------------------------------------------#
+
+
 import logging
 
 logger = logging.getLogger(__name__)

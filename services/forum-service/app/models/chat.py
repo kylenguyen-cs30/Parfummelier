@@ -44,12 +44,11 @@ class ChatroomCreate(BaseModel):
     """
     Pydantic model for creating a new chatroom.
     Used for request validation when creating chatrooms.
-
-    Attributes:
-        participants (List[int]): List of user IDs who will be in the chatroom
     """
 
-    participants: List[int]
+    participants: List[int] = Field(
+        description="List of user IDs who will be in the chatroom"
+    )
 
 
 class UserInfo(BaseModel):

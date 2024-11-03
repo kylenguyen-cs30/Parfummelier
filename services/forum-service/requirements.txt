@@ -1,10 +1,10 @@
-fastapi==0.104.1
-PyJWT==2.8.0
-uvicorn==0.24.0
-motor==3.3.1
-pymongo==4.6.1
-pydantic==2.4.2
-pydantic-settings==2.0.3
-python-dotenv==1.0.0
-websockets==12.0
-httpx==0.25.0  # Added for async HTTP requests
+fastapi==0.104.1          # FastAPI framework
+PyJWT==2.8.0             # For JWT token handling
+uvicorn==0.24.0          # ASGI server
+motor==3.3.1             # Async MongoDB driver
+pymongo==4.6.1           # MongoDB driver (motor depends on this)
+pydantic==2.4.2          # Data validation
+pydantic-settings==2.0.3 # Settings management
+python-dotenv==1.0.0     # Environment variable management
+websockets==12.0         # WebSocket support
+httpx==0.25.0            # Async HTTP client

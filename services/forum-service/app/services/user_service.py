@@ -1,56 +1,71 @@
 from fastapi import HTTPException
-from typing import Dict, Optional
+from typing import Dict, Optional, Union
 
 import httpx
 import logging
 
 logger = logging.getLogger(__name__)
 
+
 class UserService:
     def __init__(self) -> None:
         self.base_url = "http://user-service:5000"
-    
-    async def get_user_chat_info(self, access_token: str) -> dict:
+
+    async def get_user_chat_info(
+        self, identifier: Union[str, int], access_token: Optional[str] = None
+    ) -> dict:
         """
-        Fetch minimal user information needed for chat
+        Fetch minimal user information needed for chat.
+        Can be called with either an access token (str) or user_id (int)
         """
-        headers = {
-            "Authorization": f"Bearer {access_token}",
-            "Content-Type": "application/json"
-        }
-        
         try:
             async with httpx.AsyncClient() as client:
-                response = await client.get(
-                    f"{self.base_url}/user/chat-info",
-                    headers=headers,
-                    timeout=10.0
-                )
-                
+                headers = {
+                    "Authorization": f"Bearer {access_token if access_token else identifier}",
+                    "Content-Type": "application/json",
+                }
+
+                if isinstance(identifier, str):
+                    # Token-based request (for current user)
+                    response = await client.get(
+                        f"{self.base_url}/user/chat-info", headers=headers, timeout=10.0
+                    )
+                else:
+                    # User ID-based request (for other users)
+                    response = await client.get(
+                        f"{self.base_url}/user/{identifier}/chat-info",
+                        headers=headers,  # Include headers for authentication
+                        timeout=10.0,
+                    )
+
                 if response.status_code == 200:
                     user_info = response.json()
-                    # Map the fields to match our Message model
+                    # Ensure all required fields are present
+                    required_fields = ["userId", "userName", "firstName", "lastName"]
+                    if not all(field in user_info for field in required_fields):
+                        logger.error(
+                            f"Missing required fields in user info: {user_info}"
+                        )
+                        raise ValueError("Incomplete user data received")
+
                     return {
-                        "user_id": user_info["userId"],  # Note the case change
+                        "user_id": user_info["userId"],
                         "userName": user_info["userName"],
                         "firstName": user_info["firstName"],
-                        "lastName": user_info["lastName"]
+                        "lastName": user_info["lastName"],
                     }
-                elif response.status_code == 401:
-                    raise HTTPException(status_code=401, detail="Invalid or expired token")
-                elif response.status_code == 404:
-                    raise HTTPException(status_code=404, detail="User not found")
                 else:
-                    raise HTTPException(
-                        status_code=response.status_code,
-                        detail=f"Error from user service: {response.text}"
+                    error_msg = (
+                        f"Failed to get user info. Status: {response.status_code}"
                     )
-                    
-        except httpx.RequestError as e:
-            logger.error(f"Request error: {str(e)}")
+                    logger.error(error_msg)
+                    raise HTTPException(
+                        status_code=response.status_code, detail=error_msg
+                    )
+
+        except Exception as e:
+            logger.error(f"Error in get_user_chat_info: {str(e)}")
+            logger.error("Error in get_user_chat_info:")
             raise HTTPException(
-                status_code=503,
-                detail=f"User service unavailable: {str(e)}"
+                status_code=500, detail=f"Failed to get user info: {str(e)}"
             )
-    async def close(self):
-        pass

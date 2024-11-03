@@ -73,8 +73,24 @@ async def create_chatroom(
     chatroom: ChatroomCreate, current_user: dict = Depends(get_current_user)
 ):
     """Creates a new chatroom with specified participants"""
+
     try:
-        result = await chat_service.create_chatroom(chatroom.dict())
+        # Get the current user's ID
+        current_user_id = current_user["user_id"]
+
+        # Create participant list with both users
+        participants = list(set(chatroom.participants + [current_user_id]))
+
+        # Sort participants to ensure consistent lookup
+        participants.sort()
+
+        result = await chat_service.create_chatroom({"participants": participants})
+
+        # Verify the chatroom was created
+        created_room = await chat_service.db.chatrooms.find_one(
+            {"_id": ObjectId(result["chatroom_id"])}
+        )
+        logger.info(f"Verified created chatroom: {created_room}")
         return {"chatroom_id": result["chatroom_id"]}
     except Exception as e:
         logger.error(f"Error creating chatroom: {str(e)}")
@@ -85,11 +101,22 @@ async def create_chatroom(
 
 # Get user chatrooms
 @router.get("/user/chatrooms")
-async def get_user_chatrooms(current_user: dict = Depends(get_current_user)):
+async def get_user_chatrooms(
+    current_user: dict = Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
     """Get all chatrooms for the current user"""
     try:
         user_id = current_user["user_id"]
-        chatrooms = await chat_service.get_user_chatrooms(user_id)
+
+        # Get the token
+        token_str = credentials.credentials
+        if token_str.startswith("Bearer "):
+            token_str = token_str[7:]
+
+        chatrooms = await chat_service.get_user_chatrooms(
+            user_id=user_id, access_token=token_str
+        )
         return {"chatrooms": chatrooms}
     except Exception as e:
         logger.error(f"Error getting user chatrooms: {str(e)}")
@@ -171,3 +198,104 @@ async def websocket_endpoint(websocket: WebSocket, chatroom_id: str):
         logger.error(f"WebSocket error: {str(e)}")
         if websocket.client_state.CONNECTED:
             await websocket.close(code=1011)
+
+
+@router.get("/chatroom/{chatroom_id}/info")
+async def get_chatroom_info(
+    chatroom_id: str,
+    current_user: dict = Depends(get_current_user),
+    credentials: HTTPAuthorizationCredentials = Depends(security),
+):
+    """Get information about a specific chatroom"""
+    try:
+        logger.info(f"Getting info for chatroom {chatroom_id}")
+
+        # Get the token from credentials
+        token_str = credentials.credentials
+        if token_str.startswith("Bearer "):
+            token_str = token_str[7:]
+
+        if not ObjectId.is_valid(chatroom_id):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Invalid chatroom ID format",
+            )
+
+        # Get the MongoDB collection
+        collection = chat_service.db.chatrooms
+
+        # Convert string ID to ObjectId
+        room_id = ObjectId(chatroom_id)
+        logger.info(f"Looking for chatroom with ID: {room_id}")
+
+        # Find the chatroom using motor's async find_one
+        chatroom = await collection.find_one({"_id": room_id})
+
+        # Debug logs
+        if chatroom:
+            logger.info(f"Found chatroom: {chatroom}")
+        else:
+            logger.error(f"No chatroom found with ID: {room_id}")
+            # Let's check what chatrooms exist
+            all_rooms = await collection.find({}).to_list(None)
+            logger.info(f"Available chatrooms: {all_rooms}")
+
+        if not chatroom:
+            logger.error(f"Chatroom {chatroom_id} not found")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Chatroom not found"
+            )
+
+        logger.info(f"Found chatroom with participants: {chatroom['participants']}")
+
+        # Get other participant's info
+        try:
+            current_user_id = current_user["user_id"]
+            logger.info(f"Current user ID: {current_user_id}")
+            logger.info(f"All participants: {chatroom['participants']}")
+
+            other_user_id = next(
+                pid for pid in chatroom["participants"] if pid != current_user_id
+            )
+
+            logger.info(f"Getting info for other user: {other_user_id}")
+
+            # Pass both user_id and access token to get_user_chat_info
+            other_user = await chat_service.user_service.get_user_chat_info(
+                identifier=other_user_id,
+                access_token=token_str,
+            )
+
+            if not other_user:
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND, detail="Other user not found"
+                )
+
+            response = {
+                "roomId": str(chatroom["_id"]),
+                "otheruser": {
+                    "id": other_user["user_id"],
+                    "userName": other_user["userName"],
+                    "firstName": other_user["firstName"],
+                    "lastName": other_user["lastName"],
+                },
+            }
+
+            logger.info(f"Successfully got chatroom info: {response}")
+            return response
+
+        except StopIteration:
+            logger.error(f"No other participant found in chatroom {chatroom_id}")
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Other participant not found in chatroom",
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error getting chatroom info: {str(e)}", exc_info=True)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to get chatroom info: {str(e)}",
+        )

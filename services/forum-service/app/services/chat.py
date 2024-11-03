@@ -1,5 +1,6 @@
 from fastapi import WebSocket
 from app.database import Database
+from app.models.chat import ChatroomResponse, PyObjectId
 
 # from app.config import settings
 from typing import Dict, Set, List, Optional, Any
@@ -43,125 +44,146 @@ class ChatService:
     async def create_chatroom(self, chatroom_data: dict):
         """
         Find existing chatroom or create a new one for given participants.
-
-        Args:
-            chatroom_data (dict): Dictionary containing 'participants' list
-
-        Returns:
-            dict: Dictionary containing chatroom_id
         """
         try:
-            # Extract and sort participant IDs to ensure consistent room lookup
-            participant_ids = sorted(chatroom_data.get("participants", []))
-            current_user_id = participant_ids[0]
-
+            participant_ids = chatroom_data["participants"]
             logger.info(f"Looking for chatroom with participants: {participant_ids}")
 
             # Look for existing chatroom with these participants
-            existing_room = self.db.chatrooms.find_one(
-                {
-                    "$or": [
-                        {"participants": participant_ids},
-                        {"participants": participant_ids[::-1]},  # Reversed order
-                    ]
-                }
+            existing_room = await self.db.chatrooms.find_one(
+                {"participants": participant_ids}
             )
 
             if existing_room:
                 logger.info(f"Found existing chatroom: {existing_room['_id']}")
                 return {"chatroom_id": str(existing_room["_id"])}
 
-            # Create new chatroom if none exists
+            # Create new chatroom
+            current_time = datetime.now()
             new_chatroom = {
                 "participants": participant_ids,
-                "created_at": datetime.now(),
-                "last_message_at": datetime.now(),
+                "created_at": current_time,
+                "last_message_at": current_time,
             }
 
-            result = self.db.chatrooms.insert_one(new_chatroom)
-            logger.info(f"Created new chatroom: {result.inserted_id}")
-            return {"chatroom_id": str(result.inserted_id)}
+            # Insert into database
+            result = await self.db.chatrooms.insert_one(new_chatroom)
+            chatroom_id = str(result.inserted_id)
+            logger.info(f"Created new chatroom with ID: {chatroom_id}")
+
+            # Verify creation
+            created_room = await self.db.chatrooms.find_one({"_id": result.inserted_id})
+
+            if not created_room:
+                raise Exception("Failed to verify chatroom creation")
+
+            # Log the created room structure
+            logger.info(f"Created chatroom structure: {created_room}")
+
+            # Create response using Pydantic model
+            response = ChatroomResponse(
+                chatroom_id=chatroom_id,
+                participants=participant_ids,
+                created_at=current_time,
+                last_message_at=current_time,
+            )
+
+            return response.dict()
 
         except Exception as e:
             logger.error(f"Error in create_chatroom: {str(e)}")
             logger.error(f"Traceback: {traceback.format_exc()}")
             raise
 
-    async def get_user_chatrooms(self, user_id: int) -> List[dict]:
+    async def get_user_chatrooms(
+        self, user_id: int, access_token: Optional[str] = None
+    ) -> List[dict]:
         """
         Get all chatrooms for a user with latest message preview.
-
-        Args:
-            user_id (int): ID of the user
-
-        Returns:
-            List[dict]: List of chatrooms with preview information
         """
         try:
+            logger.info(f"Fetching chatrooms for user_id: {user_id}")
+
             # Find all chatrooms where user is a participant
-            chatrooms = list(
-                self.db.chatrooms.find({"participants": user_id}).sort(
-                    "last_message_at", -1
-                )
-            )
+            cursor = self.db.chatrooms.find({"participants": user_id})
+            chatrooms = await cursor.to_list(length=None)
+
+            logger.info(f"Found {len(chatrooms)} chatrooms")
 
             result = []
             for room in chatrooms:
-                # Get the latest message for this room
-                latest_message = self.db.messages.find_one(
-                    {"chatroom_id": str(room["_id"])}, sort=[("timestamp", -1)]
-                )
-
-                # Get other participant's info
-                other_participant_id = next(
-                    pid for pid in room["participants"] if pid != user_id
-                )
-
                 try:
-                    # getting other participant id
-                    other_participant_id = next(
-                        pid for pid in room["participants"] if pid != user_id
+                    # Get the latest message for this room
+                    message_cursor = (
+                        self.db.messages.find({"chatroom_id": str(room["_id"])})
+                        .sort("timestamp", -1)
+                        .limit(1)
                     )
-                    # Get user info using your user service
-                    other_user = await self.user_service.get_user_chat_info(
-                        other_participant_id
-                    )
+                    latest_messages = await message_cursor.to_list(length=1)
+                    # latest_message = latest_messages[0] if latest_messages else None
+                    latest_message = None
+                    if latest_message:
+                        latest_message = latest_message[0]
+                        if "_id" in latest_message:
+                            latest_message["_id"] = str(latest_message["_id"])
+                        if "timestamp" in latest_message:
+                            latest_message["timestamp"] = (
+                                latest_message["timestamp"].isoformat()
+                                if isinstance(latest_message["timestamp"], datetime)
+                                else latest_message["timestamp"]
+                            )
 
-                    # Retrurn an arraof an objects
-                    result.append(
-                        {
-                            "chatroom_id": str(room["_id"]),
+                    # Get other participant's info
+                    try:
+                        other_user_id = next(
+                            pid for pid in room["participants"] if pid != user_id
+                        )
+
+                        logger.info(f"Fetching info for other user: {other_user_id}")
+
+                        # Pass the access token when getting user info
+                        other_user = await self.user_service.get_user_chat_info(
+                            identifier=other_user_id,
+                            access_token=access_token,  # Pass the token here
+                        )
+
+                        # Convert datetime objects to ISO format strings
+                        last_message_at = room.get(
+                            "last_message_at", room["created_at"]
+                        )
+                        if isinstance(last_message_at, datetime):
+                            last_message_at = last_message_at.isoformat()
+
+                        chatroom_preview = {
+                            "chatroom_id": str(
+                                room["_id"]
+                            ),  # Convert ObjectId to string
                             "other_user": {
                                 "id": other_user["user_id"],
                                 "userName": other_user["userName"],
                                 "firstName": other_user["firstName"],
                                 "lastName": other_user["lastName"],
                             },
-                            "latest_message": (
-                                latest_message if latest_message else None
-                            ),
-                            "last_message_at": room.get(
-                                "last_message_at", room["created_at"]
-                            ),
+                            "latest_message": latest_message,
+                            "last_message_at": last_message_at,
                         }
-                    )
-                except (StopIteration, KeyError):
-                    # Skipp chatrooms where we can't find other participant
-                    logger.warning(
-                        f"Skipping chatroom {room['_id']} - no other participants found"
-                    )
-                    continue
-                except Exception as user_err:
-                    logger.error(
-                        f"Error getting user info for {other_participant_id}: {user_err}"
-                    )
+
+                        result.append(chatroom_preview)
+
+                    except Exception as user_err:
+                        logger.error(
+                            f"Error getting user info for {other_user_id}: {user_err}"
+                        )
+                        continue
+
+                except Exception as room_err:
+                    logger.error(f"Error processing room: {room_err}")
                     continue
 
             return result
 
         except Exception as e:
             logger.error(f"Error in get_user_chatrooms: {str(e)}")
-            logger.error(f"Traceback: {traceback.format_exc()}")
             raise
 
     async def get_messages(self, chatroom_id: str):
@@ -171,7 +193,11 @@ class ChatService:
         try:
             # Convert chatroom_id to ObjectId for MongoDB query
             room_id = ObjectId(chatroom_id)
-            messages = list(self.db.messages.find({"chatroom_id": str(room_id)}))
+            cursor = self.db.messages.find({"chatroom_id": str(room_id)})
+            # Convert cursor to list using Motor's to list method
+            messages = await cursor.to_list(length=None)
+
+            # Convert ObjectId to string for each messages
             for msg in messages:
                 msg["_id"] = str(msg["_id"])
             return messages
@@ -205,7 +231,7 @@ class ChatService:
             }
 
             # Store in database
-            result = self.db.messages.insert_one(message)
+            result = await self.db.messages.insert_one(message)
             message["_id"] = str(result.inserted_id)
             message["timestamp"] = message["timestamp"].isoformat()
 
@@ -248,13 +274,12 @@ class ChatService:
             disconnected = set()
 
             # Log the broadcast attempt
-            logger.info(
-                f"Broadcasting message {message.get('_id')} to room {chatroom_id}"
-            )
+            logger.info(f"Broadcasting message to room {chatroom_id}: {message}")
 
             for connection in self.active_connections[chatroom_id]:
                 try:
                     await connection.send_json(message)
+                    logger.info("Message sent successfully")
                 except Exception as e:
                     logger.error(f"Error broadcasting message: {e}")
                     disconnected.add(connection)
@@ -263,6 +288,7 @@ class ChatService:
             for connection in disconnected:
                 self.active_connections[chatroom_id].remove(connection)
                 logger.info(f"Removed disconnected client from room {chatroom_id}")
+
             if not self.active_connections[chatroom_id]:
                 del self.active_connections[chatroom_id]
                 logger.info(f"Removed empty room {chatroom_id}")

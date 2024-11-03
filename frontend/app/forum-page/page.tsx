@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { jwtDecode } from "jwt-decode";
 
 interface User {
   id: number;
@@ -17,6 +18,11 @@ interface ForumPost {
   author: string;
   timestamp: Date;
   topic: string;
+}
+
+interface TokenPayload {
+  user_id: number;
+  exp: number;
 }
 
 const DUMMY_POST: ForumPost[] = [
@@ -41,9 +47,51 @@ const DUMMY_POST: ForumPost[] = [
 export default function ForumPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
-  const [posts] = useState<ForumPost[]>(DUMMY_POST);
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
+  // For Time Hydration issue
+  const [posts] = useState<ForumPost[]>(
+    DUMMY_POST.map((post) => ({
+      ...post,
+      // use a stable timestamp format or handle client-side only
+      timestamp: new Date(post.timestamp), // Convert to consisten Date Object
+    })),
+  );
+
+  // When rendering the timestamp, useEffect to handle client-side update
+  const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Get current user from token
+  useEffect(() => {
+    const getCurrentUser = async () => {
+      try {
+        const tokenResponse = await axios.get("/api/getAccessToken");
+        const { access_token } = tokenResponse.data;
+
+        if (!access_token) {
+          setError("No access token found");
+          router.push("/signin");
+          return;
+        }
+
+        const decoded = jwtDecode(access_token) as TokenPayload;
+        setCurrentUserId(decoded.user_id);
+        console.log("Current user ID:", decoded.user_id); // Debug log
+      } catch (err) {
+        console.error("Error getting current user:", err);
+        setError("Failed to get current user");
+        router.push("/signin");
+      }
+    };
+
+    getCurrentUser();
+  }, [router]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -106,7 +154,15 @@ export default function ForumPage() {
   };
 
   const handleStartChat = async () => {
-    if (!selectedUser) return;
+    if (!selectedUser || !currentUserId) {
+      setError("Please select a user to chat with");
+      return;
+    }
+
+    if (selectedUser.id === currentUserId) {
+      setError("You cannot start a chat with yourself");
+      return;
+    }
 
     try {
       // Get the access token
@@ -117,7 +173,7 @@ export default function ForumPage() {
       const response = await axios.post(
         "http://localhost:5004/chat/chatroom",
         {
-          participants: [selectedUser.id],
+          participants: [selectedUser.id, currentUserId], // Now we have both IDs
         },
         {
           withCredentials: true,
@@ -128,8 +184,6 @@ export default function ForumPage() {
       );
 
       const { chatroom_id } = response.data;
-
-      // navigate to chat page with room ID
       router.push(`/chat-page?roomId=${chatroom_id}`);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 401) {
@@ -153,9 +207,11 @@ export default function ForumPage() {
               <div key={post.id} className="bg-white p-6 rounded-lg shadow">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-xl font-semibold">{post.title}</h3>
-                  <span className="text-sm text-gray-500">
-                    {new Date(post.timestamp).toLocaleDateString()}
-                  </span>
+                  {mounted ? (
+                    <span className="text-sm text-gray-500">
+                      {new Date(post.timestamp).toLocaleDateString()}
+                    </span>
+                  ) : null}
                 </div>
                 <p className="text-gray-600 mb-4">{post.content}</p>
                 <div className="flex justify-between items-center">

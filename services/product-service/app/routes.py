@@ -63,29 +63,10 @@ def get_product(id):
 def add_product():
     try:
         data = request.json
-        # ----------------------------------------------------------------------------#
-        # # Collection creation
-        # collection_name = data.get("collection")
-        # collection = None
-        #
-        # # NOTE: check if there is collection name or not
-        #
-        # if collection_name:
-        #     # query the collection name if there is existing one
-        #     collection = Collection.query.filter_by(name=collection_name).first()
-        #     # if not creating a brand new collection
-        #     if not collection:
-        #         collection = Collection(name=collection_name)
-        #         db.session.add(collection)
-        # else:
-        #     return jsonify({"error": "Collection name is missing"}), 404
-        # ----------------------------------------------------------------------------#
-
         # Create a new product
         new_product = Product(
             name=data["name"],
             # designer=data.get("designer"),
-            # collection=collection,
         )
 
         # Handle Notes

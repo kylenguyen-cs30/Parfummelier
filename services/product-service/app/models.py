@@ -22,9 +22,6 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     # designer = db.Column(db.String(100), nullable=False)
 
-    # One-To-Many relationship
-    # collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
-
     # many-to-many relationship
     notes = db.relationship(
         "Note", secondary=product_note, backref=db.backref("products", lazy="dynamic")

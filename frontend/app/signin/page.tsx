@@ -43,7 +43,7 @@ const SignIn = () => {
         await axios.post("/api/setAccessToken", { access_token });
 
         // safely push user into main-page
-        router.push("/main-page");
+        router.push("/main");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

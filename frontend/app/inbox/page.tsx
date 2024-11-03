@@ -79,9 +79,7 @@ export default function InboxPage() {
           {chatrooms.map((room) => (
             <div
               key={room.chatroom_id}
-              onClick={() =>
-                router.push(`/chat-page?roomId=${room.chatroom_id}`)
-              }
+              onClick={() => router.push(`/chat?roomId=${room.chatroom_id}`)}
               className="bg-white p-4 rounded-lg shadow hover:bg-gray-50 cursor-pointer transition-colors"
             >
               <div className="flex justify-between items-start">

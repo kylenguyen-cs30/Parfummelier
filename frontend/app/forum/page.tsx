@@ -184,7 +184,7 @@ export default function ForumPage() {
       );
 
       const { chatroom_id } = response.data;
-      router.push(`/chat-page?roomId=${chatroom_id}`);
+      router.push(`/chat?roomId=${chatroom_id}`);
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 401) {
         setError("Please sign in to start a chat");
@@ -234,7 +234,7 @@ export default function ForumPage() {
             <div className="flex justify-between items-center">
               <h2 className="text-xl font-bold">Messages</h2>
               <button
-                onClick={() => router.push("/inbox-page")}
+                onClick={() => router.push("/inbox")}
                 className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors flex items-center gap-2"
               >
                 <span>View Inbox</span>

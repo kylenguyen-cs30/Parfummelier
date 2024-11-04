@@ -28,7 +28,7 @@ const SignIn = () => {
     setError(null);
     try {
       const response = await axios.post(
-        "http://api-gateway:8000/auth/login",
+        "http://localhost:8000/auth/login",
         // "http://localhost:8000/auth/login", // TODO: Need to test this endpoint
         // "http://localhost:5002/login",
         // `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
@@ -43,7 +43,7 @@ const SignIn = () => {
         await axios.post("/api/setAccessToken", { access_token });
 
         // safely push user into main-page
-        router.push("/main-page");
+        router.push("/main");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

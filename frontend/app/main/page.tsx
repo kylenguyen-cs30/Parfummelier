@@ -11,6 +11,7 @@ import Sidebar from "../components/ui/sidebar/Sidebar";
 export default function Main() {
   const { logout } = useAuth();
 
+
   return (
     <div>
       <Header />

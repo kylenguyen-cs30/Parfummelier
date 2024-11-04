@@ -1,47 +1,59 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
+// Define public routes that don't require authentication
+const publicRoutes = [
+  "/change-password",
+  "/signin",
+  "/signup",
+  "/manage-user-profile-page",
+  "/", // Adding root path as public
+  "/api", // Adding API routes as public
+];
+
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
   // Get tokens from the cookies
   const accessToken = request.cookies.get("access_token")?.value;
-  const refreshToken = request.cookies.get("refresh_token")?.value;
   const resetToken = request.cookies.get("reset_token")?.value;
 
-  // Define the logic for each type of token
-
-  // For routes requiring a reset token (e.g., change-password)
+  // Special case for change-password route
   if (path === "/change-password") {
     if (!resetToken) {
       return NextResponse.redirect(new URL("/signin", request.url));
     }
+    return NextResponse.next();
   }
 
-  // For routes requiring an access token (e.g., main-page)
-  if (path === "/main-page") {
-    if (!accessToken) {
-      return NextResponse.redirect(new URL("/", request.url));
-    }
+  // Check if the current path is a public route
+  const isPublicRoute = publicRoutes.some(route =>
+    path === route || path.startsWith(`${route}/`)
+  );
+
+  // If it's not a public route and there's no access token, redirect to signin
+  if (!isPublicRoute && !accessToken) {
+    return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-
-  // For routes that require token refresh logic
-  if (path === "/protected-resource") {
-    if (!accessToken && refreshToken) {
-      // In this case, refresh the access token using refreshToken
-      return NextResponse.redirect(new URL("/refresh-token", request.url));
-    } else if (!accessToken && !refreshToken) {
-      return NextResponse.redirect(new URL("/signin", request.url)); // Require login if both tokens are missing
-    }
-  }
-
-  return NextResponse.next(); // Proceed to the requested route if everything is valid
+  return NextResponse.next();
 }
 
+// Update the matcher to include all routes except _next and static files
 export const config = {
-  matcher: ["/change-password", "/main-page", "/protected-resource"], // Protect routes
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - api (API routes)
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public files (public folder)
+     */
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:jpg|jpeg|gif|png|svg|ico|webp)$).*)",
+  ],
 };
+
 
 
 // BUG:

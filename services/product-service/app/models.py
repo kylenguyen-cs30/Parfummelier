@@ -20,10 +20,7 @@ product_accord = db.Table(
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    designer = db.Column(db.String(100), nullable=False)
-
-    # One-To-Many relationship
-    # collection_id = db.Column(db.Integer, db.ForeignKey("collection.id"))
+    # designer = db.Column(db.String(100), nullable=False)
 
     # many-to-many relationship
     notes = db.relationship(

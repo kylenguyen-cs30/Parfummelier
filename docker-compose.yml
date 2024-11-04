@@ -129,6 +129,7 @@ services:
     environment:
       - MONGO_URI=mongodb://mongo:27017/chat_database
       - SECRET_KEY=${SECRET_KEY}
+      - USER_SERVICE_URL=http://user-service:5000
     networks:
       - parfummelier-network
 

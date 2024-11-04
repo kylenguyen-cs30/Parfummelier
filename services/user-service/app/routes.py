@@ -1,8 +1,10 @@
 # import logging
-# import jwt
+import jwt
+
 # import os
 #
 # # import smtplib [optional]
+from flask_migrate import current
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
 from functools import wraps
@@ -140,25 +142,36 @@ def register_user():
 # WARNING: This route should be disabled
 #
 # ----------------------------------------------------------------#
-# @user_blueprint.route("/users", methods=["GET"])
-# def list_users():
-#     try:
-#         users = User.query.all()
-#         user_list = [
-#             {
-#                 "id": user.id,
-#                 "firstName": user.firstName,
-#                 "lastName": user.lastName,
-#                 "email": user.email,
-#                 "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
-#                 "scentID": user.scentID,
-#             }
-#             for user in users
-#         ]
-#         return jsonify(user_list), 200
-#     except Exception as e:
-#         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
-#
+@user_blueprint.route("/users", methods=["GET", "OPTIONS"])
+@cross_origin(
+    origins=["http://localhost:3000"],
+    methods=["GET", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
+    supports_credentials=True,
+)
+@token_required
+def list_users(current_user):  # Added current_user parameter
+    if request.method == "OPTIONS":
+        return jsonify({"status": "ok"}), 200
+
+    try:
+        users = User.query.all()
+        user_list = [
+            {
+                "id": user.id,
+                "firstName": user.firstName,
+                "lastName": user.lastName,
+                "email": user.email,
+                "dateOfBirth": user.dateOfBirth.strftime("%Y-%m-%d"),
+                "scentID": user.scentID,
+            }
+            for user in users
+        ]
+        return jsonify(user_list), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+
+
 # ----------------------------------------------------------------#
 
 # NOTE: Update ScentBank
@@ -171,7 +184,6 @@ def register_user():
 @token_required
 def update_scentbank_for_user(current_user):
     try:
-
         # Get the user's existing ScentBank
         scent_bank = ScentBank.query.get(current_user.scentID)
         if not scent_bank:
@@ -357,6 +369,59 @@ def get_user_details(current_user):
         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 
 
+"""
+This route will return user's information when a chat is initialized
+"""
+
+
+@user_blueprint.route("/user/chat-info", methods=["GET"])
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+@token_required
+def get_user_chat_info(current_user):
+    """
+    Get minimal user information needed for chat features.
+    """
+    try:
+        user_details = {
+            "firstName": current_user.firstName,
+            "lastName": current_user.lastName,
+            "userName": current_user.userName,
+            "userId": current_user.id,
+        }
+
+        return jsonify(user_details), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
+
+
+@user_blueprint.route("/user/<int:user_id>/chat-info", methods=["GET"])
+@cross_origin(origin="*", headers=["Content-Type", "Authorization"])
+@token_required
+def get_user_chat_info_by_id(current_user, user_id):
+    """
+    Get minimal user information needed for chat features by user ID.
+    Requires authentication to prevent unauthorized access to user information.
+    """
+    try:
+        # Optionally, you could add additional checks here
+        # For example, verify if current_user has permission to view this info
+
+        user = User.query.get(user_id)
+        if not user:
+            return jsonify({"error": "User not found"}), 404
+
+        user_details = {
+            "firstName": user.firstName,
+            "lastName": user.lastName,
+            "userName": user.userName,
+            "userId": user.id,
+        }
+
+        return jsonify(user_details), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching user: {str(e)}"}), 501
+
+
 # NOTE: Return the Favortite Products
 #
 # @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
@@ -367,8 +432,6 @@ def get_user_details(current_user):
 # NOTE: Return Favorite Collections
 
 # NOTE: Delete a user
-#
-##########################################################################################################################################
 # @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
 # def delete_user(user_id):
 #     try:
@@ -391,5 +454,3 @@ def get_user_details(current_user):
 #         db.session.rollback()
 #         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
 #
-#
-##########################################################################################################################################

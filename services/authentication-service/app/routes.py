@@ -7,6 +7,7 @@ from app import db
 from werkzeug.security import generate_password_hash
 from itsdangerous import URLSafeTimedSerializer
 from datetime import datetime, timezone
+
 import jwt
 import datetime
 import random
@@ -44,7 +45,7 @@ def login():
             access_token = jwt.encode(
                 {
                     "user_id": user.id,
-                    "exp": datetime.datetime.now() + datetime.timedelta(minutes=15),
+                    "exp": datetime.datetime.now() + datetime.timedelta(days=1),
                 },
                 current_app.config["SECRET_KEY"],
                 algorithm="HS256",

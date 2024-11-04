@@ -262,6 +262,7 @@ def list_notes():
     )
 
 
-# ----------------------------- #
-#          COLLECTIONS          #
-# ----------------------------- #
+# NOTE: Route recommendataion
+
+
+# NOTE: Rating Routes

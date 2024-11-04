@@ -1544,5 +1544,8 @@ def get_accords_from_notebank(notebank):
     return list(found_accords)
 
 # Return the accord-note data as JSON
-def get_accord_note_data_json():
-    return json.dumps(ACCORD_NOTE_TABLE, indent=4)
+def get_accord_note_data_json(notebank):
+    # Get the list of unique accords based on the provided notebank
+    accords = get_accords_from_notebank(notebank)
+    # Convert the list of accords to JSON format
+    return json.dumps(accords, indent=4)

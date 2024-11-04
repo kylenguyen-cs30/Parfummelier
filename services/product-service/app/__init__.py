@@ -9,7 +9,7 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 
-def create_app():
+def create_app(config=None):
     app = Flask(__name__)
     # NOTE: For Development
     CORS(
@@ -34,11 +34,15 @@ def create_app():
     )
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "my-default-secret-key")
+
+    # NOTE: For testing purposes do the following
+    if config:
+        app.config.update(config)
+
     db.init_app(app)
     migrate.init_app(app, db)
 
     from app.routes import product_blueprint
-
     app.register_blueprint(product_blueprint)
 
     return app

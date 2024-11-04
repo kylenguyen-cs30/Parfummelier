@@ -1,8 +1,11 @@
 from app import db
 
-
-# NOTE: Accociation table for many-to-many relationship
-
+# Collection model
+class Collection(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    
+# Association tables for many-to-many relationships
 product_note = db.Table(
     "product_note",
     db.Column("product_id", db.Integer, db.ForeignKey("product.id")),
@@ -15,14 +18,15 @@ product_accord = db.Table(
     db.Column("accord_id", db.Integer, db.ForeignKey("accord.id")),
 )
 
-
-# PERF: Product model: Represents individual fragrance products
+# Product model: Represents individual fragrance products
 class Product(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    # designer = db.Column(db.String(100), nullable=False)
+    manufacturer = db.Column(db.String(100), nullable=False)  # Changed from designer to manufacturer
+    collection_id = db.Column(db.Integer, db.ForeignKey('collection.id'), nullable=True)
+    collection = db.relationship('Collection', backref=db.backref('products', lazy=True))
 
-    # many-to-many relationship
+    # Many-to-many relationships
     notes = db.relationship(
         "Note", secondary=product_note, backref=db.backref("products", lazy="dynamic")
     )
@@ -32,24 +36,22 @@ class Product(db.Model):
         backref=db.backref("products", lazy="dynamic"),
     )
 
-    review = db.relationship("Review", backref="product", lazy="dynamic")
+    # One-to-many relationship with reviews
+    reviews = db.relationship("Review", backref="product", lazy="dynamic")
 
-
-# PERF: Review Model
+# Review model
 class Review(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rating = db.Column(db.Integer, nullable=False)
     content = db.Column(db.String(100), nullable=False)
     product_id = db.Column(db.Integer, db.ForeignKey("product.id"))
 
-
-# PERF: Accord model: Represents a category of notes (e.g., Woody, Floral)
+# Accord model: Represents a category of notes (e.g., Woody, Floral)
 class Accord(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
 
-
-# PERF: Note model: Represents a fragrance note belonging to a specific accord
+# Note model: Represents a fragrance note belonging to a specific accord
 class Note(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)

@@ -5,6 +5,9 @@ import { useEffect, useState } from "react";
 import ChatRoom from "../components/ui/chat/ChatRoom/ChatRoom";
 import axios from "axios";
 
+// NOTE:
+// interface variable is capturing
+// chatroom information
 interface ChatInfo {
   roomId: string;
   otheruser: {
@@ -20,6 +23,11 @@ export default function ChatPage() {
   const roomId = searchParams.get("roomId");
   const [chatInfo, setChatInfo] = useState<ChatInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  // NOTE:
+  // Establishing the connection in the backend with HTTP API Endpoint first
+  // when it return 201, chatInfo is avaialble and then throw greenlight to
+  // useEffect then conditionally render the ChatRoom Component
 
   useEffect(() => {
     const fetchChatInfo = async () => {

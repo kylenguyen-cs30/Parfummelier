@@ -27,7 +27,7 @@ const Sidebar = () => {
           </a>
         </li>
         <li>
-          <a href="forum-page" className="sidebar-link">
+          <a href="forum" className="sidebar-link">
             Forum
           </a>
         </li>

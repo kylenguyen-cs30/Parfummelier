@@ -1,6 +1,5 @@
 from flask import Blueprint, request, jsonify, abort
 from typing import List, Dict
-from .accord_note_table import get_accord_note_data_json, get_accords_from_notebank
 
 quiz_blueprint = Blueprint("quiz", __name__)
 
@@ -8,55 +7,54 @@ quiz_blueprint = Blueprint("quiz", __name__)
 def home():
     return jsonify({"message": "Quiz Service launched"}), 200
 
-# In-memory dictionary for user notebanks
-user_notebanks: Dict[int, List[str]] = {}
+# In-memory dictionary for user accordbanks
+user_accordbanks: Dict[int, List[str]] = {}
 
-# Mapping of answers to corresponding notes
-ANSWER_TO_NOTES = {
-    "Reading a book in a cozy nook": ["Bergamot", "Palestinian Sweet Lime", "Plum"],
-    "Watching your favorite series with a snack": ["Popcorn", "Petitgrain", "Pomegranate"],
-    "Meditating or practicing yoga": ["Frankincense", "Myrrh", "Lavender"],
-    "Cooking up a new recipe": ["Bigarade", "Oregano", "Strawberry"],
-    "Upbeat pop that makes you dance": ["Peach", "Pomelo", "Watermelon"],
-    "Classic rock with guitar riffs": ["Bitter Orange", "Sudachi citrus", "Yuzu"],
-    "Soothing classical music": ["Blood Orange", "Tangelo", "Iris"],
-    "Jazzy tunes with a laid-back vibe": ["Buddha's Hand", "Yuzu", "Amber"],
-    "A freshly brewed cup of coffee": ["Calamansi", "Hazelnut", "Caramel"],
-    "A calming cup of herbal tea": ["Green Tea", "Acai Berry", "Jasmine"],
-    "A glass of rich red wine": ["Grapes", "Oak", "Blackberry"],
-    "A refreshing mojito cocktail": ["Lime", "Acerola", "Rum"],
-    "Sunrise, when the world feels fresh and quiet": ["Candied Lemon", "Apple", "Peppermint"],
-    "Mid-afternoon, when the sun is warm but not too hot": ["Chen Pi", "Apricot", "Sandalwood"],
-    "Early evening, just before the stars come out": ["Chinotto", "Blackberry", "Cedar"],
-    "Late at night, when everything feels calm": ["Indian Oud", "Blueberry", "Patchouli"],
-    "A classic Italian pasta dish": ["Citron", "Cantaloupe", "Olive"],
-    "Spicy and flavorful Mexican food": ["Cilantro", "Green Pepper", "Cinnamon"],
-    "French pastries and delicate desserts": ["Citrus Water", "Thyme", "Lavender"],
-    "Fresh and simple Japanese cuisine": ["Ginger", "Rice", "Yuzu"],
-    "Hiking in the mountains or by the beach": ["Pine", "Oakmoss", "Sandalwood"],
-    "Going to a live concert or music festival": ["Clementine", "Amberwood", "Rum"],
-    "Treating yourself to a spa day": ["Finger Lime", "Chamomile", "Sandalwood"],
-    "Exploring new cafes or hidden spots in the city": ["Grapefruit", "Cherry", "Coffee"],
-    "A loyal and playful dog": ["Green Tangerine", "Woody", "Amber"],
-    "An independent and mysterious cat": ["Hassaku", "Coconut", "Jasmine"],
-    "A colorful bird that sings all day": ["Citrus", "Dragon Fruit", "Peppermint"],
-    "A calm fish that swims gracefully": ["Aquatic", "Seaweed", "Salt"],
-    "Relaxing on a secluded tropical island": ["Bergamot", "Agave", "Coconut"],
-    "Skiing in the snowy mountains": ["Kaffir Lime", "Fig", "Clove leaf"],
-    "Exploring a bustling city like New York": ["Kumquat", "Grapes", "Rose"],
-    "Strolling through romantic Paris streets": ["Lemon", "Kiwi", "Amber"],
-    "Spring, when everything blooms": ["Cherry Blossom", "Grass", "Lemon"],
-    "Summer, with endless sunny days": ["Watermelon", "Orange Blossom", "Coconut"],
-    "Fall, with cozy vibes and colorful leaves": ["Lime", "Maple", "Sandalwood"],
-    "Winter, when it’s all about warmth and hot cocoa": ["Mandarin Orange", "Mango", "Gingerbread"],
-    "Action-packed superhero adventure": ["Black Pepper", "Papaya", "Tobacco"],
-    "A lighthearted romantic comedy": ["Strawberry", "Peach", "Cotton Candy"],
-    "A mystery that keeps you on the edge of your seat": ["Neroli", "Pear", "Vetiver"],
-    "A fantasy with magical creatures and faraway lands": ["Orange", "Pineapple", "Musk"],
+# Mapping of answers to corresponding accords
+ANSWER_TO_ACCORDS = {
+    "Reading a book in a cozy nook": ["Powdery", "Amber", "Woody"],
+    "Watching your favorite series with a snack": ["Sweet", "Aromatic", "Nutty"],
+    "Meditating or practicing yoga": ["Earthy", "Balsamic", "Lavender"],
+    "Cooking up a new recipe": ["Herbal", "Spicy", "Bitter"],
+    "Upbeat pop that makes you dance": ["Fruity", "Tropical", "Citrus"],
+    "Classic rock with guitar riffs": ["Leather", "Warm Spicy", "Tobacco"],
+    "Soothing classical music": ["Iris", "White Floral", "Floral"],
+    "Jazzy tunes with a laid-back vibe": ["Soft Spicy", "Patchouli", "Mossy"],
+    "A freshly brewed cup of coffee": ["Coffee", "Caramel", "Chocolate"],
+    "A calming cup of herbal tea": ["Green", "Soapy", "Fresh"],
+    "A glass of rich red wine": ["Mossy", "Oud", "Honey"],
+    "A refreshing mojito cocktail": ["Rum", "Salty", "Mint"],
+    "Sunrise, when the world feels fresh and quiet": ["Ozonic", "Fresh Spicy", "Aldehydic"],
+    "Mid-afternoon, when the sun is warm but not too hot": ["Lactonic", "Citrus", "Marine"],
+    "Early evening, just before the stars come out": ["Rose", "Powdery", "Camphor"],
+    "Late at night, when everything feels calm": ["Musky", "Mineral", "Beeswax"],
+    "A classic Italian pasta dish": ["Animalic", "Savory", "Earthy"],
+    "Spicy and flavorful Mexican food": ["Cinnamon", "Smoky", "Peppery"],
+    "French pastries and delicate desserts": ["Vanilla", "Almond", "Cacao"],
+    "Fresh and simple Japanese cuisine": ["Aquatic", "Green", "Rice"],
+    "Hiking in the mountains or by the beach": ["Conifer", "Amber", "Sand"],
+    "Going to a live concert or music festival": ["Metallic", "Rum", "Leather"],
+    "Treating yourself to a spa day": ["Floral", "Soapy", "Tuberose"],
+    "Exploring new cafes or hidden spots in the city": ["Coffee", "Nutty", "Woodsy"],
+    "A loyal and playful dog": ["Musky", "Honey", "Soft Spicy"],
+    "An independent and mysterious cat": ["Animalic", "Patchouli", "Violet"],
+    "A colorful bird that sings all day": ["Fruity", "Citrus", "Yellow Floral"],
+    "A calm fish that swims gracefully": ["Aquatic", "Salty", "Marine"],
+    "Relaxing on a secluded tropical island": ["Coconut", "Tropical", "Fresh"],
+    "Skiing in the snowy mountains": ["Icy", "Woody", "Powdery"],
+    "Exploring a bustling city like New York": ["Industrial Glue", "Amber", "Concrete"],
+    "Strolling through romantic Paris streets": ["Rose", "Powdery", "Floral"],
+    "Spring, when everything blooms": ["Floral", "Green", "Fresh"],
+    "Summer, with endless sunny days": ["Citrus", "Tropical", "White Floral"],
+    "Fall, with cozy vibes and colorful leaves": ["Warm Spicy", "Herbal", "Earthy"],
+    "Winter, when it’s all about warmth and hot cocoa": ["Vanilla", "Cinnamon", "Nutty"],
+    "Action-packed superhero adventure": ["Black Pepper", "Leather", "Smoky"],
+    "A lighthearted romantic comedy": ["Sweet", "Fruity", "Soft Spicy"],
+    "A mystery that keeps you on the edge of your seat": ["Earthy", "Woody", "Dark"],
+    "A fantasy with magical creatures and faraway lands": ["Musk", "Green", "Amber"]
 }
 
-# NOTE: Submit quiz responses
-
+# Submit quiz responses
 @quiz_blueprint.route("/submit-quiz/", methods=["POST"])
 def submit_quiz():
     data = request.json
@@ -65,45 +63,52 @@ def submit_quiz():
     if len(answers) != 10:
         abort(400, description="Quiz must have exactly 10 answers.")
 
-    # Build the notebank based on answers
-    notebank = []
+    # Using a set to store unique accords
+    accordbank_set = set()
     for answer in answers:
-        if answer not in ANSWER_TO_NOTES:
+        if answer not in ANSWER_TO_ACCORDS:
             abort(400, description=f"Invalid answer: {answer}")
-        notebank.extend(ANSWER_TO_NOTES[answer])
+        accordbank_set.update(ANSWER_TO_ACCORDS[answer])  # Adds only unique accords
 
-    # Store the notebank in localhost
-    user_notebanks["localhost:5005"] = notebank
+    # Convert set back to list for storage
+    accordbank = list(accordbank_set)
 
-    return jsonify({"message": "Notebank created successfully", "notebank": notebank})
+    # Store the accordbank in memory
+    user_accordbanks["localhost:5005"] = accordbank
 
-@quiz_blueprint.route("/accord-note-data/", methods=["POST"])
-def get_accord_note_data():
-    notebank = request.json.get("notebank", [])
-    accords = get_accords_from_notebank(notebank)
+    return jsonify({"message": "Accordbank created successfully", "accordbank": accordbank})
+@quiz_blueprint.route("/accord-data/", methods=["POST"])
+def get_accord_data():
+    accordbank = request.json.get("accordbank", [])
+    # Assuming you have a function `get_accords_from_accordbank` defined, or this can be a simple pass-through
+    accords = list(set(accordbank))  # For now, we will return unique accords directly
     return jsonify(accords)
 
-@quiz_blueprint.route("/update-notebank/", methods=["PUT"])
-def update_notebank():
-    # Parse the JSON data from the request
+@quiz_blueprint.route("/update-accordbank/", methods=["PUT"])
+def update_accordbank():
     data = request.json
     answers = data.get("answers", [])
 
-    # Ensure that there are exactly 10 answers
     if len(answers) != 10:
         abort(400, description="Quiz must have exactly 10 answers.")
 
-    # Initialize a new notebank for the updated answers
-    updated_notebank = []
-
-    # Validate each answer and build the updated notebank
+    # Using a set to store unique accords for the updated accordbank
+    updated_accordbank_set = set()
     for answer in answers:
-        if answer not in ANSWER_TO_NOTES:
+        if answer not in ANSWER_TO_ACCORDS:
             abort(400, description=f"Invalid answer: {answer}")
-        updated_notebank.extend(ANSWER_TO_NOTES[answer])
+        updated_accordbank_set.update(ANSWER_TO_ACCORDS[answer])
 
-    # Update the user's notebank in memory
-    user_notebanks["localhost:5005"] = updated_notebank
+    # Convert set back to list for storage
+    updated_accordbank = list(updated_accordbank_set)
 
-    # Return a success message with the updated notebank
-    return jsonify({"message": "Notebank updated successfully", "updated_notebank": updated_notebank})
+    # Update the user's accordbank in memory
+    user_accordbanks["localhost:5005"] = updated_accordbank
+
+    return jsonify({"message": "Accordbank updated successfully", "updated_accordbank": updated_accordbank})
+
+@quiz_blueprint.errorhandler(400)
+def bad_request(error):
+    response = jsonify({"description": error.description})
+    response.status_code = 400
+    return response

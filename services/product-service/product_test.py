@@ -13,7 +13,6 @@ def test_list_products_empty(client):
 def test_add_product(client):
     data = {
         "name": "Test Product",
-        "note": ["Citrus", "Floral"],
         "accords": ["Fresh", "Woody"],
         "manufacturer": "Oscar Hernandez"
     }
@@ -22,16 +21,14 @@ def test_add_product(client):
     )
     assert response.status_code == 201
     assert response.json["name"] == "Test Product"
-    assert response.json["notes"] == ["Citrus", "Floral"]
     assert sorted(response.json["accords"]) == sorted(["Fresh", "Woody"])
 
 def test_get_product(client):
     # Create a product to retrieve
     data = {
         "name": "Test Product",
-        "note": ["Citrus"],
         "accords": ["Woody"],
-        "manufacturer": "Oscar Hernandez" 
+        "manufacturer": "Oscar Hernandez"
     }
     client.post("/add_product", data=json.dumps(data), content_type="application/json")
 
@@ -40,12 +37,12 @@ def test_get_product(client):
     assert response.status_code == 200
     assert response.json["name"] == "Test Product"
     assert response.json["manufacturer"] == "Oscar Hernandez"
-
+    assert "reviews" in response.json
+    
 def test_update_product(client):
     # Add a product to update
     data = {
         "name": "Old Name",
-        "note": ["Citrus"],
         "accords": ["Woody"],
         "manufacturer": "Oscar Hernandez"
     }
@@ -57,12 +54,10 @@ def test_update_product(client):
     assert response.status_code == 200
     assert response.json["name"] == "Updated Name"
 
-
 def test_add_review(client):
     # Add a product first
     data = {
         "name": "Review Product",
-        "note": ["Floral"],
         "accords": ["Fresh"],
         "manufacturer": "Oscar Hernandez"
     }
@@ -78,12 +73,10 @@ def test_add_review(client):
     assert response.json["review_id"] is not None
     assert response.json["product_id"] == 1
 
-
 def test_delete_product(client):
     # Add a product to delete
     data = {
         "name": "Delete Product",
-        "note": ["Amber"],
         "accords": ["Oriental"],
         "manufacturer": "Oscar Hernandez"
     }

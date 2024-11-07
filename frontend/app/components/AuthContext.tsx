@@ -1,17 +1,45 @@
 "use client";
-import React, { createContext, useState, useContext } from "react";
+import React, { createContext, useState, useContext, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import axios from "axios";
+
+interface User {
+  id: number;
+  email: string;
+}
 
 interface AuthContextProps {
-  isVerified: boolean;
-  setIsVerified: (isVerified: boolean) => void;
-  logout: () => void;
+  user: User | null;
+  isLoading: boolean;
+  isAuthenticated: boolean;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isVerified, setIsVerified] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await axios.get("api/getCurrentUserId");
+        if (response.status === 200) {
+          setUser(response.data);
+          setIsAuthenticated(true);
+        }
+      } catch (error) {
+        console.error("Error Verification Id: ", error);
+        setUser(null);
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
 
   // router for page changing
   const router = useRouter();
@@ -19,8 +47,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //NOTE: logout context
   const logout = async () => {
     try {
-      await fetch("/api/logout", { method: "POST" });
-      setIsVerified(false);
+      // await fetch("/api/logout", { method: "POST" });
+      await axios.post("/api/logout");
+      setUser(null);
+      setIsAuthenticated(false);
       router.push("/signin");
     } catch (error) {
       console.error("error logging out: ", error);
@@ -30,9 +60,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <AuthContext.Provider
       value={{
+        user,
+        isLoading,
+        isAuthenticated,
         logout,
-        isVerified,
-        setIsVerified,
       }}
     >
       {children}
@@ -46,39 +77,3 @@ export const useAuth = () => {
   }
   return context;
 };
-
-//
-// const setResetToken = (token: string | null) => {
-//   if (token) {
-//     localStorage.setItem("resetToken", token);
-//   } else {
-//     localStorage.removeItem("resetToken");
-//   }
-//   setResetTokenState(token);
-// };
-//
-// // Load resetToken from localStorage when the app starts
-// useEffect(() => {
-//   const token = localStorage.getItem("resetToken");
-//   if (token) {
-//     setResetTokenState(token);
-//   }
-// }, []);
-//
-//
-// const setAccessToken = (token: string | null) => {
-//   if (token) {
-//     localStorage.setItem("accessToken", token);
-//   } else {
-//     localStorage.removeItem("accessToken");
-//   }
-//   setAccessTokenState(token);
-// };
-//
-// useEffect(() => {
-//   const token = localStorage.getItem("accessToken");
-//   if (token) {
-//     setAccessTokenState(token);
-//   }
-// }, []);
-//

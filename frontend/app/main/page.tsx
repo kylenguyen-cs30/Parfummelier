@@ -7,10 +7,15 @@ import Footer from "../components/ui/footer/Footer";
 import Button from "../components/ui/button/Button";
 import { useAuth } from "../components/AuthContext";
 import Sidebar from "../components/ui/sidebar/Sidebar";
+import { useRequireAuth } from "../hooks/useRequireAuth";
 
 export default function Main() {
   const { logout } = useAuth();
+  const { user, isLoading } = useRequireAuth();
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
@@ -37,7 +42,8 @@ export default function Main() {
 
       {/* Content Section  */}
       <Content>
-        <h1>This is main page</h1>
+        <h1>Welcome , {user?.email}</h1>
+
         {/* <Card></Card> */}
       </Content>
       <Footer />

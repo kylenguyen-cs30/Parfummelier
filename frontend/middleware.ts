@@ -1,39 +1,71 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import ChangePassword from "./app/change-password/page";
+import { NextURL } from "next/dist/server/web/next-url";
 
 // Define public routes that don't require authentication
-const publicRoutes = [
-  "/change-password",
-  "/signin",
-  "/signup",
-  "/manage-user-profile-page",
-  "/", // Adding root path as public
-  "/api", // Adding API routes as public
-];
+
+// Move Routes to a separate config file for better maintaince
+const AUTH_CONFIG = {
+  publicRoutes = [
+    "/change-password",
+    "/signin",
+    "/signup",
+    "/", // Adding root path as public
+    "/api", // Adding API routes as public
+  ],
+  protectedRoutes: ["/main", "/user-profile", "/chat", "/basket"],
+
+  specialRoutes: {
+    changePassword: "/change-password",
+    defaultRedirect: "/main",
+    authRedirect: "/signin",
+  },
+} as const;
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Get tokens from the cookies
+  const matchesRoute = (path: string, routes: string[]) =>
+    routes.some((route) => path === route || path.startsWith(`${route}/`));
+
+  // Get Tokens from cookies
   const accessToken = request.cookies.get("access_token")?.value;
   const resetToken = request.cookies.get("reset_token")?.value;
 
-  // Special case for change-password route
-  if (path === "/change-password") {
+  // handle special routes first
+  if (path === AUTH_CONFIG.specialRoutes.changePassword) {
     if (!resetToken) {
-      return NextResponse.redirect(new URL("/signin", request.url));
+      return NextResponse.redirect(
+        new URL(AUTH_CONFIG.specialRoutes.authRedirect, request.url),
+      );
     }
     return NextResponse.next();
   }
 
-  // Check if the current path is a public route
-  const isPublicRoute = publicRoutes.some(route =>
-    path === route || path.startsWith(`${route}/`)
-  );
+  // Check for public routes
+  const isPublicRoute = matchesRoute(path, AUTH_CONFIG.publicRoutes);
 
-  // If it's not a public route and there's no access token, redirect to signin
+  // if user is authenticated and tries to access auth pages (signin/signup)
+  if (accessToken && path.match(/^\sign(in|up)/)) {
+    return NextResponse.redirect(
+      new URL(AUTH_CONFIG.specialRoutes.defaultRedirect, request.url),
+    );
+  }
+
+  //protected route check
   if (!isPublicRoute && !accessToken) {
-    return NextResponse.redirect(new URL("/signin", request.url));
+    const response = NextResponse.redirect(
+      new URL(AUTH_CONFIG.specialRoutes.authRedirect, request.url),
+    );
+
+    response.cookies.set("redirectTo", path, {
+      path: "/",
+      httpOnly: true,
+      sameSite: "lax",
+      maxAge: 300,
+    });
+    return response;
   }
 
   return NextResponse.next();
@@ -53,46 +85,3 @@ export const config = {
     "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:jpg|jpeg|gif|png|svg|ico|webp)$).*)",
   ],
 };
-
-
-
-// BUG:
-// this part still have bugs. we need to investigate
-//
-// if (path === "/main-page") {
-//   if (!accessToken) {
-//     return NextResponse.redirect(new URL("/signin", request.url)); // If no access token, redirect to login
-//   }
-//
-//   // Check if the access token is valid
-//   const validateTokenResponse = await fetch(
-//     "http://localhost:5002/validate-token",
-//     {
-//       method: "POST",
-//       headers: { "Content-Type": "application/json" },
-//       body: JSON.stringify({ access_token: accessToken }),
-//     },
-//   );
-//
-//   if (validateTokenResponse.status === 401) {
-//     const responseData = await validateTokenResponse.json();
-//
-//     // If the token is expired, refresh it
-//     if (responseData.status === "expired" && refreshToken) {
-//       // Call the /refresh endpoint to get a new access_token and refresh_token
-//       const refreshResponse = await fetch("http://localhost:5002/refresh", {
-//         method: "POST",
-//         headers: { "Content-Type": "application/json" },
-//         credentials: "include", // Ensure cookies are sent with the request
-//       });
-//
-//       if (refreshResponse.status === 200) {
-//         return NextResponse.next(); // Proceed if the token is refreshed successfully
-//       } else {
-//         return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if refresh failed
-//       }
-//     } else {
-//       return NextResponse.redirect(new URL("/signin", request.url)); // Redirect to login if no refresh token
-//     }
-//   }
-// }

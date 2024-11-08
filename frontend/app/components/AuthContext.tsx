@@ -6,6 +6,9 @@ import axios from "axios";
 interface User {
   id: number;
   email: string;
+  firstName: string;
+  lastName: string;
+  userName: string;
 }
 
 interface AuthContextProps {
@@ -21,33 +24,62 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const response = await axios.get("api/getCurrentUserId");
-        if (response.status === 200) {
-          setUser(response.data);
-          setIsAuthenticated(true);
-        }
-      } catch (error) {
-        console.error("Error Verification Id: ", error);
-        setUser(null);
-        setIsAuthenticated(false);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
   // router for page changing
   const router = useRouter();
+
+  // simplified checkauth function - no need for validate token
+  const checkAuth = async () => {
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken");
+
+      if (tokenResponse.status === 200) {
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.data.access_token}`,
+            },
+          },
+        );
+
+        if (userResponse.status === 200) {
+          setUser(userResponse.data);
+          setIsAuthenticated(true);
+        }
+      }
+    } catch (error) {
+      console.error("Auth Check Failed: ", error);
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      const refreshInterval = setInterval(refreshToken, 14 * 60 * 1000); // 14 minutes
+      return () => clearInterval(refreshInterval);
+    }
+  }, [isAuthenticated]);
+
+  // Refresh Token Function
+  const refreshToken = async () => {
+    try {
+      const response = await axios.post("http://localhost:8000/auth/refresh");
+      if (response.status === 200) {
+        await axios.post("/api/setAccessToken", {
+          access_token: response.data.access_token,
+        });
+      }
+    } catch (error) {
+      logout();
+    }
+  };
 
   //NOTE: logout context
   const logout = async () => {
     try {
-      // await fetch("/api/logout", { method: "POST" });
       await axios.post("/api/logout");
       setUser(null);
       setIsAuthenticated(false);

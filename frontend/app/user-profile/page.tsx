@@ -1,101 +1,44 @@
-const ManageUserProfile = () => {
+import React from "react";
+import Image from "next/image";
+
+interface UserProfileProps {
+  user: {
+    name: string;
+    email: string;
+    profileImage: string;
+    scentId: number;
+  };
+}
+
+const UserProfile: React.FC<UserProfileProps> = () => {
+  // Example user data (this would typically come from props or state)
+  const user = {
+    name: "John Doe",
+    email: "john.doe@example.com",
+    profileImage: "/images/profile1.png", // Path to profile image
+    scentId: 123,
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 py-8">
       <div className="container mx-auto px-4">
-        <h1 className="text-4xl font-bold text-center mb-8">
-          Manage Your Profile
-        </h1>
-
-        <form
-          //   onSubmit={handleSubmit}
-          className="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md"
-        >
-          {/* Name */}
-          <div className="mb-4">
-            <label
-              htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Name
-            </label>
-            <input
-              type="text"
-              id="name"
-              name="name"
-              //   value={user.name}
-              //   onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 w-full rounded-md"
-              required
+        <div className="bg-white p-6 rounded-lg shadow-md max-w-sm mx-auto text-center">
+          <div className="relative w-32 h-32 mx-auto mb-4">
+            <Image
+              src={user.profileImage}
+              alt={`${user.name}'s profile image`}
+              layout="fill"
+              objectFit="cover"
+              className="rounded-full"
             />
           </div>
-
-          {/* Email */}
-          <div className="mb-4">
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              //   value={user.email}
-              //   onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 w-full rounded-md"
-              required
-            />
-          </div>
-
-          {/* Password */}
-          <div className="mb-4">
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              //   value={user.password}
-              //   onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 w-full rounded-md"
-              required
-            />
-          </div>
-
-          {/* Bio (Optional) */}
-          <div className="mb-4">
-            <label
-              htmlFor="bio"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Bio
-            </label>
-            <textarea
-              id="bio"
-              name="bio"
-              //   value={user.bio}
-              //   onChange={handleChange}
-              className="mt-1 p-2 border border-gray-300 w-full rounded-md"
-              rows={3}
-            />
-          </div>
-
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white p-2 rounded-md hover:bg-blue-500"
-          >
-            Update Profile
-          </button>
-        </form>
+          <h1 className="text-2xl font-bold mb-2">{user.name}</h1>
+          <p className="text-gray-600">{user.email}</p>
+          <p className="text-gray-600">Scent ID: {user.scentId}</p>
+        </div>
       </div>
     </div>
   );
 };
 
-export default ManageUserProfile;
+export default UserProfile;

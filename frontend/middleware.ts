@@ -1,41 +1,34 @@
+// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
 
-// define route types
 const PUBLIC_ROUTES = [
   "/",
   "/signin",
-  "signup",
-  "forget-password",
-  "about-us",
-].map((route) => route.toLowerCase());
-const AUTH_ROUTES = ["/signin", "/signup"].map((route) => route.toLowerCase());
-// const PROTECTED_ROUTES = [
-//   "/main",
-//   "/user-profile",
-//   "/basket",
-//   "/chat",
-//   "/forum",
-//   "product",
-//   "/quiz",
-//   "/inbox",
-//   "/support",
-//   "contact-us",
-//   "all-products",
-//   "gift-guide",
-// ];
+  "/signup",
+  "/forget-password",
+  "/about-us",
+];
+
+const AUTH_ROUTES = ["/signin", "/signup"];
 
 export async function middleware(request: NextRequest) {
-  // path variable as interceptor
-  const path = request.nextUrl.pathname.toLowerCase();
+  const path = request.nextUrl.pathname;
 
-  // get tokens
+  // Skip middleware for static files
+  if (
+    path.includes("/_next") ||
+    path.includes("/api") ||
+    path.match(/\.(jpg|jpeg|png|gif|ico|svg|css|js)$/)
+  ) {
+    return NextResponse.next();
+  }
+
   const accessToken = request.cookies.get("access_token")?.value;
   const resetToken = request.cookies.get("reset_token")?.value;
 
-  // NOTE:
-  // 1. handle change-password special case
+  // Handle change-password
   if (path === "/change-password") {
     if (!resetToken) {
       return NextResponse.redirect(new URL("/forget-password", request.url));
@@ -43,51 +36,42 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // NOTE:
-  // 2. check token validity
   let isValidToken = false;
   if (accessToken) {
     try {
-      await jwtVerify(
-        accessToken,
-        new TextEncoder().encode(process.env.JWT_SECRET),
+      const secret = new TextEncoder().encode(
+        process.env.JWT_SECRET || "your-default-secret-key",
       );
+      await jwtVerify(accessToken, secret);
       isValidToken = true;
-    } catch (error) {
-      console.error("Token validation failed: ", error);
+    } catch {
       isValidToken = false;
     }
   }
 
-  // NOTE:
-  // 3. handle different scenarios
-
-  // CASE: User is on landing page
-
-  if (path === "/") {
-    if (isValidToken) {
-      return NextResponse.redirect(new URL("/main", request.url));
-    }
-
-    return NextResponse.next();
+  // Landing page redirect
+  if (path === "/" && isValidToken) {
+    return NextResponse.redirect(new URL("/main", request.url));
   }
 
-  // CASE: User is on auth routes but already authenticated
+  // Auth routes protection
   if (isValidToken && AUTH_ROUTES.includes(path)) {
     return NextResponse.redirect(new URL("/main", request.url));
   }
 
-  // CASE: User tries to access protected rotues without valid tokens
-
+  // Protected routes
   if (!isValidToken && !PUBLIC_ROUTES.includes(path)) {
     return NextResponse.redirect(new URL("/", request.url));
   }
+
   return NextResponse.next();
 }
 
-// Update the matcher to include all routes except _next and static files
 export const config = {
   matcher: [
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(png|jpg|jpeg|svg|gif)$).*)",
+    /*
+     * Match all paths except static files
+     */
+    "/((?!_next/static|_next/image|api).*)",
   ],
 };

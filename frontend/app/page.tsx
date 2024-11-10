@@ -16,6 +16,7 @@ export default function Home() {
     }
   }, [isAuthenticated, router, isLoading]);
 
+  console.log("Landing Page State:", { isLoading, isAuthenticated });
   if (isLoading) {
     return <div>Loading...</div>;
   }

@@ -1,5 +1,11 @@
 "use client";
-import React, { createContext, useState, useContext, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 
@@ -28,11 +34,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
 
   // simplified checkauth function - no need for validate token
-  const checkAuth = async () => {
+  const checkAuth = useCallback(async () => {
+    console.log("Checking auth...");
     try {
       const tokenResponse = await axios.get("/api/getAccessToken");
+      console.log("Token response:", tokenResponse.status);
 
       if (tokenResponse.status === 200) {
+        console.log("Got token, fetching user info...");
         const userResponse = await axios.get(
           "http://localhost:8000/user/current-user/info",
           {
@@ -42,19 +51,22 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           },
         );
 
+        console.log("User response:", userResponse.status);
         if (userResponse.status === 200) {
+          console.log("Setting user data:", userResponse.data);
           setUser(userResponse.data);
           setIsAuthenticated(true);
         }
       }
     } catch (error) {
-      console.error("Auth Check Failed: ", error);
+      console.error("Auth check failed:", error);
       setUser(null);
       setIsAuthenticated(false);
     } finally {
+      console.log("Setting loading to false");
       setIsLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     if (isAuthenticated) {

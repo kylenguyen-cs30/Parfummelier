@@ -43,6 +43,7 @@ services:
     environment:
       # - DATABASE_PRODUCT_URL=${DATABASE_PRODUCT_URL}
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
+      - API_BASE_URL=${PRODUCT_API_URL}
       - SECRET_KEY=${SECRET_KEY}
     networks:
       - parfummelier-network
@@ -57,6 +58,7 @@ services:
     depends_on:
       - user-service
       - authentication-service
+      - product-service
     volumes:
       # - ./api-gateway/kong.yml:/app/kong.yml
       - ./api-gateway/kong.yml:/etc/kong/kong.yml

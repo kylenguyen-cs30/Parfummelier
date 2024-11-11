@@ -1,58 +1,79 @@
-from flask import Blueprint, request, jsonify
-from app.models import db, Product, Accord, Review  
+from flask_migrate import branches
+from flask import Blueprint, request, jsonify, send_from_directory
+from app.models import db, Product, Accord, Review
+import os
+
 
 product_blueprint = Blueprint("product", __name__)
+
+# NOTE:
+# Define the path to images directory
+API_GATEWAY_URL = os.getenv("API_GATEWAY_URL", "http://localhost:8000")
+IMAGES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "images")
+
+
+@product_blueprint.route("/images/<path:filename>")
+def serve_image(filename):
+    """
+    serve images from the image directory
+    """
+    return send_from_directory(IMAGES_PATH, filename)
+
 
 @product_blueprint.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Product Service launched"}), 200
 
+
 # ----------------------------- #
 #           PRODUCTS            #
 # ----------------------------- #
 
+
+# NOTE: Full List Products return
 @product_blueprint.route("/products", methods=["GET"])
 def list_products():
     products = Product.query.all()
+    base_url = f"{API_GATEWAY_URL}/product/images/"  # Get the base URL for images
     return jsonify(
         [
             {
                 "id": product.id,
                 "name": product.name,
-                "manufacturer": product.manufacturer,
                 "accords": [accord.name for accord in product.accords],
-                "reviews": [
-                    {"rating": review.rating, "content": review.content}
-                    for review in product.review
-                ],
+                "brand": product.brand,
+                "imageURL": base_url + product.imageURL if product.imageURL else None,
             }
             for product in products
         ]
     )
 
+
+# NOTE: Single product return
 @product_blueprint.route("/products/<int:id>", methods=["GET"])
 def get_product(id):
     product = Product.query.get_or_404(id)
+    base_url = f"{API_GATEWAY_URL}/product/images/"  # Get the base URL for images
     return jsonify(
         {
             "id": product.id,
             "name": product.name,
-            "manufacturer": product.manufacturer,
+            "brand": product.brand,
             "accords": [accord.name for accord in product.accords],
-            "reviews": [
-                {"rating": review.rating, "content": review.content}
-                for review in product.reviews
-            ],
+            "imageURL": base_url + product.imageURL if product.imageURL else None,
         }
     )
 
+
+# NOTE: Add Product
 @product_blueprint.route("/add_product", methods=["POST"])
 def add_product():
     try:
         data = request.json
         new_product = Product(
             name=data["name"],
-            manufacturer=data.get("manufacturer"),
+            brand=data["brand"],
+            imageURL=data.get("imageURL"),
         )
         accord_objects = []
         for accord_name in data.get("accords", []):
@@ -63,6 +84,7 @@ def add_product():
             accord_objects.append(accord_obj)
         new_product.accords = accord_objects
 
+        # Commit Change into the database
         db.session.add(new_product)
         db.session.commit()
 
@@ -71,8 +93,9 @@ def add_product():
                 {
                     "id": new_product.id,
                     "name": new_product.name,
-                    "manufacturer": new_product.manufacturer,
+                    "brand": new_product.brand,
                     "accords": [accord.name for accord in new_product.accords],
+                    "imageURL": new_product.imageURL,
                 },
             ),
             201,
@@ -80,20 +103,6 @@ def add_product():
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-@product_blueprint.route("/products/<int:id>", methods=["PUT"])
-def update_product(id):
-    product = Product.query.get_or_404(id)
-    data = request.json
-    product.name = data.get("name", product.name)
-    product.manufacturer = data.get("manufacturer", product.manufacturer)
-    db.session.commit()
-    return jsonify(
-        {
-            "id": product.id,
-            "name": product.name,
-            "manufacturer": product.manufacturer,
-        }
-    )
 
 @product_blueprint.route("/add_review/<int:product_id>", methods=["POST"])
 def add_review(product_id):
@@ -120,12 +129,15 @@ def add_review(product_id):
         db.session.add(new_review)
         db.session.commit()
 
-        return jsonify(
-            {
-                "review_id": new_review.id,
-                "product_id": new_review.product_id,
-            }
-        ), 200
+        return (
+            jsonify(
+                {
+                    "review_id": new_review.id,
+                    "product_id": new_review.product_id,
+                }
+            ),
+            200,
+        )
 
     except Exception as e:
         print(f"Error adding review: {e}")  # Add detailed logging for debugging
@@ -139,9 +151,11 @@ def delete_product(id):
     db.session.commit()
     return jsonify({"message": "Product deleted successfully"})
 
+
 # ----------------------------- #
 #           ACCORDS             #
 # ----------------------------- #
+
 
 @product_blueprint.route("/accords", methods=["GET"])
 def list_accords():
@@ -150,25 +164,7 @@ def list_accords():
     return jsonify([{"id": accord.id, "name": accord.name} for accord in accords])
 
 
-# ----------------------------- #
-#            NOTES              #
-# ----------------------------- #
-
-
-# List all notes with their associated accord
-@product_blueprint.route("/notes", methods=["GET"])
-def list_notes():
-    notes = Note.query.all()
-    return jsonify(
-        [
-            {"id": note.id, "name": note.name, "accord": note.accord.name}
-            for note in notes
-        ]
-    )
-
-
 # NOTE: Route recommendataion
 
 
 # NOTE: Rating Routes
-

@@ -1,9 +1,6 @@
-# import logging
 import jwt
+import logging
 
-# import os
-#
-# # import smtplib [optional]
 from flask_migrate import current
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
@@ -19,6 +16,9 @@ from .models import (
 from app import db
 
 user_blueprint = Blueprint("user", __name__)
+
+
+logger = logging.getLogger(__name__)
 
 # TODO:
 #
@@ -67,7 +67,6 @@ def token_required(f):
         except jwt.ExpiredSignatureError:
             return jsonify({"error": "Token is expried"}), 401
         except jwt.InvalidTokenError:
-            print(f"Token : {token}")
             return jsonify({"error": "Invalid Token"}), 401
 
         # Pass to the current_user to the wrapped function
@@ -422,11 +421,22 @@ def get_user_chat_info_by_id(current_user, user_id):
         return jsonify({"error": f"Error fetching user: {str(e)}"}), 501
 
 
-# NOTE: Return the Favortite Products
-#
-# @user_blueprint.route("/user/favoriteproduct", methods=["GET"])
-# @token_required
-# def return_favorite_product(current_user):
+# NOTE: Return user information
+@user_blueprint.route("/current-user/info", methods=["GET"])
+@token_required
+def get_user_info(current_user):
+    try:
+        user_info = {
+            "id": current_user.id,
+            "email": current_user.email,
+            "firstName": current_user.firstName,
+            "lastName": current_user.lastName,
+            "userName": current_user.userName,
+        }
+
+        return jsonify(user_info), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching user info: {str(e)}"}), 500
 
 
 # NOTE: Return Favorite Collections

@@ -146,4 +146,29 @@ def delete_product(id):
 @product_blueprint.route("/accords", methods=["GET"])
 def list_accords():
     accords = Accord.query.all()
+
     return jsonify([{"id": accord.id, "name": accord.name} for accord in accords])
+
+
+# ----------------------------- #
+#            NOTES              #
+# ----------------------------- #
+
+
+# List all notes with their associated accord
+@product_blueprint.route("/notes", methods=["GET"])
+def list_notes():
+    notes = Note.query.all()
+    return jsonify(
+        [
+            {"id": note.id, "name": note.name, "accord": note.accord.name}
+            for note in notes
+        ]
+    )
+
+
+# NOTE: Route recommendataion
+
+
+# NOTE: Rating Routes
+

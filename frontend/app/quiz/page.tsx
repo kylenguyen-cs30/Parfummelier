@@ -5,7 +5,7 @@
 
 "use client";
 import React, { useState } from "react";
-import QuizModal from "../components/QuizModal"; // Import the modal
+import QuizModal from "../components/quiz/QuizModal"; // Import the modal
 
 const QuizPage: React.FC = () => {
   const [isModalOpen, setModalOpen] = useState(false);

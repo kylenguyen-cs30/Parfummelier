@@ -48,11 +48,11 @@ services:
       - parfummelier-network
   # NOTE: Quiz Service
   quiz-service:
-    build: ./service/quiz-service/
+    build: ./services/quiz-service/
     ports:
       - "5005:5000"
     networks:
-      - parfummelier-networks
+      - parfummelier-network
 
   # NOTE: Api Gateway
   api-gateway:

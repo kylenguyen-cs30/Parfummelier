@@ -1,5 +1,5 @@
+import Card from "@/app/components/ui/card/Card";
 import React from "react";
-import Card from "../components/ui/card/Card"; // Update this import based on your folder structure
 
 interface Product {
   id: number;

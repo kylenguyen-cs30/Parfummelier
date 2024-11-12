@@ -5,13 +5,15 @@ import { jwtVerify } from "jose";
 
 const PUBLIC_ROUTES = [
   "/",
-  "/signin",
-  "/signup",
-  "/forget-password",
-  "/about-us",
+  "/(auth)/sigin",
+  "/(auth)/signup",
+  "/(auth)/forget-password",
+  "/(static)/about-us",
+  "/(static)/contact-us",
+  "/(static)/support",
 ];
 
-const AUTH_ROUTES = ["/signin", "/signup"];
+const AUTH_ROUTES = ["/(auth)/signin", "/(auth)/signup"];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -29,9 +31,11 @@ export async function middleware(request: NextRequest) {
   const resetToken = request.cookies.get("reset_token")?.value;
 
   // Handle change-password
-  if (path === "/change-password") {
+  if (path === "/(auth)/change-password") {
     if (!resetToken) {
-      return NextResponse.redirect(new URL("/forget-password", request.url));
+      return NextResponse.redirect(
+        new URL("/(auth)/forget-password", request.url),
+      );
     }
     return NextResponse.next();
   }
@@ -39,9 +43,7 @@ export async function middleware(request: NextRequest) {
   let isValidToken = false;
   if (accessToken) {
     try {
-      const secret = new TextEncoder().encode(
-        process.env.JWT_SECRET || "your-default-secret-key",
-      );
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
       await jwtVerify(accessToken, secret);
       isValidToken = true;
     } catch {
@@ -51,12 +53,12 @@ export async function middleware(request: NextRequest) {
 
   // Landing page redirect
   if (path === "/" && isValidToken) {
-    return NextResponse.redirect(new URL("/main", request.url));
+    return NextResponse.redirect(new URL("/(main)/main", request.url));
   }
 
   // Auth routes protection
   if (isValidToken && AUTH_ROUTES.includes(path)) {
-    return NextResponse.redirect(new URL("/main", request.url));
+    return NextResponse.redirect(new URL("/(main)/main", request.url));
   }
 
   // Protected routes
@@ -69,9 +71,9 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all paths except static files
-     */
-    "/((?!_next/static|_next/image|api).*)",
+    // Match all paths except static files and api
+    "/((?!_next/static|_next/image|api|.*\\..*).*)",
+    // Include root path
+    "/",
   ],
 };

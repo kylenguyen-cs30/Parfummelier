@@ -1,24 +1,12 @@
+"use client";
+import { Fragment } from "react";
+import { useAuth } from "../../auth/AuthContext";
+import { Menu, Transition } from "@headlessui/react";
+import { Search, Sun, Moon, ChevronDown } from "lucide-react";
+import { useTheme } from "next-themes";
+import Link from "next/link";
 import Image from "next/image";
-import "./Header.css";
 
-const Header = () => {
-  return (
-    <header className="header-container">
-      <span className="header-title">Parfummelier</span>
-
-      <div className="header-profile">
-        <button className="profile-button">
-          <Image
-            src="/logo/Logo.webp"
-            alt="Profile"
-            width={32}
-            height={32}
-            className="profile-image"
-          />
-        </button>
-      </div>
-    </header>
-  );
-};
+const Header = () => {};
 
 export default Header;

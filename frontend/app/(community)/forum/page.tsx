@@ -100,8 +100,6 @@ export default function ForumPage() {
         const tokenResponse = await axios.get("/api/getAccessToken");
         const { access_token } = tokenResponse.data;
 
-        console.log("Making request with token:", access_token); // Debug log
-
         const response = await axios.get("http://localhost:8000/user/users", {
           headers: {
             Authorization: `Bearer ${access_token}`,

@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { useAuth } from "../auth/AuthContext";
 import { useRouter } from "next/navigation";
 import Header from "./Header/Header";
-import Sidebar from "./Sidebar/Sidebar";
 import Footer from "./Footer/Footer";
 
 const LoadingScreen = () => {
@@ -64,7 +63,6 @@ const MainLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="app-layout">
       <Header />
       <div className="main-content">
-        <Sidebar />
         <main className="content-area">{children}</main>
       </div>
       <Footer />

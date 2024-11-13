@@ -2,9 +2,9 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/Button";
-import Header from "../components/ui/header/Header";
-import { useAuth } from "../components/AuthContext";
+import Header from "@/app/components/layout/Header/Header";
+import Button from "@/app/components/ui/button/Button";
+import { useAuth } from "@/app/components/auth/AuthContext";
 
 //-------------------------------------------------------------------------//
 // NOTE:
@@ -24,7 +24,6 @@ const ForgetPassword = () => {
   const [twoFactorCode, setTwoFactorCode] = useState<string>("");
   const [email, setEmail] = useState("");
   const router = useRouter();
-  const { setIsVerified } = useAuth();
 
   // NOTE: send data to backend email and username for verification
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -39,7 +38,6 @@ const ForgetPassword = () => {
 
       // NOTE: found result
       if (response.status === 200) {
-        setIsVerified(true);
         setIsModalOpen(true);
         setMessage(response.data.message);
       } else {

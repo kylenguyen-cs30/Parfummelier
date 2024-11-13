@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/Button";
-import Header from "../components/ui/header/Header";
+import Button from "@/app/components/ui/button/Button";
 
 const SignUp = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +33,7 @@ const SignUp = () => {
     setSuccessMessage(null);
     try {
       const response = await axios.post(
-        "http://localhost:5001/register",
+        "http://localhost:8000/user/register",
         formData,
         {
           headers: {
@@ -60,7 +59,7 @@ const SignUp = () => {
 
   return (
     <div className="container mx-auto">
-      <Header></Header> <h1 className="text-2xl font-bold mb-6">Sign Up</h1>
+      <h1 className="text-2xl font-bold mb-6">Sign Up</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       {successMessage && (
         <div className="text-red-500 mb-4">{successMessage}</div>

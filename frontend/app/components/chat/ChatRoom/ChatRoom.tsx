@@ -1,4 +1,3 @@
-// app/components/ui/chat/ChatRoom/ChatRoom.tsx
 import React, { useEffect, useRef, useState } from "react";
 import MessageList from "../MessageList/MessageList";
 import ChatInput from "../ChatInput/ChatInput";

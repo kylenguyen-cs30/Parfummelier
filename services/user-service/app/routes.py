@@ -11,6 +11,7 @@ from .models import (
     Note,
     Accord,
     Product,
+    Collection,
 )
 from app import db
 

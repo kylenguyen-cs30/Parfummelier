@@ -2,8 +2,8 @@
 
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import ChatRoom from "../components/ui/chat/ChatRoom/ChatRoom";
 import axios from "axios";
+import ChatRoom from "@/app/components/chat/ChatRoom/ChatRoom";
 
 // NOTE:
 // interface variable is capturing

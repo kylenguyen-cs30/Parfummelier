@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, abort
 from typing import List, Dict
+import requests
 
 quiz_blueprint = Blueprint("quiz", __name__)
 
@@ -77,11 +78,11 @@ def submit_quiz():
     user_accordbanks["localhost:5005"] = accordbank
 
     return jsonify({"message": "Accordbank created successfully", "accordbank": accordbank})
+
 @quiz_blueprint.route("/accord-data/", methods=["POST"])
 def get_accord_data():
     accordbank = request.json.get("accordbank", [])
-    # Assuming you have a function `get_accords_from_accordbank` defined, or this can be a simple pass-through
-    accords = list(set(accordbank))  # For now, we will return unique accords directly
+    accords = list(set(accordbank))
     return jsonify(accords)
 
 @quiz_blueprint.route("/update-accordbank/", methods=["PUT"])
@@ -106,6 +107,16 @@ def update_accordbank():
     user_accordbanks["localhost:5005"] = updated_accordbank
 
     return jsonify({"message": "Accordbank updated successfully", "updated_accordbank": updated_accordbank})
+
+def get_recommendations_for_user(accordbank):
+    url = "http://product-service:5001/recommendations"
+
+    response = requests.post(url, json={"accordbank": accordbank})
+
+    if response.status_code == 200:
+        return response.json()["recommendations"]
+    else:
+        raise Exception(f"Failed to fetch recommendations: {response.text}")
 
 @quiz_blueprint.errorhandler(400)
 def bad_request(error):

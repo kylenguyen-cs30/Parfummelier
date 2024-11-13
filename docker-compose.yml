@@ -8,7 +8,6 @@ services:
       user_db:
         condition: service_healthy
     environment:
-      # - DATABASE_USER_URL=${DATABASE_USER_URL}
       - DATABASE_URL=${DATABASE_USER_URL}
       - SECRET_KEY=${SECRET_KEY}
     networks:
@@ -45,6 +44,13 @@ services:
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - API_BASE_URL=${PRODUCT_API_URL}
       - SECRET_KEY=${SECRET_KEY}
+    networks:
+      - parfummelier-network
+  # NOTE: Quiz Service
+  quiz-service:
+    build: ./services/quiz-service/
+    ports:
+      - "5005:5000"
     networks:
       - parfummelier-network
 

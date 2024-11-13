@@ -164,7 +164,35 @@ def list_accords():
     return jsonify([{"id": accord.id, "name": accord.name} for accord in accords])
 
 
-# NOTE: Route recommendataion
+# Recommendation Route
+@product_blueprint.route("/recommendations", methods=["POST"])
+def recommend_products():
+    data = request.json
+    accordbank = data.get("accordbank", [])
+
+    if not accordbank:
+        return jsonify({"error": "No accord bank data provided"}), 400
+
+    # Query the database for products that match any of the accords in the scent bank
+    recommended_products = Product.query.join(Product.accords).filter(
+        Accord.name.in_(accordbank)
+    ).all()
+
+    # Prepare the recommendations in JSON format
+    recommendations = [
+        {
+            "id": product.id,
+            "name": product.name,
+            "brand": product.brand,
+            "accords": [accord.name for accord in product.accords],
+            "imageURL": f"{API_GATEWAY_URL}/product/images/{product.imageURL}"
+            if product.imageURL
+            else None,
+        }
+        for product in recommended_products
+    ]
+
+    return jsonify({"recommendations": recommendations})
 
 
 # NOTE: Rating Routes

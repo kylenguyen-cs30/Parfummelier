@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from typing import Dict, Optional, Union
-
+from cachetools import TTLCache
 import httpx
 import logging
 
@@ -10,7 +10,43 @@ logger = logging.getLogger(__name__)
 class UserService:
     def __init__(self) -> None:
         self.base_url = "http://user-service:5000"
+        self._client = None
+        self.user_cache = TTLCache(maxsize=100, ttl=300)
 
+    # NOTE: create async client for the object
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = httpx.AsyncClient()
+        return self._client
+
+    # NOTE: this is for forum user
+    async def get_user_info(self, user_id: int) -> Dict:
+        """
+        Internal server call to get user info
+        """
+        cache_key = f"user_{user_id}"
+
+        if cache_key in self.user_cache:
+            return self.user_cache[cache_key]
+
+        try:
+            response = await self.client.get(
+                f"{self.base_url}/internal/user/{user_id}", timeout=10.0
+            )
+            if response.status_code == 200:
+                user_info = response.json()
+                self.user_cache[cache_key] = user_info
+                return user_info
+            else:
+                raise HTTPException(
+                    status_code=response.status_code, detail="Failed to get user info"
+                )
+        except Exception as e:
+            logger.error(f"Error getting user info: {str(e)}")
+            raise HTTPException(status_code=500, detail="Internal server error ")
+
+    # NOTE: this is for chat features
     async def get_user_chat_info(
         self, identifier: Union[str, int], access_token: Optional[str] = None
     ) -> dict:

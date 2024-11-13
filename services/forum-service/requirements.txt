@@ -1,10 +1,46 @@
-fastapi==0.104.1          # FastAPI framework
-PyJWT==2.8.0             # For JWT token handling
-uvicorn==0.24.0          # ASGI server
-motor==3.3.1             # Async MongoDB driver
-pymongo==4.6.1           # MongoDB driver (motor depends on this)
-pydantic==2.4.2          # Data validation
-pydantic-settings==2.0.3 # Settings management
-python-dotenv==1.0.0     # Environment variable management
-websockets==12.0         # WebSocket support
+# Core Framework
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.4.2
+pydantic-settings==2.0.3
+
+# Database Drivers
+motor==3.3.1             # MongoDB driver for chat features
+pymongo==4.6.1           # Required by motor
+sqlalchemy==2.0.23       # SQL ORM for forum features
+psycopg2-binary==2.9.9   # PostgreSQL adapter
+alembic==1.12.1          # Database migrations
+
+# Authentication & Security
+PyJWT==2.8.0
+python-jose==3.3.0       # JWT token handling (more features than PyJWT)
+passlib==1.7.4           # Password hashing
+
+# HTTP & API
 httpx==0.25.0            # Async HTTP client
+websockets==12.0         # WebSocket support
+python-multipart==0.0.6  # Form data parsing
+email-validator==2.1.0   # Email validation
+
+# Caching
+cachetools==5.3.2        # For user info caching
+
+# Environment & Configuration
+python-dotenv==1.0.0
+
+# CORS
+starlette==0.27.0        # CORS middleware (included in FastAPI but specified for version control)
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1   # Async test support
+httpx==0.25.0            # Already listed but needed for testing
+pytest-cov==4.1.0        # Test coverage
+asgi-lifespan==2.1.0     # ASGI app lifecycle management for testing
+
+# Logging & Monitoring
+structlog==23.2.0        # Structured logging
+prometheus-client==0.18.0 # Metrics collection
+
+python-multipart==0.0.6
+aiofiles==23.2.1

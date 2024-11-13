@@ -1,19 +1,13 @@
 import jwt
 import logging
 
-from flask_migrate import current
+from datetime import datetime
 from flask import Blueprint, request, jsonify, current_app
 from flask_cors import cross_origin
 from functools import wraps
-from .models import (
-    ScentBank,
-    User,
-    Note,
-    Accord,
-    Product,
-    Collection,
-)
-from app import db
+from app.models.user import User
+from app.models.scent import ScentBank, Accord, Product, Collection
+from app.extensions import db
 
 user_blueprint = Blueprint("user", __name__)
 
@@ -189,31 +183,15 @@ def update_scentbank_for_user(current_user):
             return jsonify({"error": "ScentBank not found for this user"}), 404
 
         # Collect the new data from the request (allow users to add their own custom data)
-        favorite_notes = request.json.get("favorite_notes", [])
         favorite_accords = request.json.get("favorite_accords", [])
         favorite_products = request.json.get("favorite_products", [])
         favorite_collections = request.json.get("favorite_collections", [])
 
-        note_objects = scent_bank.favorite_notes if favorite_notes else None
         accord_objects = scent_bank.favorite_accords if favorite_accords else None
         product_objects = scent_bank.favorite_products if favorite_products else None
         collection_objects = (
             scent_bank.favorite_collections if favorite_collections else None
         )
-
-        # Add new Note into ScentBank
-        if favorite_notes:
-            note_objects = []
-            for (
-                note
-            ) in favorite_notes:  # extract elements from the favorite_notes array
-                note_obj = Note.query.filter_by(
-                    name=note
-                ).first()  # query to see whether user already have Note or not
-                if not note_obj:
-                    note_obj = Note(name=note)
-                    db.session.add(note_obj)
-            note_objects.append(note_obj)
 
         # Add new Accord into ScentBank
         if favorite_accords:
@@ -249,8 +227,6 @@ def update_scentbank_for_user(current_user):
         db.session.commit()
 
         # Update the User's ScentBank with their custom data
-        if note_objects:
-            scent_bank.favorite_notes = note_objects
         if accord_objects:
             scent_bank.favorite_accords = accord_objects
         if product_objects:
@@ -326,7 +302,6 @@ def scentbank_details(f):
             "firstName": current_user.firstName,
             "lastName": current_user.lastName,
             "email": current_user.email,
-            "favorite_notes": [note.name for note in scent_bank.favorite_notes],
             "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
             "favorite_products": [
                 product.name for product in scent_bank.favorite_products
@@ -437,6 +412,27 @@ def get_user_info(current_user):
         return jsonify(user_info), 200
     except Exception as e:
         return jsonify({"error": f"Error fetching user info: {str(e)}"}), 500
+
+
+# NOTE: Internal Routes for getting user info
+@user_blueprint.route("/internal/user/<int:user_id>", methods=["GET"])
+@cross_origin(
+    origin="http://forum-service:5000", headers=["Content-Type", "Authorization"]
+)
+def get_internal_user_info(user_id):
+    """
+    internal endpoint for server-to-service communication.
+    Only accessiable within the internal network.
+    """
+    user = User.query.get_or_404(user_id)
+    return jsonify(
+        {
+            "userId": user.id,
+            "userName": user.userName,
+            "firstName": user.firstName,
+            "lastName": user.lastName,
+        }
+    )
 
 
 # NOTE: Return Favorite Collections

@@ -1,6 +1,9 @@
 from flask import Blueprint, request, jsonify, abort
 from typing import List, Dict
 import requests
+import os
+
+PRODUCT_API_URL = os.getenv("PRODUCT_API_URL", "http://product-service:5000")
 
 quiz_blueprint = Blueprint("quiz", __name__)
 
@@ -109,15 +112,29 @@ def update_accordbank():
     return jsonify({"message": "Accordbank updated successfully", "updated_accordbank": updated_accordbank})
 
 def get_recommendations_for_user(accordbank):
-    url = "http://product-service:5001/recommendations"
-
+    url = f"{PRODUCT_API_URL}/recommendations"
     response = requests.post(url, json={"accordbank": accordbank})
 
     if response.status_code == 200:
-        return response.json()["recommendations"]
+        return response.json()  # Ensure this is returning the full response
     else:
         raise Exception(f"Failed to fetch recommendations: {response.text}")
 
+@quiz_blueprint.route("/get-recommendations/", methods=["POST"])
+def get_recommendations():
+    data = request.json
+    accordbank = data.get("accordbank", [])
+
+    if not accordbank:
+        abort(400, description="Accord bank data is required.")
+
+    try:
+        # Call product-service to get recommendations based on the accordbank
+        recommendations = get_recommendations_for_user(accordbank)
+        return jsonify({"recommendations": recommendations})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @quiz_blueprint.errorhandler(400)
 def bad_request(error):
     response = jsonify({"description": error.description})

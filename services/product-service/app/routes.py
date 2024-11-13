@@ -173,12 +173,16 @@ def recommend_products():
     if not accordbank:
         return jsonify({"error": "No accord bank data provided"}), 400
 
-    # Query the database for products that match any of the accords in the scent bank
-    recommended_products = Product.query.join(Product.accords).filter(
-        Accord.name.in_(accordbank)
-    ).all()
+    # Query the database for products that match any accord in the accordbank
+    recommended_products = (
+        Product.query
+        .join(Product.accords)
+        .filter(Accord.name.in_(accordbank))
+        .distinct()
+        .all()
+    )
 
-    # Prepare the recommendations in JSON format
+    # Format the recommendations in JSON format
     recommendations = [
         {
             "id": product.id,

@@ -47,51 +47,43 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   // simplified checkauth function - no need for validate token
   const checkAuth = useCallback(async () => {
-    if (isAuthenticated) {
-      console.log("Checking auth...");
-      try {
-        const tokenResponse = await axios.get("/api/getAccessToken", {
-          // add silent handling of 401s
-          validateStatus: (status) => status >= 200 && status < 500,
-        });
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken", {
+        validateStatus: (status) => status >= 200 && status < 500,
+      });
 
-        // if it is 200 for the first response
-        if (tokenResponse.status === 200 && tokenResponse.data.access_token) {
-          try {
-            const userResponse = await axios.get(
-              "http://localhost:8000/user/current-user/info",
-              {
-                headers: {
-                  Authorization: `Bearer ${tokenResponse.data.access_token}`,
-                },
+      if (tokenResponse.status === 200 && tokenResponse.data.access_token) {
+        try {
+          const userResponse = await axios.get(
+            "http://localhost:8000/user/current-user/info",
+            {
+              headers: {
+                Authorization: `Bearer ${tokenResponse.data.access_token}`,
               },
-            );
-            if (userResponse.status === 200) {
-              setUser(userResponse.data);
-              setIsAuthenticated(true);
-            }
-          } catch (error) {
-            // Silect handle user info fetch error
-
-            setUser(null);
-            setIsAuthenticated(false);
+            },
+          );
+          if (userResponse.status === 200) {
+            setUser(userResponse.data);
+            setIsAuthenticated(true);
           }
-        } else {
-          // Silent handle user info fetch errors
+        } catch (error) {
           setUser(null);
           setIsAuthenticated(false);
         }
-      } catch (error) {
-        if (axios.isAxiosError(error) && error.response?.status !== 401) {
-          console.error("Auth check failed:", error);
-        }
+      } else {
         setUser(null);
         setIsAuthenticated(false);
       }
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
+        console.error("Auth check failed:", error);
+      }
+      setUser(null);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
     }
-    // always set loading to false at the end
-    setIsLoading(false);
-  }, [isAuthenticated]);
+  }, []);
 
   // Initialize the auth state on mount
   useEffect(() => {

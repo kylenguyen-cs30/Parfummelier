@@ -1,12 +1,18 @@
-"use client";
-
 import { motion } from "framer-motion";
-import { useAuth } from "../auth/AuthContext";
-import { useRouter } from "next/navigation";
-import Header from "./Header/Header";
-import Footer from "./Footer/Footer";
+import { usePathname, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const LoadingScreen = () => {
+  const [isNavigating, setIsNavigating] = useState(false);
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    setIsNavigating(false);
+  }, [pathname, searchParams]);
+
+  if (!isNavigating) {
+    return null;
+  }
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-white">
       <div className="relative">
@@ -46,28 +52,4 @@ const LoadingScreen = () => {
   );
 };
 
-const MainLayout = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
-
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
-
-  if (!isAuthenticated) {
-    router.push("/");
-    return null;
-  }
-
-  return (
-    <div className="app-layout">
-      <Header />
-      <div className="main-content">
-        <main className="content-area">{children}</main>
-      </div>
-      <Footer />
-    </div>
-  );
-};
-
-export default MainLayout;
+export default LoadingScreen;

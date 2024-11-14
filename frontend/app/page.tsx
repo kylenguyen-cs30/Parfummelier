@@ -2,7 +2,7 @@
 import React, { useEffect } from "react";
 import Button from "./components/ui/button/Button";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./components/AuthContext";
+import { useAuth } from "./components/auth/AuthContext";
 
 export default function Home() {
   const router = useRouter();
@@ -16,17 +16,11 @@ export default function Home() {
     }
   }, [isAuthenticated, router, isLoading]);
 
-  console.log("Landing Page State:", { isLoading, isAuthenticated });
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-
   const handleClick = (type: "signin" | "signup") => {
-    //TODO: if it register, router.push("/signup") otherwise, router.push("/signin")
     if (type === "signup") {
-      router.push("/signup");
+      router.push("/auth/signup");
     } else {
-      router.push("/signin");
+      router.push("/auth/signin");
     }
   };
   return (

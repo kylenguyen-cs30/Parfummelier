@@ -8,16 +8,18 @@ import uuid
 from sqlalchemy.orm import Session
 from app.models.post import Post, PostCreate  # Added PostCreate import
 from app.models.post import PostResponse  # Optional, if needed
+from app.services.user_service import UserService
 
 
 class PostService:
     def __init__(self, db: Session):
         self.db = db
+        # User object
+        self.user_service = UserService()
         # Configure image upload settings
         self.UPLOAD_DIR = "uploads/images"
         self.MAX_IMAGE_SIZE = 5 * 1024 * 1024  # 5MB
         self.ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".gif"}
-
         # Ensure upload directory exists
         os.makedirs(self.UPLOAD_DIR, exist_ok=True)
 
@@ -58,15 +60,19 @@ class PostService:
                 status_code=500, detail=f"Failed to upload image: {str(e)}"
             )
 
-    async def create_post(self, post: PostCreate) -> Post:
+    async def create_post(self, post: PostCreate, access_token: str) -> Post:
         """Create a new post"""
         try:
+            # Get User Info from Token
+            user_info = await self.user_service.get_user_chat_info(
+                identifier=access_token
+            )
             db_post = Post(
                 title=post.title,
                 content=post.content,
                 topic=post.topic,
                 image_urls=post.image_urls,
-                user_id=1,  # TODO: Get from auth token
+                user_id=user_info["user_id"],
             )
             self.db.add(db_post)
             self.db.commit()

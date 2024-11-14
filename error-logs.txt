@@ -1,0 +1,87 @@
+
+
+❯ http POST http://localhost:5004/posts/ \
+title="Test Post" \
+content="This is a test post content" \
+topic="General"\
+image_urls:='[]'
+HTTP/1.1 500 Internal Server Error
+content-length: 2902
+content-type: application/json
+date: Wed, 13 Nov 2024 23:04:58 GMT
+server: uvicorn
+
+{
+    "detail": {
+        "error": "",
+        "message": "Failed to create post",
+        "traceback": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 2505, in get_property\n    return self._props[key]\nKeyError: 'comments'\n\nThe above exception was the direct cause of the following exception:\n\nTraceback (most recent call last):\n  File \"/app/app/services/post_service.py\", line 64, in create_post\n    db_post = Post(\n  File \"<string>\", line 4, in __init__\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/state.py\", line 561, in _initialize_instance\n    manager.dispatch.init(self, args, kwargs)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/event/attr.py\", line 487, in __call__\n    fn(*args, **kw)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 4391, in _event_on_init\n    instrumenting_mapper._check_configure()\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 2386, in _check_configure\n    _configure_registries({self.registry}, cascade=True)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 4199, in _configure_registries\n    _do_configure_registries(registries, cascade)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 4240, in _do_configure_registries\n    mapper._post_configure_properties()\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 2403, in _post_configure_properties\n    prop.init()\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/interfaces.py\", line 579, in init\n    self.do_init()\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py\", line 1640, in do_init\n    self._generate_backref()\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py\", line 2129, in _generate_backref\n    self._add_reverse_property(self.back_populates)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py\", line 1571, in _add_reverse_property\n    other = self.mapper.get_property(key, _configure_mappers=False)\n  File \"/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py\", line 2507, in get_property\n    raise sa_exc.InvalidRequestError(\nsqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[Post(posts)]' has no property 'comments'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.\n\nDuring handling of the above exception, another exception occurred:\n\nTraceback (most recent call last):\n  File \"/app/app/routes/post.py\", line 45, in create_post\n    result = await service.create_post(post)\n  File \"/app/app/services/post_service.py\", line 77, in create_post\n    raise HTTPException(status_code=500, detail=str(e))\nfastapi.exceptions.HTTPException\n"
+    }
+}
+
+
+❯ docker-compose logs forum-service
+forum-service-1  | INFO:     Will watch for changes in these directories: ['/app']
+forum-service-1  | INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
+forum-service-1  | INFO:     Started reloader process [1] using StatReload
+forum-service-1  | /usr/local/lib/python3.9/site-packages/pydantic/_internal/_config.py:317: UserWarning: Valid config keys have changed in V2:
+forum-service-1  | * 'orm_mode' has been renamed to 'from_attributes'
+forum-service-1  |   warnings.warn(message, UserWarning)
+forum-service-1  | INFO:app.database.mongodb:Created new MongoDB client connection
+forum-service-1  | INFO:app.database.mongodb:Connected to database: chat_database
+forum-service-1  | INFO:app.main:Postgresql tables created successfully
+forum-service-1  | INFO:     Started server process [7]
+forum-service-1  | INFO:     Waiting for application startup.
+forum-service-1  | INFO:app.main:Database initialized successfully
+forum-service-1  | INFO:app.main:PostgresSQL initialized and connection verified successfully
+forum-service-1  | INFO:     Application startup complete.
+forum-service-1  | INFO:app.routes.post:Attempting to create post: {'title': 'Test Post', 'content': 'This is a test post content', 'topic': 'Generalimage_urls:=[]', 'image_urls': None}
+forum-service-1  | ERROR:app.routes.post:Failed to create post. Error:
+forum-service-1  | ERROR:app.routes.post:Traceback: Traceback (most recent call last):
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 2505, in get_property
+forum-service-1  |     return self._props[key]
+forum-service-1  | KeyError: 'comments'
+forum-service-1  |
+forum-service-1  | The above exception was the direct cause of the following exception:
+forum-service-1  |
+forum-service-1  | Traceback (most recent call last):
+forum-service-1  |   File "/app/app/services/post_service.py", line 64, in create_post
+forum-service-1  |     db_post = Post(
+forum-service-1  |   File "<string>", line 4, in __init__
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/state.py", line 561, in _initialize_instance
+forum-service-1  |     manager.dispatch.init(self, args, kwargs)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/event/attr.py", line 487, in __call__
+forum-service-1  |     fn(*args, **kw)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 4391, in _event_on_init
+forum-service-1  |     instrumenting_mapper._check_configure()
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 2386, in _check_configure
+forum-service-1  |     _configure_registries({self.registry}, cascade=True)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 4199, in _configure_registries
+forum-service-1  |     _do_configure_registries(registries, cascade)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 4240, in _do_configure_registries
+forum-service-1  |     mapper._post_configure_properties()
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 2403, in _post_configure_properties
+forum-service-1  |     prop.init()
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/interfaces.py", line 579, in init
+forum-service-1  |     self.do_init()
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py", line 1640, in do_init
+forum-service-1  |     self._generate_backref()
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py", line 2129, in _generate_backref
+forum-service-1  |     self._add_reverse_property(self.back_populates)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/relationships.py", line 1571, in _add_reverse_property
+forum-service-1  |     other = self.mapper.get_property(key, _configure_mappers=False)
+forum-service-1  |   File "/usr/local/lib/python3.9/site-packages/sqlalchemy/orm/mapper.py", line 2507, in get_property
+forum-service-1  |     raise sa_exc.InvalidRequestError(
+forum-service-1  | sqlalchemy.exc.InvalidRequestError: Mapper 'Mapper[Post(posts)]' has no property 'comments'.  If this property was indicated from other mappers or configure events, ensure registry.configure() has been called.
+forum-service-1  |
+forum-service-1  | During handling of the above exception, another exception occurred:
+forum-service-1  |
+forum-service-1  | Traceback (most recent call last):
+forum-service-1  |   File "/app/app/routes/post.py", line 45, in create_post
+forum-service-1  |     result = await service.create_post(post)
+forum-service-1  |   File "/app/app/services/post_service.py", line 77, in create_post
+forum-service-1  |     raise HTTPException(status_code=500, detail=str(e))
+forum-service-1  | fastapi.exceptions.HTTPException
+forum-service-1  |
+forum-service-1  | INFO:     192.168.65.1:26995 - "POST /posts/ HTTP/1.1" 500 Internal Server Error
+

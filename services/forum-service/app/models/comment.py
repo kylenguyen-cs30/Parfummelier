@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from datetime import datetime
 from app.database.postgresql import Base
 from pydantic import BaseModel
@@ -24,9 +24,12 @@ class Comment(Base):
 
     # Relationships
     post = relationship("Post", back_populates="comments")
+
+    # backward relationship
     replies = relationship(
         "Comment",
-        backref=relationship("Comment", remote_side=[id]),
+        # backref=relationship("Comment", remote_side=[id]),
+        backref=backref("parent", remote_side=[id]),
         cascade="all, delete-orphan",
     )
 
@@ -51,6 +54,7 @@ class CommentResponse(CommentBase):
 
     class Config:
         orm_mode = True
+        from_attributes = True
 
 
 # This is needed for the self-referential relationship in CommentResponse

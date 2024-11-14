@@ -21,16 +21,19 @@ async def comment_health_check():
 async def create_comment(
     post_id: int,
     comment: CommentCreate,
-    access_token: str = Header(...),
+    # access_token: str = Header(...),
+    authorization: str = Header(..., description="Bearer {token}"),
     service: CommentService = Depends(),
 ):
     """Create a new comment on a post"""
     try:
+        token = authorization.split("Bearer ")[-1]
         return await service.create_comment(
             post_id=post_id,
             content=comment.content,
-            access_token=access_token,
+            access_token=token,
             parent_id=comment.parent_id,
+            user_id=1,
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

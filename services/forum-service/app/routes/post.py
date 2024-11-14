@@ -1,5 +1,4 @@
-# app/routes/post.py
-from fastapi import APIRouter, Depends, HTTPException, File, UploadFile
+from fastapi import APIRouter, Depends, HTTPException, File, UploadFile, Header
 from typing import List, Optional
 from sqlalchemy.orm import Session
 from app.database.postgresql import get_db
@@ -7,9 +6,20 @@ from app.models.post import Post, PostCreate, PostResponse
 from app.services.post_service import PostService
 from datetime import datetime
 
+import logging
+import traceback
+
 router = APIRouter()
 
+logger = logging.getLogger(__name__)
 
+
+# Create a dependency for PostService
+def get_post_service(db: Session = Depends(get_db)):
+    return PostService(db)
+
+
+# NOTE: Health check router
 @router.get("/health")
 async def post_health_check():
     """Check if post service is online"""
@@ -20,24 +30,45 @@ async def post_health_check():
     }
 
 
+# NOTE: Create new post
 @router.post("/", response_model=PostResponse)
 async def create_post(
     post: PostCreate,
-    db: Session = Depends(get_db),
-    service: PostService = Depends(lambda: PostService(db)),
+    # access_token: str = Header(...),
+    authorization: str = Header(..., description="Bearer {token}"),
+    service: PostService = Depends(get_post_service),
 ):
     """Create a new post"""
     try:
-        return await service.create_post(post)
+        # Log the incoming post data
+        token = authorization.split("Bearer ")[-1]
+        logger.info(f"Attempting to create post: {post.dict()}")
+        result = await service.create_post(post, token)
+        logger.info(f"Successfully created post: {result}")
+        return result
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        # Log the full error traceback
+        error_traceback = traceback.format_exc()
+        logger.error(f"Failed to create post. Error: {str(e)}")
+        logger.error(f"Traceback: {error_traceback}")
+
+        # Return more detailed error information
+        raise HTTPException(
+            status_code=500,
+            detail={
+                "message": "Failed to create post",
+                "error": str(e),
+                "traceback": error_traceback,
+            },
+        )
 
 
+# NOTE: Get all posts
 @router.get("/{post_id}", response_model=PostResponse)
 async def get_post(
     post_id: int,
-    db: Session = Depends(get_db),
-    service: PostService = Depends(lambda: PostService(db)),
+    service: PostService = Depends(get_post_service),
 ):
     """Get a specific post by ID"""
     try:
@@ -51,8 +82,7 @@ async def get_posts(
     skip: int = 0,
     limit: int = 10,
     topic: Optional[str] = None,
-    db: Session = Depends(get_db),
-    service: PostService = Depends(lambda: PostService(db)),
+    service: PostService = Depends(get_post_service),
 ):
     """Get all posts with optional filtering"""
     try:
@@ -61,12 +91,11 @@ async def get_posts(
         raise HTTPException(status_code=500, detail=str(e))
 
 
-# Add image upload endpoint
+# NOTE: Add image upload endpoint
 @router.post("/upload-images")
 async def upload_images(
     files: List[UploadFile] = File(...),
-    db: Session = Depends(get_db),
-    service: PostService = Depends(lambda: PostService(db)),
+    service: PostService = Depends(get_post_service),
 ):
     """Upload images for a post"""
     try:

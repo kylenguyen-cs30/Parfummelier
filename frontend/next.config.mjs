@@ -6,6 +6,16 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "api-gateway",
+        port: "8000",
+        pathname: "/images/**", // Updated to match new Kong path
+      },
+    ],
+  },
   async headers() {
     return [
       {

@@ -37,6 +37,7 @@ def parse_perfume_data(file_path):
         if image_match:
             image_filename = image_match.group(1)
             perfume_data["imageURL"] = image_filename
+        """
 
         # Extract accords
         accords = []
@@ -50,11 +51,25 @@ def parse_perfume_data(file_path):
         ):  # Changed from 'manufacturer' to 'brand'
             parsed_data.append(perfume_data)
 
+        """
+
+        accords_with_colors = []
+        accord_matches = re.finditer(
+            r"Accord: (.*?), Background Color: (#[A-Fa-f0-9]{6})", perfume
+        )
+        for match in accord_matches:
+            accord_info = {"name": match.group(1), "background_color": match.group(2)}
+            accords_with_colors.append(accord_info)
+        perfume_data["accords"] = accords_with_colors
+
+        if perfume_data.get("name") and perfume_data.get("brand"):
+            parsed_data.append(perfume_data)
+
     return parsed_data
 
 
 def populate_database(data):
-    api_endpoint = "http://localhost:8000/product/add_product"
+    api_endpoint = "http://localhost:8000/products/add_product"
 
     for perfume in data:
         try:

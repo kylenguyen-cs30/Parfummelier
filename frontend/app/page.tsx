@@ -1,26 +1,16 @@
 "use client";
-import React, { useEffect } from "react";
+import React from "react";
 import Button from "./components/ui/button/Button";
 import { useRouter } from "next/navigation";
-import { useAuth } from "./components/auth/AuthContext";
 
 export default function Home() {
   const router = useRouter();
 
-  const { isAuthenticated, isLoading } = useAuth();
-
-  // check user is authenticated or not
-  useEffect(() => {
-    if (!isLoading && isAuthenticated) {
-      router.push("/main");
-    }
-  }, [isAuthenticated, router, isLoading]);
-
   const handleClick = (type: "signin" | "signup") => {
     if (type === "signup") {
-      router.push("/auth/signup");
+      router.push("/signup");
     } else {
-      router.push("/auth/signin");
+      router.push("/signin");
     }
   };
   return (

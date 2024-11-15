@@ -43,6 +43,8 @@ services:
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - API_BASE_URL=${PRODUCT_API_URL}
       - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./services/product-service/images:/app/images
     networks:
       - parfummelier-network
   # NOTE: Quiz Service
@@ -143,8 +145,11 @@ services:
       - NODE_ENV=${NODE_ENV}
       - JWT_SECRET=${SECRET_KEY}
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_PRODUCT_API_BASE_URL=${NEXT_PUBLIC_PRODUCT_API_BASE_URL}
     networks:
       - parfummelier-network
+    depends_on:
+      - api-gateway
 
   # NOTE: Forum Service
   forum-service:

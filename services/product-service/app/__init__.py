@@ -14,7 +14,7 @@ def create_app(config=None):
     # NOTE: For Development
     CORS(
         app,
-        resources={r"/*": {"origins": "http://localhost:3000/"}},
+        resources={r"/*": {"origins": "*"}},
         methods=[
             "GET",
             "POST",
@@ -43,6 +43,7 @@ def create_app(config=None):
     migrate.init_app(app, db)
 
     from app.routes import product_blueprint
+
     app.register_blueprint(product_blueprint)
 
     return app

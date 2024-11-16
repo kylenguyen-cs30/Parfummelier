@@ -1,5 +1,5 @@
 from fastapi import WebSocket
-from app.database import Database
+from app.database.mongodb import Database
 from app.models.chat import ChatroomResponse, PyObjectId
 
 # from app.config import settings

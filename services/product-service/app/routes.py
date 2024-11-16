@@ -34,14 +34,18 @@ def home():
 @product_blueprint.route("/products", methods=["GET"])
 def list_products():
     products = Product.query.all()
-    base_url = f"{API_GATEWAY_URL}/product/images/"  # Get the base URL for images
+    # base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
+    base_url = "http://api-gateway:8000/images"  # PERF: testing
     return jsonify(
         [
             {
                 "id": product.id,
                 "name": product.name,
-                "accords": [accord.name for accord in product.accords],
                 "brand": product.brand,
+                "accords": [
+                    {"name": accord.name, "background_color": accord.background_color}
+                    for accord in product.accords
+                ],
                 "imageURL": base_url + product.imageURL if product.imageURL else None,
             }
             for product in products
@@ -53,7 +57,7 @@ def list_products():
 @product_blueprint.route("/products/<int:id>", methods=["GET"])
 def get_product(id):
     product = Product.query.get_or_404(id)
-    base_url = f"{API_GATEWAY_URL}/product/images/"  # Get the base URL for images
+    base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
     return jsonify(
         {
             "id": product.id,
@@ -75,16 +79,28 @@ def add_product():
             brand=data["brand"],
             imageURL=data.get("imageURL"),
         )
+
         accord_objects = []
-        for accord_name in data.get("accords", []):
+        for accord_data in data.get("accords", []):
+            # Check if this is a dict with name and color or just a name string
+            if isinstance(accord_data, dict):
+                accord_name = accord_data["name"]
+                background_color = accord_data.get("background_color")
+            else:
+                accord_name = accord_data
+                background_color = None
+
             accord_obj = Accord.query.filter_by(name=accord_name).first()
             if not accord_obj:
-                accord_obj = Accord(name=accord_name)
+                accord_obj = Accord(name=accord_name, background_color=background_color)
                 db.session.add(accord_obj)
-            accord_objects.append(accord_obj)
-        new_product.accords = accord_objects
+            elif background_color and not accord_obj.background_color:
+                # Update background color if it's not set
+                accord_obj.background_color = background_color
 
-        # Commit Change into the database
+            accord_objects.append(accord_obj)
+
+        new_product.accords = accord_objects
         db.session.add(new_product)
         db.session.commit()
 
@@ -94,12 +110,19 @@ def add_product():
                     "id": new_product.id,
                     "name": new_product.name,
                     "brand": new_product.brand,
-                    "accords": [accord.name for accord in new_product.accords],
+                    "accords": [
+                        {
+                            "name": accord.name,
+                            "background_color": accord.background_color,
+                        }
+                        for accord in new_product.accords
+                    ],
                     "imageURL": new_product.imageURL,
-                },
+                }
             ),
             201,
         )
+
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 

@@ -5,10 +5,10 @@ import { jwtVerify } from "jose";
 
 const PUBLIC_ROUTES = [
   "/",
-  "/(auth)/sigin",
-  "/(auth)/signup",
-  "/(auth)/forget-password",
-  "/(static)/about-us",
+  "/signin",
+  "/signup",
+  "/forget-password",
+  "/about-us",
   "/(static)/contact-us",
   "/(static)/support",
 ];
@@ -31,11 +31,9 @@ export async function middleware(request: NextRequest) {
   const resetToken = request.cookies.get("reset_token")?.value;
 
   // Handle change-password
-  if (path === "/(auth)/change-password") {
+  if (path === "/change-password") {
     if (!resetToken) {
-      return NextResponse.redirect(
-        new URL("/(auth)/forget-password", request.url),
-      );
+      return NextResponse.redirect(new URL("/forget-password", request.url));
     }
     return NextResponse.next();
   }
@@ -43,9 +41,14 @@ export async function middleware(request: NextRequest) {
   let isValidToken = false;
   if (accessToken) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-      await jwtVerify(accessToken, secret);
-      isValidToken = true;
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
+      if (!process.env.JWT_SECRET) {
+        console.error("JWT_SECRET is not defined");
+        isValidToken = false;
+      } else {
+        await jwtVerify(accessToken, secret);
+        isValidToken = true;
+      }
     } catch {
       isValidToken = false;
     }
@@ -53,12 +56,12 @@ export async function middleware(request: NextRequest) {
 
   // Landing page redirect
   if (path === "/" && isValidToken) {
-    return NextResponse.redirect(new URL("/(main)/main", request.url));
+    return NextResponse.redirect(new URL("/main", request.url));
   }
 
   // Auth routes protection
   if (isValidToken && AUTH_ROUTES.includes(path)) {
-    return NextResponse.redirect(new URL("/(main)/main", request.url));
+    return NextResponse.redirect(new URL("/main", request.url));
   }
 
   // Protected routes

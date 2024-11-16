@@ -37,3 +37,4 @@ class Accord(db.Model):
     __tablename__ = "accord"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False, unique=True)
+    background_color = db.Column(db.String(10))

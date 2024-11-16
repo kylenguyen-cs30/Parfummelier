@@ -24,9 +24,9 @@ const Header = () => {
     ],
 
     community: [
-      { name: "Forum", href: "/(community)/forum" },
-      { name: "Timeline", href: "/(community)/timeline" },
-      { name: "Inbox", href: "/(community)/inbox" },
+      { name: "Forum", href: "/forum" },
+      { name: "Timeline", href: "/timeline" },
+      { name: "Inbox", href: "/inbox" },
     ],
   };
 

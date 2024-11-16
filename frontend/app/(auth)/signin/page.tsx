@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-import Button from "../components/ui/button/Button";
-import Header from "../components/ui/header/Header";
+import Button from "@/app/components/ui/button/Button";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -55,7 +54,6 @@ const SignIn = () => {
 
   return (
     <div className="container mx-auto">
-      <Header />
       <h1 className="text-2xl font-bold mb-6">Sign In</h1>
       {error && <div className="text-red-500 mb-4">{error}</div>}
       {/* Display message */}

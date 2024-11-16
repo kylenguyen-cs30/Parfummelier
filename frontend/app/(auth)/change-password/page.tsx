@@ -52,7 +52,7 @@ const ChangePassword = () => {
 
         // set reset token back to null
         await axios.post("/api/setResetToken", { reset_token: null });
-        router.push("/signin");
+        router.push("/(auth)/signin");
       }
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {

@@ -19,4 +19,57 @@ services:
     routes:
       - name: product-route
         paths:
-          - /product
+          - /products
+        strip_path: true
+        preserve_host: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS
+      - name: product-images-route
+        paths:
+          - /images
+        strip_path: false
+        preserve_host: true
+        methods:
+          - GET
+    plugins:
+      - name: cors
+        config:
+          origins: ["*"]
+          methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"]
+          headers:
+            - "Accept"
+            - "Accept-Version"
+            - "Content-Length"
+            - "Content-MD5"
+            - "Content-Type"
+            - "Date"
+            - "Authorization"
+          exposed_headers: ["*"]
+          credentials: true
+          max_age: 3600
+      - name: response-transformer
+        config:
+          add:
+            headers:
+              - "Cache-Control: public, max-age=31536000"
+              - "Access-Control-Allow-Origin: *"
+          remove:
+            headers:
+              - "X-Kong-Response-Latency"
+              - "Via"
+      - name: proxy-cache
+        config:
+          content_type:
+            - "text/plain"
+            - "application/json"
+            - "image/jpeg"
+            - "image/jpg"
+            - "image/png"
+            - "image/gif"
+            - "image/webp"
+          cache_ttl: 3600
+          strategy: memory

@@ -13,7 +13,13 @@ import datetime
 import random
 import smtplib
 import os
+import logging
 
+# for logging error
+logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
+
+# Blueprint
 auth_blueprint = Blueprint("auth", __name__)
 
 # NOTE: serializer for generating and verifying tokens
@@ -28,20 +34,46 @@ def home():
     return jsonify({"message": "authentication service launched"})
 
 
-# NOTE: New Login Route
+# NOTE:  Login Route
 @auth_blueprint.route("/login", methods=["POST"])
 def login():
     try:
+        # Log incoming request
+        logger.debug("Login attempt received")
         data = request.json
+        logger.debug(f"Request data: {data}")
+
+        # Validate input data
+        if not data or "email" not in data or "password" not in data:
+            logger.error("Missing required fields in request")
+            return jsonify({"error": "Email and password are required"}), 400
+
         email = data.get("email")
         password = data.get("password")
 
-        # fetch user user from database
-        user = User.query.filter_by(email=email).first()
+        # Log email (but never log passwords!)
+        logger.debug(f"Attempting login for email: {email}")
 
-        # check user
-        if user and user.check_password(password):
-            # NOTE: generate access token
+        # Fetch user from database
+        user = User.query.filter_by(email=email).first()
+        logger.debug(f"User found: {user is not None}")
+
+        if not user:
+            logger.warning(f"No user found for email: {email}")
+            return jsonify({"error": "Invalid email or password"}), 401
+
+        # Check password
+        logger.debug("Checking password...")
+        password_valid = user.check_password(password)
+        logger.debug(f"Password valid: {password_valid}")
+
+        if not password_valid:
+            logger.warning("Invalid password attempt")
+            return jsonify({"error": "Invalid email or password"}), 401
+
+        # Generate tokens
+        logger.debug("Generating tokens...")
+        try:
             access_token = jwt.encode(
                 {
                     "user_id": user.id,
@@ -51,7 +83,6 @@ def login():
                 algorithm="HS256",
             )
 
-            # NOTE: generate JWT
             refresh_token = jwt.encode(
                 {
                     "user_id": user.id,
@@ -60,33 +91,51 @@ def login():
                 current_app.config["SECRET_KEY"],
                 algorithm="HS256",
             )
+            logger.debug("Tokens generated successfully")
 
-            # set response HTTP Cookie only
+        except Exception as e:
+            logger.error(f"Token generation failed: {str(e)}")
+            return jsonify({"error": "Failed to generate tokens"}), 500
+
+        # Create response
+        try:
             response = make_response(
-                jsonify({"message": "Login successfully", "access_token": access_token})
+                jsonify(
+                    {
+                        "message": "Login successful",
+                        "access_token": access_token,
+                        "user": {
+                            "id": user.id,
+                            "email": user.email,
+                        },
+                    }
+                )
             )
 
             response.set_cookie(
                 "refresh_token",
                 refresh_token,
                 httponly=True,
-                # secure=True,
+                # secure=True,  # Enable in production with HTTPS
                 samesite="Lax",
                 path="/refresh",
+                max_age=7 * 24 * 60 * 60,  # 7 days in seconds
             )
+            logger.debug("Response created successfully")
             return response
 
-        else:
-            return jsonify({"error": "invalid email"}), 401
+        except Exception as e:
+            logger.error(f"Response creation failed: {str(e)}")
+            return jsonify({"error": "Failed to create response"}), 500
+
     except Exception as e:
-        print(f"Error: {e}")
-        return jsonify({"error": "Unknown error"}), 500
+        logger.error(f"Login failed with error: {str(e)}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
 
 
 # NOTE: refresh access_token route:
 @auth_blueprint.route("/refresh", methods=["POST"])
 def refresh():
-
     try:
         old_refresh_token = request.cookies.get("refresh_token")
 

@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from typing import Dict, Optional, Union
-
+from cachetools import TTLCache
 import httpx
 import logging
 
@@ -10,7 +10,17 @@ logger = logging.getLogger(__name__)
 class UserService:
     def __init__(self) -> None:
         self.base_url = "http://user-service:5000"
+        self._client = None
+        self.user_cache = TTLCache(maxsize=100, ttl=300)
 
+    # NOTE: create async client for the object
+    @property
+    def client(self):
+        if self._client is None:
+            self._client = httpx.AsyncClient()
+        return self._client
+
+    # NOTE: this is for chat features
     async def get_user_chat_info(
         self, identifier: Union[str, int], access_token: Optional[str] = None
     ) -> dict:

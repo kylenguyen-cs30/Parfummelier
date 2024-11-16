@@ -40,10 +40,11 @@ services:
       product_db:
         condition: service_healthy
     environment:
-      # - DATABASE_PRODUCT_URL=${DATABASE_PRODUCT_URL}
       - DATABASE_URL=${DATABASE_PRODUCT_URL}
       - API_BASE_URL=${PRODUCT_API_URL}
       - SECRET_KEY=${SECRET_KEY}
+    volumes:
+      - ./services/product-service/images:/app/images
     networks:
       - parfummelier-network
   # NOTE: Quiz Service
@@ -51,9 +52,6 @@ services:
     build: ./services/quiz-service/
     ports:
       - "5005:5000"
-    environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - PRODUCT_API_URL=http://product-service:5000
     networks:
       - parfummelier-network
 
@@ -119,6 +117,25 @@ services:
       start_period: 30s
     networks:
       - parfummelier-network
+  # NOTE: FORUM DB for storing Post, Comment, and Thread
+  forum_db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_FORUM_DB}
+    ports:
+      - "5435:5432" # New port to avoid conflicts
+    volumes:
+      - forum_data:/var/lib/postgresql/data
+    healthcheck:
+      test:
+        ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_FORUM_DB}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - parfummelier-network
 
   frontend:
     build: ./frontend
@@ -128,8 +145,11 @@ services:
       - NODE_ENV=${NODE_ENV}
       - JWT_SECRET=${SECRET_KEY}
       - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+      - NEXT_PUBLIC_PRODUCT_API_BASE_URL=${NEXT_PUBLIC_PRODUCT_API_BASE_URL}
     networks:
       - parfummelier-network
+    depends_on:
+      - api-gateway
 
   # NOTE: Forum Service
   forum-service:
@@ -138,10 +158,12 @@ services:
       - "5004:5000" # Expose the forum service on port 5004
     depends_on:
       - mongo
+      - forum_db
     environment:
       - MONGO_URI=mongodb://mongo:27017/chat_database
       - SECRET_KEY=${SECRET_KEY}
       - USER_SERVICE_URL=http://user-service:5000
+      - POSTGRES_URI=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@forum_db:5432/${POSTGRES_FORUM_DB}
     networks:
       - parfummelier-network
 
@@ -169,4 +191,5 @@ volumes:
   user_data:
   products_data:
   mongo_data:
+  forum_data:
     driver: local

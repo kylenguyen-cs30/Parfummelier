@@ -69,7 +69,7 @@ const ForgetPassword = () => {
 
         // close Modal
         setIsModalOpen(false);
-        router.push("/change-password");
+        router.push("/(auth)/change-password");
       } else {
         setError("Invalid 2FA Code");
         return;

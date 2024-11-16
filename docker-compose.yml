@@ -54,6 +54,8 @@ services:
       - "5005:5000"
     networks:
       - parfummelier-network
+    depends_on:
+      - product-service
 
   # NOTE: Api Gateway
   api-gateway:

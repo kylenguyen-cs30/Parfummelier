@@ -10,6 +10,7 @@ import {
   CardTitle,
 } from "../../components/ui/card/Card";
 import { api } from "../../lib/axios";
+import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 
 interface Accord {
   name: string;
@@ -59,7 +60,7 @@ export default function ProductsPage() {
     fetchProducts();
   }, []);
 
-  if (isLoading) return <div className="text-center p-8">Loading...</div>;
+  if (isLoading) return <LoadingScreen />;
   if (error)
     return <div className="text-center text-red-500 p-8">Error: {error}</div>;
 

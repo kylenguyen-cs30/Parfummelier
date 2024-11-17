@@ -43,6 +43,7 @@ export default function ProductsPage() {
     const fetchProducts = async () => {
       try {
         const { data } = await api.get("/products/products");
+
         const transformedProducts = data.map((product: Product) => ({
           ...product,
           imageURL: getImageUrl(product.imageURL),

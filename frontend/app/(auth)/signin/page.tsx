@@ -2,7 +2,6 @@
 
 import React, { useState } from "react";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import Button from "@/app/components/ui/button/Button";
 import { useAuth } from "@/app/components/auth/AuthContext";
 
@@ -13,7 +12,6 @@ const SignIn = () => {
   });
 
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
   const { login } = useAuth();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,21 +26,8 @@ const SignIn = () => {
     event.preventDefault();
     setError(null);
     try {
-      const response = await axios.post(
-        "http://localhost:8000/auth/login",
-        formData,
-      );
-
-      // NOTE: login successfully
-      if (response.status === 200) {
-        const { access_token } = response.data;
-
-        // ensure user access_token set in cookie
-        await axios.post("/api/setAccessToken", { access_token });
-
-        // safely push user into main-page
-        router.push("/main");
-      }
+      // use login function from authcontext
+      await login(formData.email, formData.password);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         setError(

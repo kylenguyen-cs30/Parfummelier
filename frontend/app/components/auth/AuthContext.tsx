@@ -6,106 +6,197 @@ import React, {
   useEffect,
   useCallback,
 } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
+import { AuthState } from "../../type/auth";
 import axios from "axios";
 
-interface User {
-  id: number;
-  email: string;
-  firstName: string;
-  lastName: string;
-  userName: string;
-}
-
-interface AuthContextProps {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
+interface AuthContextProps extends AuthState {
   logout: () => Promise<void>;
+  refreshToken: () => Promise<boolean>;
+  login: (email: string, password: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  // Set state of the user authentication
+  const [state, setState] = useState<AuthState>({
+    user: null,
+    isLoading: true,
+    isAuthenticated: false,
+  });
+
+  // const [user, setUser] = useState<User | null>(null);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [isAuthenticated, setIsAuthenticated] = useState(false);
   // router for page changing
   const router = useRouter();
+  const pathname = usePathname();
 
   //NOTE: logout context
   const logout = useCallback(async () => {
     try {
       await axios.post("/api/logout");
-      setUser(null);
-      setIsAuthenticated(false);
+      setState({
+        user: null,
+        isAuthenticated: false,
+        isLoading: false,
+      });
       router.push("/");
     } catch (error) {
       console.error("error logging out : ", error);
     }
   }, [router]);
 
-  // simplified checkauth function - no need for validate token
-  const checkAuth = useCallback(async () => {
+  // NOTE: Refresh token function
+  const refreshToken = useCallback(async (): Promise<boolean> => {
     try {
-      const tokenResponse = await axios.get("/api/getAccessToken", {
-        validateStatus: (status) => status >= 200 && status < 500,
-      });
+      // refresh token will be automatically included in the request
+      // as an HTTP-only cookie because the endpoint matches the cookie's path
+      const response = await axios.post(
+        "http://localhost:8000/auth/refresh",
+        {}, // empty body since there is no payload
+        {
+          withCredentials: true,
+        },
+      );
 
-      if (tokenResponse.status === 200 && tokenResponse.data.access_token) {
-        try {
-          const userResponse = await axios.get(
-            "http://localhost:8000/user/current-user/info",
-            {
-              headers: {
-                Authorization: `Bearer ${tokenResponse.data.access_token}`,
-              },
+      if (response.status === 200) {
+        const { access_token } = response.data;
+        await axios.post("/api/setAccessToken", { access_token });
+
+        // update user state if needed
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
             },
-          );
-          if (userResponse.status === 200) {
-            setUser(userResponse.data);
-            setIsAuthenticated(true);
-          }
-        } catch (error) {
-          setUser(null);
-          setIsAuthenticated(false);
+          },
+        );
+
+        if (userResponse.status === 200) {
+          setState((prev) => ({
+            ...prev,
+            user: userResponse.data,
+            isAuthenticated: true,
+          }));
         }
-      } else {
-        setUser(null);
-        setIsAuthenticated(false);
+
+        return true;
       }
+      return false;
     } catch (error) {
-      if (axios.isAxiosError(error) && error.response?.status !== 401) {
-        console.error("Auth check failed:", error);
+      if (axios.isAxiosError(error)) {
+        if (error.response?.status === 401) {
+          // refresh token expired or invalid
+          setState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+        }
       }
-      setUser(null);
-      setIsAuthenticated(false);
-    } finally {
-      setIsLoading(false);
+      console.error(`Failed to refresh token ${error}`);
+      return false;
     }
   }, []);
+
+  // NOTE: Authentication Status Checker
+  const checkAuth = useCallback(async () => {
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      if (tokenResponse.status === 200) {
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${tokenResponse.data.access_token}`,
+            },
+          },
+        );
+
+        if (userResponse.status === 200) {
+          setState({
+            user: userResponse.data,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return;
+        }
+      }
+
+      // NOTE: try refresh token if the access token fail
+      const refreshed = await refreshToken();
+      if (refreshed) {
+        //retry getting user info after refresh
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${(await axios.get("/api/getAccessToken")).data.access_token}`,
+            },
+          },
+        );
+        if (userResponse.status === 200) {
+          setState({
+            user: userResponse.data,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+          return;
+        }
+      }
+
+      setState({ user: null, isAuthenticated: false, isLoading: false });
+    } catch (error) {
+      console.error(`Error in refresh new tokne ${error}`);
+      setState({ user: null, isAuthenticated: false, isLoading: false });
+    }
+  }, [refreshToken]);
+
+  // NOTE: login function
+  const login = async (email: string, password: string) => {
+    try {
+      const response = await axios.post("http://localhost:8000/auth/login", {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        const { access_token, user } = response.data;
+        await axios.post("/api/setAccessToken", { access_token });
+
+        setState({
+          user,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+
+        router.push("/main");
+      }
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        throw new Error(
+          error.response?.data?.error || "An error occured while logging in",
+        );
+      }
+      throw new Error("An error occured");
+    }
+  };
 
   // Initialize the auth state on mount
   useEffect(() => {
     checkAuth();
-  }, [checkAuth]);
+  }, [checkAuth, pathname]);
 
   // set up token refresh interval when authenticated
   useEffect(() => {
-    if (isAuthenticated) {
+    if (state.isAuthenticated) {
       const refreshInterval = setInterval(
         async () => {
-          try {
-            const response = await axios.post(
-              "http://localhost:8000/auth/refresh",
-            );
-            if (response.status === 200) {
-              await axios.post("/api/setAccessToken", {
-                access_token: response.data.access_token,
-              });
-            }
-          } catch (error) {
-            console.error("Token Refresh Failed: ", error);
+          const refreshed = await refreshToken();
+          if (!refreshed) {
             logout();
           }
         },
@@ -113,15 +204,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
       return () => clearInterval(refreshInterval);
     }
-  }, [isAuthenticated, logout]);
+  }, [state.isAuthenticated, logout, refreshToken]);
 
   return (
     <AuthContext.Provider
       value={{
-        user,
-        isLoading,
-        isAuthenticated,
+        ...state,
+        login,
         logout,
+        refreshToken,
       }}
     >
       {children}

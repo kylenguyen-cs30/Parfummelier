@@ -1,19 +1,29 @@
-"use client";
 import { useAuth } from "./components/auth/AuthContext";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 import Header from "./components/layout/Header/Header";
 import LoadingScreen from "./components/common/LoadingScreen/LoadingScreen";
 
-// Updated routes to match your folder structure
 const PUBLIC_ROUTES = [
   "/",
   "/signin",
   "/signup",
   "/forget-password",
-  "/change-password",
   "/about-us",
   "/contact-us",
   "/support",
+];
+
+const PROTECTED_ROUTES = [
+  "/main",
+  "/chat",
+  "/forum",
+  "/inbox",
+  "/timeline",
+  "/history",
+  "/quiz",
+  "/settings",
+  "/user-profile",
 ];
 
 export default function ClientLayout({
@@ -21,22 +31,37 @@ export default function ClientLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const { isLoading } = useAuth();
+  const { isLoading, isAuthenticated, refreshToken } = useAuth();
   const pathname = usePathname();
+  const router = useRouter();
 
-  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+  useEffect(() => {
+    const handleAuthRedirect = async () => {
+      if (!isLoading) {
+        if (isAuthenticated && PUBLIC_ROUTES.includes(pathname)) {
+          router.replace("/main");
+        } else if (!isAuthenticated && PROTECTED_ROUTES.includes(pathname)) {
+          const refreshed = await refreshToken();
+          if (!refreshed) {
+            router.replace("/");
+          }
+        }
+      }
+    };
 
-  // Show loading screen while checking authentication
+    handleAuthRedirect();
+  }, [isLoading, isAuthenticated, pathname, refreshToken, router]);
+
   if (isLoading) {
     return <LoadingScreen />;
   }
 
-  // Public layout (no header)
+  const isPublicRoute = PUBLIC_ROUTES.includes(pathname);
+
   if (isPublicRoute) {
     return <div className="min-h-screen bg-gray-50">{children}</div>;
   }
 
-  // Protected layout (with header)
   return (
     <div className="min-h-screen bg-gray-100">
       <Header />

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import Button from "@/app/components/ui/button/Button";
+import { useAuth } from "@/app/components/auth/AuthContext";
 
 const SignIn = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ const SignIn = () => {
 
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const { login } = useAuth();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;

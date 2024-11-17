@@ -1,4 +1,3 @@
-// middleware.ts
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { jwtVerify } from "jose";
@@ -9,16 +8,14 @@ const PUBLIC_ROUTES = [
   "/signup",
   "/forget-password",
   "/about-us",
-  "/(static)/contact-us",
-  "/(static)/support",
+  "/contact-us",
+  "/support",
 ];
-
-const AUTH_ROUTES = ["/(auth)/signin", "/(auth)/signup"];
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
 
-  // Skip middleware for static files
+  // Skip middleware for static files and API routes
   if (
     path.includes("/_next") ||
     path.includes("/api") ||
@@ -30,7 +27,7 @@ export async function middleware(request: NextRequest) {
   const accessToken = request.cookies.get("access_token")?.value;
   const resetToken = request.cookies.get("reset_token")?.value;
 
-  // Handle change-password
+  // Special handling for change-password route
   if (path === "/change-password") {
     if (!resetToken) {
       return NextResponse.redirect(new URL("/forget-password", request.url));
@@ -38,45 +35,34 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Verify access token
   let isValidToken = false;
   if (accessToken) {
     try {
-      const secret = new TextEncoder().encode(process.env.JWT_SECRET || "");
-      if (!process.env.JWT_SECRET) {
-        console.error("JWT_SECRET is not defined");
-        isValidToken = false;
-      } else {
-        await jwtVerify(accessToken, secret);
-        isValidToken = true;
-      }
+      const secret = new TextEncoder().encode(process.env.JWT_SECRET);
+      await jwtVerify(accessToken, secret);
+      isValidToken = true;
     } catch {
       isValidToken = false;
     }
   }
 
-  // Landing page redirect
-  if (path === "/" && isValidToken) {
-    return NextResponse.redirect(new URL("/main", request.url));
-  }
-
-  // Auth routes protection
-  if (isValidToken && AUTH_ROUTES.includes(path)) {
-    return NextResponse.redirect(new URL("/main", request.url));
-  }
-
-  // Protected routes
-  if (!isValidToken && !PUBLIC_ROUTES.includes(path)) {
-    return NextResponse.redirect(new URL("/", request.url));
+  // Handle authentication redirects
+  if (isValidToken) {
+    // Redirect authenticated users from public routes to main
+    if (PUBLIC_ROUTES.includes(path)) {
+      return NextResponse.redirect(new URL("/main", request.url));
+    }
+  } else {
+    // Redirect unauthenticated users from protected routes to home
+    if (!PUBLIC_ROUTES.includes(path)) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    // Match all paths except static files and api
-    "/((?!_next/static|_next/image|api|.*\\..*).*)",
-    // Include root path
-    "/",
-  ],
+  matcher: ["/((?!_next/static|_next/image|api|.*\\..*).*)", "/"],
 };

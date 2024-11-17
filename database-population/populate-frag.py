@@ -88,7 +88,8 @@ def populate_database(data):
 
 
 if __name__ == "__main__":
-    file_path = "/Users/kyle/Developer/projects/Parfummelier/data-scraping/result.txt"
+    # NOTE: remember change the path for the file
+    file_path = "/home/kyle/Developer/projects/Parfummelier/data-scraping/result.txt"
     perfume_data = parse_perfume_data(file_path)
     print(f"Found {len(perfume_data)} perfumes to add")
     populate_database(perfume_data)

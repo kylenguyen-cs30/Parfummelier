@@ -5,28 +5,29 @@ import { useEffect } from "react";
 import Header from "./components/layout/Header/Header";
 import LoadingScreen from "./components/common/LoadingScreen/LoadingScreen";
 
-const PUBLIC_ROUTES = [
-  "/",
-  "/signin",
-  "/signup",
-  "/forget-password",
-  "/about-us",
-  "/contact-us",
-  "/support",
-];
+// NOTE: declare public route
+const PUBLIC_ROUTES = ["/", "/signin", "/signup", "/forget-password"];
 
-const PROTECTED_ROUTES = [
-  "/main",
-  "/chat",
-  "/forum",
-  "/inbox",
-  "/timeline",
-  "/history",
-  "/quiz",
-  "/settings",
-  "/user-profile",
-  "/product/all",
-];
+// NOTE: Declare protected route.
+const isProtectedRoute = (path: string): boolean => {
+  const protectedPrefixes = [
+    "/main",
+    "/chat",
+    "/forum",
+    "/inbox",
+    "/timeline",
+    "/history",
+    "/quiz",
+    "/settings",
+    "/user-profile",
+    "/product",
+    "/about-us",
+    "/contact-us",
+    "/support",
+  ];
+
+  return protectedPrefixes.some((prefix) => path.startsWith(prefix));
+};
 
 export default function ClientLayout({
   children,
@@ -42,7 +43,7 @@ export default function ClientLayout({
       if (!isLoading) {
         if (isAuthenticated && PUBLIC_ROUTES.includes(pathname)) {
           router.replace("/main");
-        } else if (!isAuthenticated && PROTECTED_ROUTES.includes(pathname)) {
+        } else if (!isAuthenticated && isProtectedRoute(pathname)) {
           const refreshed = await refreshToken();
           if (!refreshed) {
             router.replace("/");

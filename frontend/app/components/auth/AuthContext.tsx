@@ -58,6 +58,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         {}, // empty body since there is no payload
         {
           withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+          },
           validateStatus: (status) => status === 200 || status === 401,
         },
       );
@@ -99,66 +102,55 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // NOTE: Authentication Status Checker
   const checkAuth = useCallback(async () => {
     try {
-      const tokenResponse = await axios.get("/api/getAccessToken", {
-        validateStatus: (status) => status === 200 || status === 401,
+      console.log("Starting Auth Check");
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      console.log("Token response: ", tokenResponse.data);
+      const access_token = tokenResponse.data?.access_token;
+
+      if (!access_token) {
+        const refreshed = await refreshToken();
+        if (!refreshed) {
+          setState({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false,
+          });
+        }
+      } else {
+        // trying using existing token
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          },
+        );
+
+        if (userResponse.status === 200) {
+          setState({
+            user: userResponse.data,
+            isAuthenticated: true,
+            isLoading: false,
+          });
+
+          return;
+        }
+      }
+    } catch (error: any) {
+      console.error("Auth Check Error:", {
+        status: error.reponse?.status,
+        data: error.response?.data,
+        headers: error.response?.headers,
       });
-
-      if (tokenResponse.status === 401) {
-        setState({ user: null, isAuthenticated: false, isLoading: false });
-        return;
-      }
-
-      if (tokenResponse.status === 200) {
-        const userResponse = await axios.get(
-          "http://localhost:8000/user/current-user/info",
-          {
-            headers: {
-              Authorization: `Bearer ${tokenResponse.data.access_token}`,
-            },
-            validateStatus: (status) => status === 200 || status === 401,
-          },
-        );
-
-        if (userResponse.status === 200) {
-          setState({
-            user: userResponse.data,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          return;
-        }
-      }
-
-      // NOTE: try refresh token if the access token fail
       const refreshed = await refreshToken();
-      if (refreshed) {
-        //retry getting user info after refresh
-        const userResponse = await axios.get(
-          "http://localhost:8000/user/current-user/info",
-          {
-            headers: {
-              Authorization: `Bearer ${(await axios.get("/api/getAccessToken")).data.access_token}`,
-            },
-            validateStatus: (status) => status === 200 || status === 401,
-          },
-        );
-        if (userResponse.status === 200) {
-          setState({
-            user: userResponse.data,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-          return;
-        }
+      if (!refreshed) {
+        setState({
+          user: null,
+          isAuthenticated: false,
+          isLoading: false,
+        });
       }
-
-      setState({ user: null, isAuthenticated: false, isLoading: false });
-    } catch (error) {
-      // Only log non-401 errors
-      if (axios.isAxiosError(error) && error.response?.status !== 401) {
-        console.error("Unexpected error during auth check:", error);
-      }
-      setState({ user: null, isAuthenticated: false, isLoading: false });
     }
   }, [refreshToken]);
 

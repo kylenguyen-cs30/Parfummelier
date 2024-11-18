@@ -19,23 +19,26 @@ const ProtectedRoute = ({
   const { isAuthenticated, isLoading, refreshToken } = useAuth();
   const router = useRouter();
 
+  console.log("Validate Auth with Protected Route", {
+    isAuthenticated,
+    isLoading,
+  });
+
   useEffect(() => {
     const validatedAuth = async () => {
-      if (!isLoading && isAuthenticated) {
-        const refreshed = await refreshToken();
-        if (!refreshed) {
-          router.replace("/");
-        }
+      if (!isLoading && !isAuthenticated) {
+        console.log("Unauthenticated user redirected to home");
+        router.replace("/");
       }
     };
     validatedAuth();
   }, [isAuthenticated, isLoading, refreshToken, router]);
 
   if (isLoading) {
-    return <>{fallback}</>;
+    return fallback;
   }
 
-  return isAuthenticated ? <>{children}</> : null;
+  return isAuthenticated ? children : null;
 };
 
 export default ProtectedRoute;

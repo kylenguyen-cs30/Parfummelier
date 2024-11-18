@@ -3,7 +3,7 @@ from typing import List, Dict
 import requests
 import os
 
-PRODUCT_API_URL = os.getenv("PRODUCT_API_URL", "http://product-service:5000")
+PRODUCT_API_URL_QUIZ_SERVICES = os.getenv("PRODUCT_API_URL", "http://product-service:5000")
 
 quiz_blueprint = Blueprint("quiz", __name__)
 
@@ -112,7 +112,7 @@ def update_accordbank():
     return jsonify({"message": "Accordbank updated successfully", "updated_accordbank": updated_accordbank})
 
 def get_recommendations_for_user(accordbank):
-    url = f"{PRODUCT_API_URL}/recommendations"
+    url = f"{PRODUCT_API_URL_QUIZ_SERVICES}/recommendations"
     response = requests.post(url, json={"accordbank": accordbank})
 
     if response.status_code == 200:

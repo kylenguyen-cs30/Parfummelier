@@ -28,6 +28,13 @@ services:
           - PUT
           - DELETE
           - OPTIONS
+      - name: recommendations-route
+        paths:
+          - /recommendations
+        strip_path: false
+        preserve_host: true
+        methods:
+          - POST
       - name: product-images-route
         paths:
           - /images

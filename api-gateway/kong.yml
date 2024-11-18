@@ -80,3 +80,18 @@ services:
             - "image/webp"
           cache_ttl: 3600
           strategy: memory
+
+  - name: quiz-service
+    url: http://quiz-service:5000
+    routes:
+      - name: quiz-route
+        paths:
+          - /quiz
+        strip_path: false
+        preserve_host: true
+        methods:
+          - GET
+          - POST
+          - PUT
+          - DELETE
+          - OPTIONS

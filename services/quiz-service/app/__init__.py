@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_cors import CORS
 from .routes import quiz_blueprint
 
@@ -16,5 +16,10 @@ def create_app():
 
     # Register blueprints
     app.register_blueprint(quiz_blueprint, url_prefix="/quiz")
+
+    # Define a root route
+    @app.route("/", methods=["GET"])
+    def home():
+        return jsonify({"message": "Quiz Service launched"}), 200
 
     return app

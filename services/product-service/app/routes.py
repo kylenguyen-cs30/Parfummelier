@@ -1,6 +1,7 @@
 from flask_migrate import branches
 from flask import Blueprint, request, jsonify, send_from_directory
 from app.models import db, Product, Accord, Review
+from sqlalchemy import func
 import os
 
 
@@ -188,7 +189,51 @@ def list_accords():
     return jsonify([{"id": accord.id, "name": accord.name} for accord in accords])
 
 
-# NOTE: Route recommendataion
+# Recommendation Route
+@product_blueprint.route("/recommendations", methods=["POST"])
+def recommend_products():
+    try:
+        data = request.json
+        accordbank = data.get("accordbank", [])
+
+        # Normalize accord names to lowercase
+        accordbank = [accord.lower() for accord in accordbank]
+
+        if not accordbank:
+            return jsonify({"error": "No accord bank data provided"}), 400
+
+        # Query the database for products that match any accord in the accordbank
+        recommended_products = (
+            Product.query
+            .join(Product.accords)
+            .filter(func.lower(Accord.name).in_(accordbank))  # Match lowercased accord names
+            .distinct()
+            .all()
+        )
+
+        if not recommended_products:
+            return jsonify({"message": "No recommendations found"}), 200
+
+        # Format the recommendations in JSON format
+        recommendations = [
+            {
+                "id": product.id,
+                "name": product.name,
+                "brand": product.brand,
+                "accords": [accord.name for accord in product.accords],
+                "imageURL": f"{API_GATEWAY_URL}/product/images/{product.imageURL}"
+                if product.imageURL
+                else None,
+            }
+            for product in recommended_products
+        ]
+
+        return jsonify({"recommendations": recommendations})
+
+    except Exception as e:
+        print(f"Error in recommendations route: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 # NOTE: Rating Routes

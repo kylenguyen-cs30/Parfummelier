@@ -1,3 +1,4 @@
+"use client";
 import { useAuth } from "./components/auth/AuthContext";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -24,6 +25,7 @@ const PROTECTED_ROUTES = [
   "/quiz",
   "/settings",
   "/user-profile",
+  "/product/all",
 ];
 
 export default function ClientLayout({

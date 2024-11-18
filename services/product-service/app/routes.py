@@ -12,6 +12,7 @@ API_GATEWAY_URL = os.getenv("API_GATEWAY_URL", "http://localhost:8000")
 IMAGES_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), "images")
 
 
+# NOTE: Serve the images on the server
 @product_blueprint.route("/images/<path:filename>")
 def serve_image(filename):
     """
@@ -35,7 +36,7 @@ def home():
 def list_products():
     products = Product.query.all()
     # base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
-    base_url = "http://api-gateway:8000/images"  # PERF: testing
+    base_url = "http://api-gateway:8000/images/"  # PERF: testing
     return jsonify(
         [
             {

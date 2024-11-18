@@ -16,6 +16,10 @@ interface AuthContextProps extends AuthState {
   login: (email: string, password: string) => Promise<void>;
 }
 
+const AUTH_TIMES = {
+  REFRESH_INTERVAL: 7.5 * 60 * 60 * 1000,
+} as const;
+
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -26,10 +30,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isAuthenticated: false,
   });
 
-  // const [user, setUser] = useState<User | null>(null);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [isAuthenticated, setIsAuthenticated] = useState(false);
-  // router for page changing
   const router = useRouter();
   const pathname = usePathname();
 
@@ -58,6 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         {}, // empty body since there is no payload
         {
           withCredentials: true,
+          validateStatus: (status) => status === 200 || status === 401,
         },
       );
 
@@ -72,6 +73,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             headers: {
               Authorization: `Bearer ${access_token}`,
             },
+            validateStatus: (status) => status === 200 || status === 401,
           },
         );
 
@@ -87,17 +89,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       return false;
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        if (error.response?.status === 401) {
-          // refresh token expired or invalid
-          setState({
-            user: null,
-            isAuthenticated: false,
-            isLoading: false,
-          });
-        }
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
+        console.error("Unexpected error during token refresh:", error);
       }
-      console.error(`Failed to refresh token ${error}`);
       return false;
     }
   }, []);
@@ -105,7 +99,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // NOTE: Authentication Status Checker
   const checkAuth = useCallback(async () => {
     try {
-      const tokenResponse = await axios.get("/api/getAccessToken");
+      const tokenResponse = await axios.get("/api/getAccessToken", {
+        validateStatus: (status) => status === 200 || status === 401,
+      });
+
+      if (tokenResponse.status === 401) {
+        setState({ user: null, isAuthenticated: false, isLoading: false });
+        return;
+      }
+
       if (tokenResponse.status === 200) {
         const userResponse = await axios.get(
           "http://localhost:8000/user/current-user/info",
@@ -113,6 +115,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             headers: {
               Authorization: `Bearer ${tokenResponse.data.access_token}`,
             },
+            validateStatus: (status) => status === 200 || status === 401,
           },
         );
 
@@ -136,6 +139,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             headers: {
               Authorization: `Bearer ${(await axios.get("/api/getAccessToken")).data.access_token}`,
             },
+            validateStatus: (status) => status === 200 || status === 401,
           },
         );
         if (userResponse.status === 200) {
@@ -150,7 +154,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       setState({ user: null, isAuthenticated: false, isLoading: false });
     } catch (error) {
-      console.error(`Error in refresh new tokne ${error}`);
+      // Only log non-401 errors
+      if (axios.isAxiosError(error) && error.response?.status !== 401) {
+        console.error("Unexpected error during auth check:", error);
+      }
       setState({ user: null, isAuthenticated: false, isLoading: false });
     }
   }, [refreshToken]);
@@ -158,10 +165,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // NOTE: login function
   const login = async (email: string, password: string) => {
     try {
-      const response = await axios.post("http://localhost:8000/auth/login", {
-        email,
-        password,
-      });
+      const response = await axios.post(
+        "http://localhost:8000/auth/login",
+        {
+          email,
+          password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        },
+      );
 
       if (response.status === 200) {
         const { access_token, user } = response.data;
@@ -177,6 +193,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (error) {
       if (axios.isAxiosError(error)) {
+        console.log("Request Config:", error.config);
+        console.log("Response Headers:", error.response?.headers);
         throw new Error(
           error.response?.data?.error || "An error occured while logging in",
         );
@@ -193,15 +211,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // set up token refresh interval when authenticated
   useEffect(() => {
     if (state.isAuthenticated) {
-      const refreshInterval = setInterval(
-        async () => {
-          const refreshed = await refreshToken();
-          if (!refreshed) {
-            logout();
-          }
-        },
-        14 * 60 * 1000,
-      );
+      const refreshInterval = setInterval(async () => {
+        const refreshed = await refreshToken();
+        if (!refreshed) {
+          logout();
+        }
+      }, AUTH_TIMES.REFRESH_INTERVAL);
       return () => clearInterval(refreshInterval);
     }
   }, [state.isAuthenticated, logout, refreshToken]);

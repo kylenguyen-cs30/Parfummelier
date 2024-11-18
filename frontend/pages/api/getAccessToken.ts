@@ -10,8 +10,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const access_token = cookies.access_token;
 
   if (!access_token) {
-    // return res.status(401).json({ error: 'No access token found' });
-    // return res.status(401).end();
     res.status(401).json({ error: "No Token" });
     return;
   }

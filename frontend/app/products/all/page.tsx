@@ -11,6 +11,7 @@ import {
 } from "../../components/ui/card/Card";
 import { api } from "../../lib/axios";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 interface Accord {
   name: string;
@@ -66,50 +67,52 @@ export default function ProductsPage() {
     return <div className="text-center text-red-500 p-8">Error: {error}</div>;
 
   return (
-    <div className="container mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
+    <ProtectedRoute>
+      <div className="container mx-auto p-8">
+        <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((product) => (
-          <Card key={product.id}>
-            <CardHeader>
-              <CardTitle>{product.name}</CardTitle>
-              <p className="text-gray-500">{product.brand}</p>
-            </CardHeader>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map((product) => (
+            <Card key={product.id}>
+              <CardHeader>
+                <CardTitle>{product.name}</CardTitle>
+                <p className="text-gray-500">{product.brand}</p>
+              </CardHeader>
 
-            <CardContent>
-              {product.imageURL && (
-                <div className="relative h-64 mb-4">
-                  <Image
-                    src={product.imageURL}
-                    alt={product.name}
-                    fill
-                    className="object-cover rounded-md"
-                  />
+              <CardContent>
+                {product.imageURL && (
+                  <div className="relative h-64 mb-4">
+                    <Image
+                      src={product.imageURL}
+                      alt={product.name}
+                      fill
+                      className="object-cover rounded-md"
+                    />
+                  </div>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                  {product.accords.map((accord, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 rounded-full text-sm"
+                      style={{
+                        backgroundColor: accord.background_color,
+                        color: isLightColor(accord.background_color)
+                          ? "black"
+                          : "white",
+                      }}
+                    >
+                      {accord.name}
+                    </span>
+                  ))}
                 </div>
-              )}
-
-              <div className="flex flex-wrap gap-2">
-                {product.accords.map((accord, index) => (
-                  <span
-                    key={index}
-                    className="px-3 py-1 rounded-full text-sm"
-                    style={{
-                      backgroundColor: accord.background_color,
-                      color: isLightColor(accord.background_color)
-                        ? "black"
-                        : "white",
-                    }}
-                  >
-                    {accord.name}
-                  </span>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }
 

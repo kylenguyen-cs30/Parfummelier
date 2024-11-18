@@ -4,6 +4,7 @@ import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import ChatRoom from "@/app/components/chat/ChatRoom/ChatRoom";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 
 // NOTE:
 // interface variable is capturing
@@ -64,18 +65,20 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      {chatInfo && (
-        <div className="mb-4">
-          <h1 className="text-2xl font-bold">
-            Chat with {chatInfo.otheruser.firstName}{" "}
-            {chatInfo.otheruser.lastName}
-          </h1>
+    <ProtectedRoute>
+      <div className="container mx-auto px-4 py-8">
+        {chatInfo && (
+          <div className="mb-4">
+            <h1 className="text-2xl font-bold">
+              Chat with {chatInfo.otheruser.firstName}{" "}
+              {chatInfo.otheruser.lastName}
+            </h1>
+          </div>
+        )}
+        <div className="h-[calc(100vh-200px)]">
+          <ChatRoom roomId={roomId} />
         </div>
-      )}
-      <div className="h-[calc(100vh-200px)]">
-        <ChatRoom roomId={roomId} />
       </div>
-    </div>
+    </ProtectedRoute>
   );
 }

@@ -77,7 +77,7 @@ def login():
             access_token = jwt.encode(
                 {
                     "user_id": user.id,
-                    "exp": datetime.datetime.now() + datetime.timedelta(days=1),
+                    "exp": datetime.datetime.now() + datetime.timedelta(hours=8),
                 },
                 current_app.config["SECRET_KEY"],
                 algorithm="HS256",

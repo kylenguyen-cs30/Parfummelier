@@ -11,7 +11,7 @@ export default function hanlder(req: NextApiRequest, res: NextApiResponse) {
   const cookie = serialize("access_token", access_token, {
     httpOnly: true,
     // secure: process.env.NODE_ENV === "production",
-    maxAge: 60 * 60 * 24, // one day
+    maxAge: 8 * 60 * 60, // one day
     path: "/",
   });
   res.setHeader("Set-Cookie", cookie);

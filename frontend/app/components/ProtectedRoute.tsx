@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import LoadingScreen from "./common/LoadingScreen/LoadingScreen";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { useAuth } from "./auth/AuthContext";
 
 interface ProtectedRouteProps {

@@ -10,9 +10,14 @@ export default function Main() {
     <div>
       {/* Content Section  */}
       <Content>
+        {/* welcome user title  */}
         <h1>Welcome , {user?.email}</h1>
 
-        {/* <Card></Card> */}
+        {/* NOTE: Recommendation by user's accord */}
+
+        {/* NOTE: Recommendation by Season */}
+
+        {/* NOTE: Recommendation by best selling */}
       </Content>
     </div>
   );

@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import LoadingScreen from "./common/LoadingScreen/LoadingScreen";
 import { useRouter } from "next/router";
+import { useAuth } from "./auth/AuthContext";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -19,7 +20,7 @@ const ProtectedRoute = ({
   const router = useRouter();
 
   useEffect(() => {
-    const validatedAuthe = async () => {
+    const validatedAuth = async () => {
       if (!isLoading && isAuthenticated) {
         const refreshed = await refreshToken();
         if (!refreshed) {
@@ -27,6 +28,7 @@ const ProtectedRoute = ({
         }
       }
     };
+    validatedAuth();
   }, [isAuthenticated, isLoading, refreshToken, router]);
 
   if (isLoading) {
@@ -35,3 +37,5 @@ const ProtectedRoute = ({
 
   return isAuthenticated ? <>{children}</> : null;
 };
+
+export default ProtectedRoute;

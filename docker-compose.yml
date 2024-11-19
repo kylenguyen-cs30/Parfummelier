@@ -68,6 +68,8 @@ services:
       - user-service
       - authentication-service
       - product-service
+      - quiz-service
+      - forum-service
     volumes:
       # - ./api-gateway/kong.yml:/app/kong.yml
       - ./api-gateway/kong.yml:/etc/kong/kong.yml

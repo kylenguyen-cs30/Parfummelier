@@ -2,7 +2,7 @@ from fastapi import Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List, Optional
 from app.database.postgresql import get_db
-from app.models.comment import Comment
+from app.models.comment import Comment, CommentResponse
 from app.services.user_service import UserService
 
 
@@ -20,13 +20,13 @@ class CommentService:
         content: str,
         access_token: str,
         parent_id: Optional[int] = None,
-    ) -> dict:
+    ) -> CommentResponse:
         try:
             # Verify user exists
             user_info = await self.user_service.get_user_chat_info(access_token)
 
             # If this is a reply, verify parent comment exists
-            if parent_id:
+            if parent_id is not None:  # Changed from if parent_id:
                 parent_comment = (
                     self.db.query(Comment).filter(Comment.id == parent_id).first()
                 )
@@ -36,25 +36,26 @@ class CommentService:
                     )
 
             comment = Comment(
-                post_id=post_id, user_id=user_id, parent_id=parent_id, content=content
+                post_id=post_id,
+                user_id=user_info["user_id"],  # Use user_id from token
+                parent_id=parent_id,
+                content=content,
             )
 
             self.db.add(comment)
             self.db.commit()
             self.db.refresh(comment)
 
-            return {
-                "id": comment.id,
-                "content": comment.content,
-                "created_at": comment.created_at,
-                "parent_id": comment.parent_id,
-                "user": {
-                    "user_id": user_info["user_id"],
-                    "userName": user_info["userName"],
-                    "firstName": user_info["firstName"],
-                    "lastName": user_info["lastName"],
-                },
-            }
+            return CommentResponse(
+                id=comment.id,
+                post_id=post_id,
+                user_id=user_info["user_id"],
+                content=comment.content,
+                parent_id=comment.parent_id,
+                created_at=comment.created_at,
+                updated_at=comment.updated_at,
+                replies=[],
+            )
         except Exception as e:
             self.db.rollback()
             raise HTTPException(status_code=500, detail=str(e))

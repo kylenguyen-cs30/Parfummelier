@@ -4,6 +4,10 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { jwtDecode } from "jwt-decode";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import { Post } from "@/app/type/posts";
+import Link from "next/link";
+import Button from "@/app/components/ui/button/Button";
+import MakePostModal from "@/app/components/forum/MakePost/MakePost";
 
 interface User {
   id: number;
@@ -12,60 +16,50 @@ interface User {
   email: string;
 }
 
-interface ForumPost {
-  id: string;
-  title: string;
-  content: string;
-  author: string;
-  timestamp: Date;
-  topic: string;
-}
-
 interface TokenPayload {
   user_id: number;
   exp: number;
 }
 
-const DUMMY_POST: ForumPost[] = [
-  {
-    id: "1",
-    title: "Best Summer Fragrances 2024",
-    content: "What are your favorite summer fragrances this year?",
-    author: "John Doe",
-    timestamp: new Date(),
-    topic: "Summer Scents",
-  },
-  {
-    id: "2",
-    title: "Perfume Longevity Tips",
-    content: "Share your tips for making fragrances last longer!",
-    author: "Jane Smith",
-    timestamp: new Date(),
-    topic: "Tip & Tricks",
-  },
-];
-
 export default function ForumPage() {
   const [users, setUsers] = useState<User[]>([]);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
-
-  // For Time Hydration issue
-  const [posts] = useState<ForumPost[]>(
-    DUMMY_POST.map((post) => ({
-      ...post,
-      // use a stable timestamp format or handle client-side only
-      timestamp: new Date(post.timestamp), // Convert to consisten Date Object
-    })),
-  );
-
+  const [loading, setLoading] = useState(true);
   // When rendering the timestamp, useEffect to handle client-side update
   const [mounted, setMounted] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+  const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
+  }, []);
+
+  // Fetch posts from API
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const tokenResponse = await axios.get("/api/getAccessToken");
+        const { access_token } = tokenResponse.data;
+
+        const response = await axios.get("http://localhost:8000/posts", {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        });
+
+        setPosts(response.data);
+      } catch (err) {
+        console.error("Error fetching posts:", err);
+        setError("Failed to fetch posts");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
   }, []);
 
   // Get current user from token
@@ -195,6 +189,25 @@ export default function ForumPage() {
     }
   };
 
+  // NOTE: refresh post
+  const handleRefreshPosts = async () => {
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      const { access_token } = tokenResponse.data;
+
+      const response = await axios.get("http://localhost:8000/posts", {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+        },
+      });
+
+      setPosts(response.data);
+    } catch (err) {
+      console.error("Error fetching posts:", err);
+      setError("Failed to fetch posts");
+    }
+  };
+
   return (
     <ProtectedRoute>
       <div className="container mx-auto px-4 py-8">
@@ -202,29 +215,42 @@ export default function ForumPage() {
           {/* Forum Posts - Left Side */}
           <div className="col-span-8">
             <h2 className="text-2xl font-bold mb-6">Forum Discussions</h2>
-            <div className="space-y-6">
-              {posts.map((post) => (
-                <div key={post.id} className="bg-white p-6 rounded-lg shadow">
-                  <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-xl font-semibold">{post.title}</h3>
-                    {mounted ? (
-                      <span className="text-sm text-gray-500">
-                        {new Date(post.timestamp).toLocaleDateString()}
-                      </span>
-                    ) : null}
-                  </div>
-                  <p className="text-gray-600 mb-4">{post.content}</p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-500">
-                      By {post.author}
-                    </span>
-                    <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                      {post.topic}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Button onClick={() => setIsCreatePostModalOpen(true)}>
+              Create Post
+            </Button>
+            {loading ? (
+              <div>Loading posts...</div>
+            ) : error ? (
+              <div className="text-red-500">{error}</div>
+            ) : (
+              <div className="space-y-6">
+                {posts.map((post) => (
+                  <Link href={`/forum/post/${post.id}`} key={post.id}>
+                    <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-xl font-semibold">{post.title}</h3>
+                        <span className="text-sm text-gray-500">
+                          {new Date(post.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                      <p className="text-gray-600 mb-4">
+                        {post.content.length > 200
+                          ? `${post.content.substring(0, 200)}...`
+                          : post.content}
+                      </p>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-500">
+                          User ID: {post.user_id}
+                        </span>
+                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                          {post.topic}
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Online Users - Right Side */}
@@ -288,6 +314,11 @@ export default function ForumPage() {
               </div>
             </div>
           </div>
+          <MakePostModal
+            isOpen={isCreatePostModalOpen}
+            onClose={() => setIsCreatePostModalOpen(false)}
+            onSuccess={handleRefreshPosts}
+          />
         </div>
       </div>
     </ProtectedRoute>

@@ -146,7 +146,7 @@ const Header = () => {
             <Menu as="div" className="relative">
               <MenuButton className="flex items-center space-x-2 text-gray-900 dark:text-white hover:text-gray-500">
                 <Image
-                  src="/logo/Logo.webp"
+                  src="/profile-picture/gender-neutral.png"
                   alt="Profile"
                   width={32}
                   height={32}

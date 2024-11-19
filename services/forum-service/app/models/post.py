@@ -16,6 +16,8 @@ class Post(Base):
     topic = Column(String(100), nullable=False, index=True)
     # Store array of image URLs
     image_urls = Column(ARRAY(String), nullable=True)
+
+    # time of the post
     created_at = Column(DateTime, default=datetime.now)
     updated_at = Column(DateTime, default=datetime.now, onupdate=datetime.now)
 

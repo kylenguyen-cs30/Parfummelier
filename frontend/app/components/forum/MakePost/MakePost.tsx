@@ -5,18 +5,28 @@ import Textarea from "@/app/components/ui/textarea/textarea";
 import Input from "@/app/components/ui/input/input";
 import Button from "../../ui/button/Button";
 import { X } from "lucide-react";
+import axios from "axios";
 
-const MakePostModal = ({ isOpen, onClose, onSubmit }) => {
+interface MakePostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSuccess: () => void; // Callback to refresh posts list
+}
+
+const MakePostModal = ({ isOpen, onClose, onSuccess }: MakePostModalProps) => {
   const [formData, setFormData] = useState({
     title: "",
     content: "",
     topic: "",
-    image_urls: [],
+    image_urls: [] as string[],
   });
   const [images, setImages] = useState<File[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -29,46 +39,71 @@ const MakePostModal = ({ isOpen, onClose, onSubmit }) => {
 
     const files = Array.from(e.target.files);
     setIsLoading(true);
-
-    const formData = new FormData();
-    files.forEach((file) => formData.append("files", file));
+    setError(null);
 
     try {
-      const response = await fetch(
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      const { access_token } = tokenResponse.data;
+
+      const formData = new FormData();
+      files.forEach((file) => formData.append("files", file));
+
+      const response = await axios.post(
         "http://localhost:8000/posts/upload-images",
+        formData,
         {
-          method: "POST",
-          body: formData,
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
         },
       );
-      const data = await response.json();
+
       setFormData((prev) => ({
         ...prev,
-        image_urls: [...prev.image_urls, ...data.image_urls],
+        image_urls: [...prev.image_urls, ...response.data.image_urls],
       }));
       setImages((prev) => [...prev, ...files]);
     } catch (error) {
       console.error("Error Uploading Images: ", error);
+      setError("Failed to upload images");
     } finally {
       setIsLoading(false);
     }
   };
 
-  //NOTE: Handle submit the form
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setError(null);
+
     try {
-      await onSubmit(formData);
+      // Get access token
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      const { access_token } = tokenResponse.data;
+
+      // Create post
+      await axios.post("http://localhost:8000/posts/", formData, {
+        headers: {
+          Authorization: `Bearer ${access_token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Reset form
       setFormData({ title: "", content: "", topic: "", image_urls: [] });
       setImages([]);
+
+      // Close modal and refresh posts
+      onSuccess();
       onClose();
     } catch (error) {
-      console.error("error creating post:", error);
+      console.error("Error creating post:", error);
+      setError("Failed to create post. Please try again.");
     } finally {
       setIsLoading(false);
     }
   };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
@@ -79,6 +114,12 @@ const MakePostModal = ({ isOpen, onClose, onSubmit }) => {
               <X className="h-6 w-6" />
             </Button>
           </div>
+
+          {error && (
+            <div className="mb-4 p-3 bg-red-100 text-red-600 rounded">
+              {error}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
@@ -127,15 +168,14 @@ const MakePostModal = ({ isOpen, onClose, onSubmit }) => {
                 className="w-full"
               />
               {images.length > 0 && (
-                <div className="mt-2 flex gap-2 flex-wrap">
+                <div className="mt-2 grid grid-cols-3 gap-2">
                   {images.map((image, index) => (
-                    <div key={index} className="relative">
+                    <div key={index} className="relative h-24">
                       <Image
                         src={URL.createObjectURL(image)}
                         alt={`Preview ${index + 1}`}
                         fill
                         className="object-cover rounded"
-                        sizes="80px"
                       />
                     </div>
                   ))}

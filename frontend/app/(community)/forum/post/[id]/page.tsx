@@ -12,12 +12,21 @@ export default function SinglePostPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
+  // NOTE: Fetch POST API call
   useEffect(() => {
     const fetchPost = async () => {
+      if (!params.id) {
+        setError("No post ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
+        // Get access token
         const tokenResponse = await axios.get("/api/getAccessToken");
         const { access_token } = tokenResponse.data;
 
+        // Fetch post data
         const response = await axios.get(
           `http://localhost:8000/posts/${params.id}`,
           {
@@ -27,29 +36,84 @@ export default function SinglePostPage() {
           },
         );
 
+        // Check if we got data
+        if (!response.data) {
+          throw new Error("No data received from server");
+        }
+
         setPost(response.data);
+        setError(null);
       } catch (err) {
         console.error("Error fetching post:", err);
-        setError("Failed to fetch post");
+        if (axios.isAxiosError(err)) {
+          if (err.response?.status === 404) {
+            setError("Post not found");
+          } else if (err.response?.status === 401) {
+            setError("Unauthorized - Please sign in again");
+            router.push("/signin");
+          } else {
+            setError(
+              `Failed to fetch post: ${err.response?.data?.detail || err.message}`,
+            );
+          }
+        } else {
+          setError("An unexpected error occurred");
+        }
       } finally {
         setLoading(false);
       }
     };
 
-    if (params.id) {
-      fetchPost();
-    }
-  }, [params.id]);
+    fetchPost();
+  }, [params.id, router]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div className="text-red-500">{error}</div>;
-  if (!post) return <div>Post not found</div>;
+  if (loading) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-xl">Loading post...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+          <div className="text-red-700">{error}</div>
+          <button
+            onClick={() => router.push("/forum")}
+            className="mt-4 px-4 py-2 bg-red-100 hover:bg-red-200 text-red-700 rounded-lg transition-colors"
+          >
+            Return to Forum
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (!post) {
+    return (
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center">
+          <div className="text-xl mb-4">Post not found</div>
+          <button
+            onClick={() => router.push("/forum")}
+            className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+          >
+            Return to Forum
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <ProtectedRoute>
       <div className="container mx-auto px-4 py-8">
         <button
-          onClick={() => router.back()}
+          onClick={() => router.push("/forum")}
           className="mb-6 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
         >
           ← Back to Forum
@@ -68,7 +132,7 @@ export default function SinglePostPage() {
           </div>
 
           <div className="prose max-w-none">
-            <p>{post.content}</p>
+            <p className="whitespace-pre-wrap">{post.content}</p>
           </div>
 
           {post.image_urls && post.image_urls.length > 0 && (

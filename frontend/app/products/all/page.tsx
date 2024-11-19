@@ -70,32 +70,31 @@ export default function ProductsPage() {
     <ProtectedRoute>
       <div className="container mx-auto p-8">
         <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {products.map((product) => (
-            <Card key={product.id}>
-              <CardHeader>
-                <CardTitle>{product.name}</CardTitle>
-                <p className="text-gray-500">{product.brand}</p>
+            <Card key={product.id} className="flex flex-col">
+              <CardHeader className="flex-none">
+                <CardTitle className="text-lg">{product.name}</CardTitle>
+                <p className="text-gray-500 text-sm">{product.brand}</p>
               </CardHeader>
-
-              <CardContent>
+              <CardContent className="flex-grow flex flex-col items-center">
                 {product.imageURL && (
-                  <div className="relative h-64 mb-4">
+                  <div className="relative w-[240px] h-[320px] mb-4">
                     <Image
                       src={product.imageURL}
                       alt={product.name}
-                      fill
-                      className="object-cover rounded-md"
+                      width={240}
+                      height={320}
+                      className="rounded-md"
+                      quality={75}
                     />
                   </div>
                 )}
-
-                <div className="flex flex-wrap gap-2">
+                <div className="flex flex-wrap gap-1.5 justify-center">
                   {product.accords.map((accord, index) => (
                     <span
                       key={index}
-                      className="px-3 py-1 rounded-full text-sm"
+                      className="px-2 py-0.5 rounded-full text-xs"
                       style={{
                         backgroundColor: accord.background_color,
                         color: isLightColor(accord.background_color)

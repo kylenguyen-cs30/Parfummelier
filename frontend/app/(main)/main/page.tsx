@@ -10,15 +10,29 @@ export default function Main() {
     <div>
       {/* Content Section  */}
       <Content>
-        {/* welcome user title  */}
-        <h1>Welcome , {user?.email}</h1>
-
-        {/* NOTE: Recommendation by user's accord */}
-
-        {/* NOTE: Recommendation by Season */}
-
-        {/* NOTE: Recommendation by best selling */}
+        {/*NOTE: welcome user title  */}
+        <h1>
+          Welcome , {user?.firstName} {user?.lastName}
+        </h1>
       </Content>
+
+      {/* NOTE: How to use the website */}
+
+      <div>
+        <div>
+          <h1>How to use Parfummelier</h1>
+        </div>
+      </div>
+
+      {/* NOTE: Recommendation by user's accord */}
+
+      {/* NOTE: Recommendation by Season */}
+
+      <div>
+        <div>
+          <h1>Seasonal Recommendation</h1>
+        </div>
+      </div>
     </div>
   );
 }

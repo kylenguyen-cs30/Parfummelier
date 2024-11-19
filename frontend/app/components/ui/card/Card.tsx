@@ -9,20 +9,38 @@ export function Card({
   className?: string;
 }) {
   return (
-    <div className={`bg-white rounded-lg border shadow-sm ${className}`}>
+    <div className={`bg-white rounded-lg border shadow-sm h-full ${className}`}>
       {children}
     </div>
   );
 }
 
-export function CardHeader({ children }: { children: React.ReactNode }) {
-  return <div className="p-6">{children}</div>;
+export function CardHeader({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`p-4 ${className}`}>{children}</div>;
 }
 
-export function CardTitle({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-2xl font-semibold">{children}</h3>;
+export function CardTitle({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <h3 className={`font-semibold ${className}`}>{children}</h3>;
 }
 
-export function CardContent({ children }: { children: React.ReactNode }) {
-  return <div className="p-6 pt-0">{children}</div>;
+export function CardContent({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`p-4 pt-0 ${className}`}>{children}</div>;
 }

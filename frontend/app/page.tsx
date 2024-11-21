@@ -1,18 +1,29 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "./components/ui/button/Button";
 import { useRouter } from "next/navigation";
+import { useAuth } from "./components/auth/AuthContext";
+import LoadingScreen from "./components/common/LoadingScreen/LoadingScreen";
 
 export default function Home() {
   const router = useRouter();
+  const { isLoading, isAuthenticated } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && isAuthenticated) {
+      router.replace("/main");
+    }
+  }, [isLoading, isAuthenticated, router]);
+
+  // Show loading screen while checking auth
+  if (isLoading || isAuthenticated) {
+    return <LoadingScreen />;
+  }
 
   const handleClick = (type: "signin" | "signup") => {
-    if (type === "signup") {
-      router.push("/signup");
-    } else {
-      router.push("/signin");
-    }
+    router.push(`/${type}`);
   };
+
   return (
     <div className="h-screen  bg-cover flex  items-center bg-main-background">
       <div className="ml-36 ">

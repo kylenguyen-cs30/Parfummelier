@@ -1,7 +1,6 @@
-// app/products/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Image from "next/image";
 import {
   Card,
@@ -12,6 +11,7 @@ import {
 import { api } from "../../lib/axios";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import axios from "axios";
 
 interface Accord {
   name: string;
@@ -28,11 +28,58 @@ interface Product {
 
 const getImageUrl = (url: string | null) => {
   if (!url) return null;
-  // Replace localhost with api-gateway in URLs if they exist
-  if (url.includes("localhost:8000")) {
-    return url.replace("localhost:8000", "api-gateway:8000");
+  try {
+    // Fix potential missing slash between 'images' and filename
+    const fixedUrl = url.replace("/images", "/images/");
+    const imageUrl = new URL(fixedUrl);
+
+    // For development environment, use localhost:8000
+    if (process.env.NODE_ENV === "development") {
+      imageUrl.hostname = "localhost";
+      imageUrl.port = "8000";
+    }
+
+    return imageUrl.toString();
+  } catch (error) {
+    console.error("Error processing image URL:", error);
+    return url;
   }
-  return url;
+};
+
+// NOTE: Product Card Component for Image rendering
+const ProductCard = ({ product }: { product: Product }) => {
+  const [imageError, setImageError] = useState(false);
+
+  const imageUrl = useMemo(() => {
+    if (!product.imageURL) return null;
+    return getImageUrl(product.imageURL);
+  }, [product.imageURL]);
+
+  if (!imageUrl || imageError) {
+    return (
+      <div className="relative w-[240px] h-[320px] mb-4 bg-gray-200 flex items-center justify-center">
+        <span className="text-gray-400">No image available</span>
+      </div>
+    );
+  }
+
+  return (
+    <div className="relative w-[240px] h-[320px] mb-4">
+      <Image
+        src={imageUrl}
+        alt={product.name}
+        width={240}
+        height={320}
+        className="rounded-md object-cover"
+        onError={(e) => {
+          console.error(`Failed to load image: ${imageUrl}`);
+          setImageError(true);
+        }}
+        unoptimized
+        // quality={75}
+      />
+    </div>
+  );
 };
 
 export default function ProductsPage() {
@@ -45,13 +92,24 @@ export default function ProductsPage() {
       try {
         const { data } = await api.get("/products/products");
 
-        const transformedProducts = data.map((product: Product) => ({
-          ...product,
-          imageURL: getImageUrl(product.imageURL),
-        }));
+        const transformedProducts = data.map((product: Product) => {
+          const transformedUrl = getImageUrl(product.imageURL);
+          return {
+            ...product,
+            imageURL: transformedUrl,
+          };
+        });
+
         setProducts(transformedProducts);
       } catch (err) {
-        console.error("Fetch error:", err);
+        if (axios.isAxiosError(err)) {
+          console.error("Axios error details:", {
+            status: err.response?.status,
+            data: err.response?.data,
+            headers: err.response?.headers,
+            config: err.config,
+          });
+        }
         setError(
           err instanceof Error ? err.message : "Failed to fetch products",
         );
@@ -78,18 +136,7 @@ export default function ProductsPage() {
                 <p className="text-gray-500 text-sm">{product.brand}</p>
               </CardHeader>
               <CardContent className="flex-grow flex flex-col items-center">
-                {product.imageURL && (
-                  <div className="relative w-[240px] h-[320px] mb-4">
-                    <Image
-                      src={product.imageURL}
-                      alt={product.name}
-                      width={240}
-                      height={320}
-                      className="rounded-md"
-                      quality={75}
-                    />
-                  </div>
-                )}
+                <ProductCard product={product} />
                 <div className="flex flex-wrap gap-1.5 justify-center">
                   {product.accords.map((accord, index) => (
                     <span

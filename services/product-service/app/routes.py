@@ -36,8 +36,8 @@ def home():
 @product_blueprint.route("/products", methods=["GET"])
 def list_products():
     products = Product.query.all()
-    # base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
-    base_url = "http://api-gateway:8000/images/"  # PERF: testing
+    base_url = "http://api-gateway:8000/images/"  # Always use api-gateway
+
     return jsonify(
         [
             {
@@ -48,7 +48,11 @@ def list_products():
                     {"name": accord.name, "background_color": accord.background_color}
                     for accord in product.accords
                 ],
-                "imageURL": base_url + product.imageURL if product.imageURL else None,
+                "imageURL": (
+                    f"{base_url}{product.imageURL.lstrip('/')}"
+                    if product.imageURL
+                    else None
+                ),
             }
             for product in products
         ]
@@ -59,7 +63,9 @@ def list_products():
 @product_blueprint.route("/products/<int:id>", methods=["GET"])
 def get_product(id):
     product = Product.query.get_or_404(id)
-    base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
+    # base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
+    base_url = "http://api-gateway:8000/images/"  # PERF: testing
+
     return jsonify(
         {
             "id": product.id,
@@ -204,9 +210,10 @@ def recommend_products():
 
         # Query the database for products that match any accord in the accordbank
         recommended_products = (
-            Product.query
-            .join(Product.accords)
-            .filter(func.lower(Accord.name).in_(accordbank))  # Match lowercased accord names
+            Product.query.join(Product.accords)
+            .filter(
+                func.lower(Accord.name).in_(accordbank)
+            )  # Match lowercased accord names
             .distinct()
             .all()
         )
@@ -221,9 +228,11 @@ def recommend_products():
                 "name": product.name,
                 "brand": product.brand,
                 "accords": [accord.name for accord in product.accords],
-                "imageURL": f"{API_GATEWAY_URL}/product/images/{product.imageURL}"
-                if product.imageURL
-                else None,
+                "imageURL": (
+                    f"{API_GATEWAY_URL}/product/images/{product.imageURL}"
+                    if product.imageURL
+                    else None
+                ),
             }
             for product in recommended_products
         ]
@@ -233,7 +242,6 @@ def recommend_products():
     except Exception as e:
         print(f"Error in recommendations route: {e}")
         return jsonify({"error": str(e)}), 500
-
 
 
 # NOTE: Rating Routes

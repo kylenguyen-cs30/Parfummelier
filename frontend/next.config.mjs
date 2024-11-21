@@ -7,15 +7,17 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
+    domains: ["localhost", "api-gateway"],
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "api-gateway",
+        hostname: "localhost",
         port: "8000",
-        pathname: "/images/**", // Updated to match new Kong path
+        pathname: "/images/**",
       },
     ],
   },
+
   async headers() {
     return [
       {

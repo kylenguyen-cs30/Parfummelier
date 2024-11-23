@@ -315,6 +315,91 @@ def scentbank_details(f):
     return decorated_function
 
 
+# Route to update favorite accords
+@user_blueprint.route("/user/scentbank/accords", methods=["PUT"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
+@token_required
+def update_favorite_accords(current_user):
+    try:
+        favorite_accords = request.json.get("favorite_accords", [])
+        scent_bank = ScentBank.query.get(current_user.scentID)
+        if not scent_bank:
+            return jsonify({"error": "ScentBank not found for this user"}), 404
+
+        accord_objects = []
+        for accord in favorite_accords:
+            accord_obj = Accord.query.filter_by(name=accord).first()
+            if not accord_obj:
+                accord_obj = Accord(name=accord)
+                db.session.add(accord_obj)
+            accord_objects.append(accord_obj)
+
+        scent_bank.favorite_accords = accord_objects
+        db.session.commit()
+        return jsonify({"message": "Favorite accords updated successfully"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update favorite accords: {str(e)}"}), 500
+
+
+# Route to update favorite products
+@user_blueprint.route("/user/scentbank/products", methods=["PUT"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
+@token_required
+def update_favorite_products(current_user):
+    try:
+        favorite_products = request.json.get("favorite_products", [])
+        scent_bank = ScentBank.query.get(current_user.scentID)
+        if not scent_bank:
+            return jsonify({"error": "ScentBank not found for this user"}), 404
+
+        product_objects = []
+        for product in favorite_products:
+            product_obj = Product.query.filter_by(name=product).first()
+            if not product_obj:
+                product_obj = Product(name=product)
+                db.session.add(product_obj)
+            product_objects.append(product_obj)
+
+        scent_bank.favorite_products = product_objects
+        db.session.commit()
+        return jsonify({"message": "Favorite products updated successfully"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update favorite products: {str(e)}"}), 500
+
+
+# Route to update favorite collections
+@user_blueprint.route("/user/scentbank/collections", methods=["PUT"])
+@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
+@token_required
+def update_favorite_collections(current_user):
+    try:
+        favorite_collections = request.json.get("favorite_collections", [])
+        scent_bank = ScentBank.query.get(current_user.scentID)
+        if not scent_bank:
+            return jsonify({"error": "ScentBank not found for this user"}), 404
+
+        collection_objects = []
+        for collection in favorite_collections:
+            collection_obj = Collection.query.filter_by(name=collection).first()
+            if not collection_obj:
+                collection_obj = Collection(name=collection)
+                db.session.add(collection_obj)
+            collection_objects.append(collection_obj)
+
+        scent_bank.favorite_collections = collection_objects
+        db.session.commit()
+        return jsonify({"message": "Favorite collections updated successfully"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update favorite collections: {str(e)}"}), 500
+
+
+
 @user_blueprint.route("/user/scentbank/details", methods=["GET"])
 @cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @scentbank_details

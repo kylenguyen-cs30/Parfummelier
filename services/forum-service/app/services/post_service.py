@@ -9,6 +9,9 @@ from sqlalchemy.orm import Session
 from app.models.post import Post, PostCreate  # Added PostCreate import
 from app.models.post import PostResponse  # Optional, if needed
 from app.services.user_service import UserService
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 class PostService:
@@ -60,6 +63,7 @@ class PostService:
                 status_code=500, detail=f"Failed to upload image: {str(e)}"
             )
 
+    # NOTE: create a new post in the databasa
     async def create_post(self, post: PostCreate, access_token: str) -> Post:
         """Create a new post"""
         try:
@@ -82,13 +86,51 @@ class PostService:
             self.db.rollback()
             raise HTTPException(status_code=500, detail=str(e))
 
-    async def get_post(self, post_id: int) -> Post:
+    # NOTE: return single post
+    async def get_post(self, post_id: int, access_token: str) -> dict:
         """Get a post by ID"""
-        post = self.db.query(Post).filter(Post.id == post_id).first()
-        if not post:
-            raise HTTPException(status_code=404, detail="Post not found")
-        return post
+        try:
+            post = self.db.query(Post).filter(Post.id == post_id).first()
+            if not post:
+                raise HTTPException(status_code=404, detail="Post not found ")
 
+            # Get user info
+            try:
+                user_info = await self.user_service.get_user_chat_info(
+                    identifier=post.user_id, access_token=access_token
+                )
+
+            except Exception as e:
+                logger.warning(f"Failed to get user info: {str(e)}")
+                user_info = None
+
+            # create response with user info
+            post_dict = {
+                "id": post.id,
+                "user_id": post.user_id,
+                "title": post.title,
+                "content": post.content,
+                "topic": post.topic,
+                "image_urls": post.image_urls,
+                "created_at": post.created_at,
+                "updated_at": post.updated_at,
+            }
+
+            if user_info:
+                post_dict["user"] = {
+                    "userName": user_info.get("userName", f"User {post.user_id}"),
+                    "firstName": user_info.get("firstName", ""),
+                    "lastName": user_info.get("lastName", ""),
+                }
+            return post_dict
+
+        except HTTPException as he:
+            raise he
+        except Exception as e:
+            logger.error(f"Error in get_post: {str(e)}")
+            raise HTTPException(status_code=500, detail=str(e))
+
+    # NOTE: return all the post in the database
     async def get_posts(
         self, skip: int = 0, limit: int = 10, topic: Optional[str] = None
     ) -> List[Post]:

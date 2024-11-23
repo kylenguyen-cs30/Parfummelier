@@ -348,6 +348,8 @@ This route will return user's information when a chat is initialized
 """
 
 
+# NOTE: this route for sending user information to the forum-service
+# for chat-service. Establishing connection for the frontend and backend
 @user_blueprint.route("/user/chat-info", methods=["GET"])
 @cross_origin(origin="*", headers=["Content-Type", "Authorization"])
 @token_required
@@ -368,6 +370,7 @@ def get_user_chat_info(current_user):
         return jsonify({"error": f"Error fetching users: {str(e)}"}), 501
 
 
+# NOTE: this route is for the chat-service in the forum-service
 @user_blueprint.route("/user/<int:user_id>/chat-info", methods=["GET"])
 @cross_origin(origin="*", headers=["Content-Type", "Authorization"])
 @token_required
@@ -415,6 +418,7 @@ def get_user_info(current_user):
 
 
 # NOTE: Internal Routes for getting user info
+# WARNING: This route is not used anywhere else. Considering deleting
 @user_blueprint.route("/internal/user/<int:user_id>", methods=["GET"])
 @cross_origin(
     origin="http://forum-service:5000", headers=["Content-Type", "Authorization"]
@@ -435,28 +439,29 @@ def get_internal_user_info(user_id):
     )
 
 
-# NOTE: Return Favorite Collections
+# NOTE: Getting the user preferences for favorite accords, product and Collection
 
-# NOTE: Delete a user
-# @user_blueprint.route("/user/<int:user_id>/delete", methods=["DELETE"])
-# def delete_user(user_id):
-#     try:
-#         user = User.query.get(user_id)
-#         if not user:
-#             return jsonify({"error": "User not Found"}), 404
-#
-#         # Delete the user from the database
-#         db.session.delete(user)
-#         db.session.commit()
-#         return (
-#             jsonify(
-#                 {
-#                     "message": f"User {user.firstName} {user.lastName} delete successfully"
-#                 }
-#             ),
-#             200,
-#         )
-#     except Exception as e:
-#         db.session.rollback()
-#         return jsonify({"error": f"Failed to delete user : {str(e)}"}), 500
-#
+
+@user_blueprint.route("/user/scentbank", methods=["GET"])
+@cross_origin(
+    origins="http://localhost:3000", headers=["Content-Type", "Authorization"]
+)
+@token_required
+def get_user_preferences(current_user):
+    try:
+        scent_bank = ScentBank.query.get(current_user.scentID)
+        if not scent_bank:
+            return jsonify({"error": "user scentbank not found"}), 404
+
+        scentBank = {
+            "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
+            "favorite_products": [
+                product.name for product in scent_bank.favorite_products
+            ],
+            "favorite_collections": [
+                collection.name for collection in scent_bank.favorite_collections
+            ],
+        }
+        return jsonify(scentBank), 200
+    except Exception as e:
+        return jsonify({"error": f"Error fetching Scent Bank: {str(e)}"}), 500

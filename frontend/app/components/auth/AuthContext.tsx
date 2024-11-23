@@ -17,7 +17,7 @@ interface AuthContextProps extends AuthState {
 }
 
 const AUTH_TIMES = {
-  REFRESH_INTERVAL: 7.5 * 60 * 60 * 1000,
+  REFRESH_INTERVAL: 8 * 60 * 60 * 1000,
 } as const;
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -172,15 +172,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       );
 
       if (response.status === 200) {
-        const { access_token, user } = response.data;
+        const { access_token } = response.data;
         await axios.post("/api/setAccessToken", { access_token });
-
-        setState({
-          user,
-          isAuthenticated: true,
-          isLoading: false,
-        });
-
         router.push("/main");
       }
     } catch (error) {

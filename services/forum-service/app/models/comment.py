@@ -1,3 +1,4 @@
+from logging import StringTemplateStyle
 from sqlalchemy import Column, Integer, Text, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from datetime import datetime
@@ -44,12 +45,20 @@ class CommentCreate(CommentBase):
     pass
 
 
+class CommentUserReponse(BaseModel):
+    user_id: int
+    userName: str
+    firstName: str
+    lastName: str
+
+
 class CommentResponse(CommentBase):
     id: int
     post_id: int
     user_id: int
     created_at: datetime
     updated_at: datetime
+    user: CommentUserReponse
     replies: List["CommentResponse"] = []
 
     class Config:

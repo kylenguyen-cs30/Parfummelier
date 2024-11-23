@@ -4,6 +4,27 @@ import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 import { Post } from "@/app/type/posts";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import CommentSection from "@/app/components/forum/CommentSection/CommentSection";
+import Image from "next/image";
+
+// NOTE: Post User interface
+interface PostUser {
+  userName: string;
+  firstName: string;
+  lastName: string;
+}
+
+interface Post {
+  id: number;
+  title: string;
+  content: string;
+  topic: string;
+  user_id: number;
+  created_at: string;
+  updated_at: string;
+  image_urls?: string[];
+  user: PostUser;
+}
 
 export default function SinglePostPage() {
   const params = useParams();
@@ -22,21 +43,20 @@ export default function SinglePostPage() {
       }
 
       try {
-        // Get access token
         const tokenResponse = await axios.get("/api/getAccessToken");
         const { access_token } = tokenResponse.data;
 
-        // Fetch post data
         const response = await axios.get(
-          `http://localhost:8000/posts/${params.id}`,
+          `http://localhost:8000/posts/${params.id}/`,
           {
             headers: {
               Authorization: `Bearer ${access_token}`,
             },
+            withCrendentials: true,
           },
         );
 
-        // Check if we got data
+        // NOTE: Check if we got data
         if (!response.data) {
           throw new Error("No data received from server");
         }
@@ -77,6 +97,7 @@ export default function SinglePostPage() {
     );
   }
 
+  // NOTE: Error fetching data from the backend
   if (error) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -118,16 +139,18 @@ export default function SinglePostPage() {
         >
           ← Back to Forum
         </button>
-
         <div className="bg-white p-8 rounded-lg shadow-lg">
-          <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+          <h1 className="text-3xl font-bold mb-4">{post?.title}</h1>
 
+          {/* NOTE: User detail of who post the post */}
           <div className="flex items-center gap-4 text-gray-500 mb-6">
-            <span>Posted by User {post.user_id}</span>
+            <span>
+              Posted by User {post?.user?.userName || `User ${post?.user_id}`}
+            </span>
             <span>•</span>
-            <span>{new Date(post.created_at).toLocaleString()}</span>
+            <span>{new Date(post?.created_at || "").toLocaleString()}</span>
             <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full">
-              {post.topic}
+              {post?.topic}
             </span>
           </div>
 
@@ -138,7 +161,7 @@ export default function SinglePostPage() {
           {post.image_urls && post.image_urls.length > 0 && (
             <div className="mt-6 grid grid-cols-2 gap-4">
               {post.image_urls.map((url, index) => (
-                <img
+                <Image
                   key={index}
                   src={url}
                   alt={`Post image ${index + 1}`}
@@ -147,6 +170,10 @@ export default function SinglePostPage() {
               ))}
             </div>
           )}
+        </div>
+        {/* NOTE: Add Comment Section */}
+        <div>
+          <CommentSection postId={Number(params.id)} />
         </div>
       </div>
     </ProtectedRoute>

@@ -3,13 +3,17 @@ from typing import List, Dict
 import requests
 import os
 
-PRODUCT_API_URL_QUIZ_SERVICES = os.getenv("PRODUCT_API_URL", "http://product-service:5000")
+PRODUCT_API_URL_QUIZ_SERVICES = os.getenv(
+    "PRODUCT_API_URL", "http://product-service:5000"
+)
 
 quiz_blueprint = Blueprint("quiz", __name__)
+
 
 @quiz_blueprint.route("/", methods=["GET"])
 def home():
     return jsonify({"message": "Quiz Service launched"}), 200
+
 
 # In-memory dictionary for user accordbanks
 user_accordbanks: Dict[int, List[str]] = {}
@@ -28,8 +32,16 @@ ANSWER_TO_ACCORDS = {
     "A calming cup of herbal tea": ["Green", "Soapy", "Fresh"],
     "A glass of rich red wine": ["Mossy", "Oud", "Honey"],
     "A refreshing mojito cocktail": ["Rum", "Salty", "Mint"],
-    "Sunrise, when the world feels fresh and quiet": ["Ozonic", "Fresh Spicy", "Aldehydic"],
-    "Mid-afternoon, when the sun is warm but not too hot": ["Lactonic", "Citrus", "Marine"],
+    "Sunrise, when the world feels fresh and quiet": [
+        "Ozonic",
+        "Fresh Spicy",
+        "Aldehydic",
+    ],
+    "Mid-afternoon, when the sun is warm but not too hot": [
+        "Lactonic",
+        "Citrus",
+        "Marine",
+    ],
     "Early evening, just before the stars come out": ["Rose", "Powdery", "Camphor"],
     "Late at night, when everything feels calm": ["Musky", "Mineral", "Beeswax"],
     "A classic Italian pasta dish": ["Animalic", "Savory", "Earthy"],
@@ -51,12 +63,17 @@ ANSWER_TO_ACCORDS = {
     "Spring, when everything blooms": ["Floral", "Green", "Fresh"],
     "Summer, with endless sunny days": ["Citrus", "Tropical", "White Floral"],
     "Fall, with cozy vibes and colorful leaves": ["Warm Spicy", "Herbal", "Earthy"],
-    "Winter, when it’s all about warmth and hot cocoa": ["Vanilla", "Cinnamon", "Nutty"],
+    "Winter, when it’s all about warmth and hot cocoa": [
+        "Vanilla",
+        "Cinnamon",
+        "Nutty",
+    ],
     "Action-packed superhero adventure": ["Black Pepper", "Leather", "Smoky"],
     "A lighthearted romantic comedy": ["Sweet", "Fruity", "Soft Spicy"],
     "A mystery that keeps you on the edge of your seat": ["Earthy", "Woody", "Dark"],
-    "A fantasy with magical creatures and faraway lands": ["Musk", "Green", "Amber"]
+    "A fantasy with magical creatures and faraway lands": ["Musk", "Green", "Amber"],
 }
+
 
 # Submit quiz responses
 @quiz_blueprint.route("/submit-quiz/", methods=["POST"])
@@ -80,13 +97,17 @@ def submit_quiz():
     # Store the accordbank in memory
     user_accordbanks["localhost:5005"] = accordbank
 
-    return jsonify({"message": "Accordbank created successfully", "accordbank": accordbank})
+    return jsonify(
+        {"message": "Accordbank created successfully", "accordbank": accordbank}
+    )
+
 
 @quiz_blueprint.route("/accord-data/", methods=["POST"])
 def get_accord_data():
     accordbank = request.json.get("accordbank", [])
     accords = list(set(accordbank))
     return jsonify(accords)
+
 
 @quiz_blueprint.route("/update-accordbank/", methods=["PUT"])
 def update_accordbank():
@@ -109,8 +130,15 @@ def update_accordbank():
     # Update the user's accordbank in memory
     user_accordbanks["localhost:5005"] = updated_accordbank
 
-    return jsonify({"message": "Accordbank updated successfully", "updated_accordbank": updated_accordbank})
+    return jsonify(
+        {
+            "message": "Accordbank updated successfully",
+            "updated_accordbank": updated_accordbank,
+        }
+    )
 
+
+# getting accord from the user
 def get_recommendations_for_user(accordbank):
     url = f"{PRODUCT_API_URL_QUIZ_SERVICES}/recommendations"
     response = requests.post(url, json={"accordbank": accordbank})
@@ -119,6 +147,7 @@ def get_recommendations_for_user(accordbank):
         return response.json()  # Ensure this is returning the full response
     else:
         raise Exception(f"Failed to fetch recommendations: {response.text}")
+
 
 @quiz_blueprint.route("/get-recommendations/", methods=["POST"])
 def get_recommendations():
@@ -134,7 +163,8 @@ def get_recommendations():
         return jsonify({"recommendations": recommendations})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
 @quiz_blueprint.errorhandler(400)
 def bad_request(error):
     response = jsonify({"description": error.description})

@@ -64,19 +64,27 @@ async def create_post(
         )
 
 
-# NOTE: Get all posts
-@router.get("/{post_id}", response_model=PostResponse)
+# NOTE: Get single post
+@router.get("/{post_id}/", response_model=PostResponse)
 async def get_post(
     post_id: int,
     service: PostService = Depends(get_post_service),
+    authorization: str = Header(..., description="Bearer {token}"),
 ):
     """Get a specific post by ID"""
     try:
-        return await service.get_post(post_id)
+        token = authorization.split("Bearer ")[-1]
+        # Pass the token into the service
+        return await service.get_post(post_id, token)
+    except HTTPException as he:
+        logger.error(f"HTTP Exception fetching post: {str(he)}")
+        raise he
     except Exception as e:
+        logger.error(f"Error fetching post:  {str(e)}")
         raise HTTPException(status_code=404, detail=str(e))
 
 
+# NOTE: Get all posts
 @router.get("/", response_model=List[PostResponse])
 async def get_posts(
     skip: int = 0,

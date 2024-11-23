@@ -43,6 +43,7 @@ class PostResponse(PostBase):
     user_id: int
     created_at: datetime
     updated_at: datetime
+    user: Optional[dict] = None
 
     class Config:
         # orm_mode = True

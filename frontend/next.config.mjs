@@ -6,6 +6,18 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  images: {
+    domains: ["localhost", "api-gateway"],
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/images/**",
+      },
+    ],
+  },
+
   async headers() {
     return [
       {

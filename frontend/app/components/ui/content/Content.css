@@ -2,4 +2,6 @@
   align-items: center;
   display: flex;
   justify-items: center;
+  background-color: grey;
+  height: 64px;
 }

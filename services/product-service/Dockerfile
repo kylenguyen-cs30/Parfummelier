@@ -7,6 +7,10 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
-EXPOSE 5003
+# Make sure the images directory exists and is accessible
+RUN mkdir -p /app/images
+COPY images/* /app/images/
+
+EXPOSE 5000
 
 CMD ["python3" , "run.py"]

@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import { Roboto, Roboto_Flex } from "next/font/google";
 import localFont from "next/font/local";
-import { AuthProvider } from "./components/AuthContext";
+import { AuthProvider } from "./components/auth/AuthContext";
 import "./globals.css";
+import ClientLayout from "./client-layout";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -12,6 +14,11 @@ const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
+});
+
+const robotoFlex = Roboto_Flex({
+  subsets: ["latin"],
+  variable: "--font-roboto-flex",
 });
 
 export const metadata: Metadata = {
@@ -27,9 +34,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${robotoFlex.variable} antialiased`}
       >
-        <AuthProvider> {children}</AuthProvider>
+        <AuthProvider>
+          <ClientLayout>{children}</ClientLayout>
+        </AuthProvider>
       </body>
     </html>
   );

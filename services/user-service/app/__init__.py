@@ -1,72 +1,38 @@
-import os
+# app/__init__.py
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
 from flask_cors import CORS
-
-# from flask_cors import CORS
-
-db = SQLAlchemy()
-migrate = Migrate()
+from app.extensions import db, migrate
+from app.config import Config
 
 
-def create_app():
+def create_app(config_class=Config):
     app = Flask(__name__)
+    app.config.from_object(config_class)
 
-    # NOTE: For Development
-    CORS(
-        app,
-        resources={r"/*": {"origins": "*"}},
-        methods=[
-            "GET",
-            "POST",
-            "PUT",
-            "DELETE",
-            "OPTIONS",
-        ],
-        supports_credentials=True,
-        allow_headers=[
-            "Content-Type",
-            "Authorization",
-            "Access-Control-Allow-Credentials",
-        ],
-    )
-
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.getenv(
-        "DATABASE_URL", "postgresql://admin:password@db/capstone_project"
-    )
-    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-    # app config for secret key
-    app.config["SECRET_KEY"] = os.getenv("SECRET_KEY", "my-default-secret-key")
+    # Initialize extensions
     db.init_app(app)
     migrate.init_app(app, db)
 
-    from app.routes import user_blueprint
+    # Configure CORS
+    CORS(
+        app,
+        resources={
+            r"/*": {
+                "origins": app.config["CORS_ORIGINS"],
+                "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+                "allow_headers": ["Content-Type", "Authorization"],
+                "supports_credentials": True,
+                "expose_headers": ["Content-Type", "Authorization"],
+                "max_age": 600,
+                "send_wildcard": False,
+            }
+        },
+    )
+
+    # Register blueprints
+    from app.routes import user_blueprint, test_bp
 
     app.register_blueprint(user_blueprint)
+    app.register_blueprint(test_bp, url_prefix="/test")
 
     return app
-
-
-# NOTE: For Deployment
-
-# -----------------------------------------------------------------------#
-# CORS(
-#     app,
-#     resources={r"/*": {"origins": os.getenv("REACT_APP_API_URL")}},
-#     methods=[
-#         "GET",
-#         "POST",
-#         "PUT",
-#         "DELETE",
-#         "OPTIONS",
-#     ],
-#     supports_credentials=True,
-#     allow_headers=[
-#         "Content-Type",
-#         "Authorization",
-#         "Access-Control-Allow-Credentials",
-#     ],
-# )
-# -----------------------------------------------------------------------#

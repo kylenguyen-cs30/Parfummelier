@@ -1,28 +1,46 @@
+// components/ui/card.tsx
 import React from "react";
-import Image from "next/image";
 
-interface CardProps {
-  title: string;
-  value: string;
-  image: string; // Image URL
-}
-
-const Card: React.FC<CardProps> = ({ title, value, image }) => {
+export function Card({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
   return (
-    <div className="card-container">
-      <div className="image-wrapper">
-        <Image
-          src={image}
-          alt={title}
-          layout="fill" // Ensures the image covers the parent div
-          objectFit="cover" // Makes the image cover the container properly
-          className="rounded-lg"
-        />
-      </div>
-      <h3 className="card-title">{title}</h3>
-      <p className="card-value">{value}</p>
+    <div className={`bg-white rounded-lg border shadow-sm h-full ${className}`}>
+      {children}
     </div>
   );
-};
+}
 
-export default Card;
+export function CardHeader({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`p-4 ${className}`}>{children}</div>;
+}
+
+export function CardTitle({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <h3 className={`font-semibold ${className}`}>{children}</h3>;
+}
+
+export function CardContent({
+  children,
+  className = "",
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <div className={`p-4 pt-0 ${className}`}>{children}</div>;
+}

@@ -8,6 +8,7 @@ import { Post } from "@/app/type/posts";
 import Link from "next/link";
 import Button from "@/app/components/ui/button/Button";
 import MakePostModal from "@/app/components/forum/MakePost/MakePost";
+import ForumSearch from "@/app/components/forum/ForumSearch/ForumSearch";
 
 interface User {
   id: number;
@@ -32,6 +33,7 @@ export default function ForumPage() {
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
   const [isCreatePostModalOpen, setIsCreatePostModalOpen] = useState(false);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     setMounted(true);
@@ -215,40 +217,50 @@ export default function ForumPage() {
           {/* Forum Posts - Left Side */}
           <div className="col-span-8">
             <h2 className="text-2xl font-bold mb-6">Forum Discussions</h2>
+            <ForumSearch
+              posts={posts}
+              onSearch={(filtered) => setFilteredPosts(filtered)}
+            />
+            {/*NOTE: Create a new Post Modal */}
             <Button onClick={() => setIsCreatePostModalOpen(true)}>
               Create Post
             </Button>
+            {/* NOTE:  Post mapping */}
             {loading ? (
               <div>Loading posts...</div>
             ) : error ? (
               <div className="text-red-500">{error}</div>
             ) : (
               <div className="space-y-6">
-                {posts.map((post) => (
-                  <Link href={`/forum/post/${post.id}`} key={post.id}>
-                    <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-xl font-semibold">{post.title}</h3>
-                        <span className="text-sm text-gray-500">
-                          {new Date(post.created_at).toLocaleDateString()}
-                        </span>
+                {(filteredPosts.length > 0 ? filteredPosts : posts).map(
+                  (post) => (
+                    <Link href={`/forum/post/${post.id}`} key={post.id}>
+                      <div className="bg-white p-6 rounded-lg shadow hover:shadow-lg transition-shadow">
+                        <div className="flex justify-between items-center mb-4">
+                          <h3 className="text-xl font-semibold">
+                            {post.title}
+                          </h3>
+                          <span className="text-sm text-gray-500">
+                            {new Date(post.created_at).toLocaleDateString()}
+                          </span>
+                        </div>
+                        <p className="text-gray-600 mb-4">
+                          {post.content.length > 200
+                            ? `${post.content.substring(0, 100)}...`
+                            : post.content}
+                        </p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-500">
+                            User ID: {post.user_id}
+                          </span>
+                          <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                            {post.topic}
+                          </span>
+                        </div>
                       </div>
-                      <p className="text-gray-600 mb-4">
-                        {post.content.length > 200
-                          ? `${post.content.substring(0, 200)}...`
-                          : post.content}
-                      </p>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-500">
-                          User ID: {post.user_id}
-                        </span>
-                        <span className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
-                          {post.topic}
-                        </span>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ),
+                )}
               </div>
             )}
           </div>
@@ -283,6 +295,7 @@ export default function ForumPage() {
               </div>
             </div>
 
+            {/* NOTE: Online user window  */}
             <div className="bg-white p-6 rounded-lg shadow">
               <h2 className="text-xl font-bold mb-4">Online Users</h2>
               {error && <div className="text-red-500 mb-4">{error}</div>}
@@ -314,6 +327,8 @@ export default function ForumPage() {
               </div>
             </div>
           </div>
+
+          {/* NOTE: Make Post Modal for the Post */}
           <MakePostModal
             isOpen={isCreatePostModalOpen}
             onClose={() => setIsCreatePostModalOpen(false)}

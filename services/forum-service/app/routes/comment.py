@@ -3,7 +3,6 @@ from typing import List
 from app.services.comment_service import CommentService
 from app.models.comment import CommentCreate, CommentResponse
 from datetime import datetime
-
 import logging
 
 logger = logging.getLogger(__name__)
@@ -47,11 +46,9 @@ async def create_comment(
 async def get_post_comments(
     post_id: int,
     authorization: str = Header(..., description="Bearer {token}"),
-    # access_token: str = Header(...),
     service: CommentService = Depends(),
 ):
     """Get all comments for a specific post"""
-    # return await service.get_post_comments(post_id, access_token)
     try:
         # Extract token from Bearer header
         token = authorization.split("Bearer ")[-1]

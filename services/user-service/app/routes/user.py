@@ -287,36 +287,8 @@ def test_put(current_user):
 # ------------------------------------------------------------------------------------------------#
 
 
-# NOTE:  scent bank detail decorator
-def scentbank_details(f):
-    @wraps(f)
-    @token_required
-    def decorated_function(current_user, *arg, **kwargs):
-        # find the user's scentbank
-        scent_bank = ScentBank.query.get(current_user.scentID)
-        if not scent_bank:
-            return jsonify({"error": "scent bank not found"}), 404
-        scent_bank_details = {
-            "user_id": current_user.id,
-            "scent_id": scent_bank.id,
-            "firstName": current_user.firstName,
-            "lastName": current_user.lastName,
-            "email": current_user.email,
-            "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
-            "favorite_products": [
-                product.name for product in scent_bank.favorite_products
-            ],
-            "favorite_collections": [
-                collection.name for collection in scent_bank.favorite_collections
-            ],
-        }
-        return f(scent_bank_details, *arg, **kwargs)
-
-    return decorated_function
-
-
-# Route to update favorite accords
-@user_blueprint.route("/user/scentbank/accords", methods=["PUT"])
+# NOTE: Route to update favorite accords
+@user_blueprint.route("/scentbank/accords", methods=["PUT"])
 @cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @token_required
 def update_favorite_accords(current_user):
@@ -343,8 +315,8 @@ def update_favorite_accords(current_user):
         return jsonify({"error": f"Failed to update favorite accords: {str(e)}"}), 500
 
 
-# Route to update favorite products
-@user_blueprint.route("/user/scentbank/products", methods=["PUT"])
+# NOTE: Route to update favorite products
+@user_blueprint.route("/scentbank/products", methods=["PUT"])
 @cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @token_required
 def update_favorite_products(current_user):
@@ -371,8 +343,8 @@ def update_favorite_products(current_user):
         return jsonify({"error": f"Failed to update favorite products: {str(e)}"}), 500
 
 
-# Route to update favorite collections
-@user_blueprint.route("/user/scentbank/collections", methods=["PUT"])
+# NOTE: Route to update favorite collections
+@user_blueprint.route("/scentbank/collections", methods=["PUT"])
 @cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
 @token_required
 def update_favorite_collections(current_user):
@@ -396,16 +368,10 @@ def update_favorite_collections(current_user):
 
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": f"Failed to update favorite collections: {str(e)}"}), 500
-
-
-
-@user_blueprint.route("/user/scentbank/details", methods=["GET"])
-@cross_origin(origin="http://localhost:3000", headers=["Content-Type", "Authorization"])
-@scentbank_details
-# def get_user_scentbank_details(scent_bank_details, user_id):
-def get_user_scentbank_details(scent_bank_details):
-    return jsonify(scent_bank_details), 200
+        return (
+            jsonify({"error": f"Failed to update favorite collections: {str(e)}"}),
+            500,
+        )
 
 
 # WARNING: This route should be disabled for security reason.
@@ -527,7 +493,7 @@ def get_internal_user_info(user_id):
 # NOTE: Getting the user preferences for favorite accords, product and Collection
 
 
-@user_blueprint.route("/user/scentbank", methods=["GET"])
+@user_blueprint.route("/scentbank", methods=["GET"])
 @cross_origin(
     origins="http://localhost:3000", headers=["Content-Type", "Authorization"]
 )

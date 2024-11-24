@@ -104,9 +104,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     try {
       console.log("Starting Auth Check");
       const tokenResponse = await axios.get("/api/getAccessToken");
-      console.log("Token response: ", tokenResponse.data);
       const access_token = tokenResponse.data?.access_token;
 
+      // if the token is expired or non exist
+      // checkAuth will attemp to request a new one
       if (!access_token) {
         const refreshed = await refreshToken();
         if (!refreshed) {

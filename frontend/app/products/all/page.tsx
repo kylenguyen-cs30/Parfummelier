@@ -12,6 +12,7 @@ import { api } from "../../lib/axios";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import axios from "axios";
+import Link from "next/link";
 
 interface Accord {
   name: string;
@@ -130,31 +131,33 @@ export default function ProductsPage() {
         <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {products.map((product) => (
-            <Card key={product.id} className="flex flex-col">
-              <CardHeader className="flex-none">
-                <CardTitle className="text-lg">{product.name}</CardTitle>
-                <p className="text-gray-500 text-sm">{product.brand}</p>
-              </CardHeader>
-              <CardContent className="flex-grow flex flex-col items-center">
-                <ProductCard product={product} />
-                <div className="flex flex-wrap gap-1.5 justify-center">
-                  {product.accords.map((accord, index) => (
-                    <span
-                      key={index}
-                      className="px-2 py-0.5 rounded-full text-xs"
-                      style={{
-                        backgroundColor: accord.background_color,
-                        color: isLightColor(accord.background_color)
-                          ? "black"
-                          : "white",
-                      }}
-                    >
-                      {accord.name}
-                    </span>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
+            <Link key={product.id} href={`/products/${product.id}`}>
+              <Card className="flex flex-col">
+                <CardHeader className="flex-none">
+                  <CardTitle className="text-lg">{product.name}</CardTitle>
+                  <p className="text-gray-500 text-sm">{product.brand}</p>
+                </CardHeader>
+                <CardContent className="flex-grow flex flex-col items-center">
+                  <ProductCard product={product} />
+                  <div className="flex flex-wrap gap-1.5 justify-center">
+                    {product.accords.map((accord, index) => (
+                      <span
+                        key={index}
+                        className="px-2 py-0.5 rounded-full text-xs"
+                        style={{
+                          backgroundColor: accord.background_color,
+                          color: isLightColor(accord.background_color)
+                            ? "black"
+                            : "white",
+                        }}
+                      >
+                        {accord.name}
+                      </span>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
           ))}
         </div>
       </div>

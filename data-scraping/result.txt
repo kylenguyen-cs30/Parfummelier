@@ -995,35 +995,29 @@ Accord: musky, Background Color: #E7D8EA, Width: 44.525639133398%
 
 ---
 
-Perfume Name: 1 Million Rabanne for men
-Image URL: https://fimgs.net/mdimg/perfume/375x500.3747.jpg
-Brand: Rabanne
+Perfume Name: Luna Rossa Prada for men
+Image URL: https://fimgs.net/mdimg/perfume/375x500.15754.jpg
+Brand: Prada
 Top Notes:
-- Blood MandarinGrapefruitMint
-- Blood Mandarin
-- Grapefruit
-- Mint
+- LavenderBitter Orange
+- Lavender
+- Bitter Orange
 Middle Notes:
-- CinnamonSpicy NotesRose
-- Cinnamon
-- Spicy Notes
-- Rose
+- MintClary Sage
+- Mint
+- Clary Sage
 Base Notes:
-- AmberLeatherWoody NotesIndian Patchouli
-- Amber
-- Leather
-- Woody Notes
-- Indian Patchouli
-Accord: warm spicy, Background Color: #CC3300, Width: 100%
-Accord: cinnamon, Background Color: #D2691E, Width: 81.72050806171%
-Accord: citrus, Background Color: #F9FF52, Width: 72.901693539033%
-Accord: amber, Background Color: #bc4d10, Width: 62.327398213664%
-Accord: woody, Background Color: #774414, Width: 61.013629509338%
-Accord: leather, Background Color: #78483A, Width: 58.473784943742%
-Accord: rose, Background Color: #FE016B, Width: 53.636875072497%
-Accord: animalic, Background Color: #8E4B13, Width: 50.702412713142%
-Accord: green, Background Color: #0E8C1D, Width: 47.413525113096%
-Accord: patchouli, Background Color: #63652e, Width: 46.662858137107%
+- Ambrette (Musk Mallow)Ambroxan
+- Ambrette (Musk Mallow)
+- Ambroxan
+Accord: aromatic, Background Color: #37a089, Width: 100%
+Accord: lavender, Background Color: #e7ceec, Width: 77.906253131815%
+Accord: green, Background Color: #0E8C1D, Width: 67.232358036298%
+Accord: fresh spicy, Background Color: #83C928, Width: 66.355449716765%
+Accord: citrus, Background Color: #F9FF52, Width: 63.674615711334%
+Accord: musky, Background Color: #E7D8EA, Width: 58.653355158607%
+Accord: amber, Background Color: #bc4d10, Width: 49.693523525004%
+Accord: floral, Background Color: #FF5F8D, Width: 47.4185727989%
 
 ---
 

@@ -8,7 +8,7 @@ import {
   MenuItem,
   MenuItems,
 } from "@headlessui/react";
-import { Search, Sun, Moon, ChevronDown } from "lucide-react";
+import { Sun, Moon, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import Image from "next/image";
@@ -20,12 +20,11 @@ const Header = () => {
   const navigation = {
     products: [
       { name: "All Products", href: "products/all" },
-      { name: "Product By Accord", href: "products/by-accord" },
+      { name: "Product By Grade", href: "products/grade" },
     ],
 
     community: [
       { name: "Forum", href: "/forum" },
-      { name: "Timeline", href: "/timeline" },
       { name: "Inbox", href: "/inbox" },
     ],
   };
@@ -125,11 +124,6 @@ const Header = () => {
 
           {/* Right side items */}
           <div className="flex items-center space-x-4">
-            {/* Search button */}
-            <button className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700">
-              <Search className="h-5 w-5 text-gray-600 dark:text-gray-300" />
-            </button>
-
             {/* Theme toggle */}
             <button
               onClick={() => setTheme(theme === "dark" ? "light" : "dark")}

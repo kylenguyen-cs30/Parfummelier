@@ -20,6 +20,7 @@ const AUTH_TIMES = {
   REFRESH_INTERVAL: 8 * 60 * 60 * 1000,
 } as const;
 
+// NOTE: Create a context object
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -220,6 +221,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     </AuthContext.Provider>
   );
 };
+
+// NOTE: Wrap the Object Context with useAuth call sign
+// so this file can be called from anywhere in the project
 export const useAuth = () => {
   const context = useContext(AuthContext);
   if (context === undefined) {

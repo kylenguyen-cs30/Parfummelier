@@ -76,8 +76,8 @@ ANSWER_TO_ACCORDS = {
 
 
 # Submit quiz responses
-@quiz_blueprint.route("/submit-quiz/", methods=["POST"])
-def submit_quiz():
+@quiz_blueprint.route("/submit-quiz/<int:user_id>", methods=["POST"])
+def submit_quiz(user_id):
     data = request.json
     answers = data.get("answers", [])
 
@@ -94,8 +94,8 @@ def submit_quiz():
     # Convert set back to list for storage
     accordbank = list(accordbank_set)
 
-    # Store the accordbank in memory
-    user_accordbanks["localhost:5005"] = accordbank
+    # Store the accordbank for the user
+    user_accordbanks[user_id] = accordbank
 
     return jsonify(
         {"message": "Accordbank created successfully", "accordbank": accordbank}
@@ -109,8 +109,8 @@ def get_accord_data():
     return jsonify(accords)
 
 
-@quiz_blueprint.route("/update-accordbank/", methods=["PUT"])
-def update_accordbank():
+@quiz_blueprint.route("/update-accordbank/<int:user_id>", methods=["PUT"])
+def update_accordbank(user_id):
     data = request.json
     answers = data.get("answers", [])
 
@@ -128,7 +128,7 @@ def update_accordbank():
     updated_accordbank = list(updated_accordbank_set)
 
     # Update the user's accordbank in memory
-    user_accordbanks["localhost:5005"] = updated_accordbank
+    user_accordbanks[user_id] = updated_accordbank
 
     return jsonify(
         {
@@ -170,3 +170,30 @@ def bad_request(error):
     response = jsonify({"description": error.description})
     response.status_code = 400
     return response
+
+@quiz_blueprint.route("/sync-user-accords/<int:user_id>", methods=["PUT"])
+def sync_user_accords(user_id):
+    """
+    Syncs user_accordbank data with the user's favorite accords in user-service.
+    """
+    try:
+        # Retrieve the user's accordbank from memory
+        accordbank = user_accordbanks.get(user_id)
+        if not accordbank:
+            abort(404, description="No accordbank found for the user.")
+
+        # Send a request to the user-service to update favorite accords
+        user_service_url = f"http://user-service:5000/scentbank/accords"
+        response = requests.put(
+            user_service_url,
+            json={"favorite_accords": accordbank},
+            headers={"Content-Type": "application/json"},
+        )
+
+        if response.status_code == 201:
+            return jsonify({"message": "Favorite accords synced successfully."}), 201
+        else:
+            return jsonify({"error": response.json()}), response.status_code
+
+    except requests.RequestException as e:
+        return jsonify({"error": f"Failed to sync accords: {str(e)}"}), 500

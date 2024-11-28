@@ -15,7 +15,7 @@ def create_app():
     )
 
     # Register blueprints
-    app.register_blueprint(quiz_blueprint, url_prefix="/quiz")
+    app.register_blueprint(quiz_blueprint)
 
     # Define a root route
     @app.route("/", methods=["GET"])

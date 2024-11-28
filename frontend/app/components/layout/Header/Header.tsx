@@ -45,10 +45,10 @@ const Header = () => {
             {/* Primary Navigation */}
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
               <Link
-                href="/main"
+                href="/quiz"
                 className="text-gray-900 dark:text-white hover:text-gray-500 px-3 py-2 rounded-md text-sm font-medium"
               >
-                Home
+                Take a quiz
               </Link>
 
               {/* Products Dropdown */}

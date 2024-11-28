@@ -288,14 +288,18 @@ def recommend_by_season():
 
         accords = seasonal_accords[season]
 
-        # Query products matching at least 3 of the seasonal accords
+        # Query products matching seasonal accords and count matches
         recommended_products = (
-            Product.query
+            db.session.query(
+                Product,
+                func.count(func.lower(Accord.name)).label("match_count")
+            )
             .join(Product.accords)
             .filter(func.lower(Accord.name).in_([accord.lower() for accord in accords]))
             .group_by(Product.id)
             .having(func.count(func.lower(Accord.name)) >= 3)
-            .distinct()
+            .order_by(func.count(func.lower(Accord.name)).desc())  # Order by match count
+            .limit(10)  # Fetch more products initially to handle duplicates
             .all()
         )
 
@@ -306,7 +310,7 @@ def recommend_by_season():
         recommendations = []
         added_names = set()  # Track already added product names
 
-        for product in recommended_products:
+        for product, match_count in recommended_products:
             if product.name.lower() not in added_names:
                 recommendations.append({
                     "id": product.id,
@@ -318,14 +322,20 @@ def recommend_by_season():
                         if product.imageURL
                         else None
                     ),
+                    "matching_accords_count": match_count,  # Include the match count
                 })
                 added_names.add(product.name.lower())
+
+            # Stop adding products once we have 5 unique recommendations
+            if len(recommendations) == 5:
+                break
 
         return jsonify({"season": season.capitalize(), "recommendations": recommendations})
 
     except Exception as e:
         print(f"Error in seasonal recommendations route: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 
 # NOTE: Rating Routes

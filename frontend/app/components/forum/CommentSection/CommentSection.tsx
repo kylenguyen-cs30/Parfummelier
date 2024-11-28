@@ -124,54 +124,71 @@ const CommentItem: React.FC<{
   const [showReplyForm, setShowReplyForm] = useState(false);
   const { user } = useAuth();
 
+  // heper function to get initials
+  const getInitials = (firstName?: string, lastName?: string) => {
+    if (!firstName && !lastName) {
+      return "U";
+    }
+    return `${firstName?.[0] || ""}${lastName?.[0] || ""}`;
+  };
+
   return (
     <div className="border-l-2 border-gray-200 pl-3 mb-4">
-      <div className="bg-gray-50  p-4 rounded-lg">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="font-medium">
-            {comment.user?.userName || `User ${comment.user_id}`}
-          </span>
-          <span className="text-gray-500 text-sm">
-            {new Date(comment.created_at).toLocaleString()}
-          </span>
-          {comment.updated_at !== comment.created_at && (
-            <span className="text-gray-400 text-xs">(edited)</span>
+      <div className="bg-gray-50 p-4 rounded-lg">
+        <div className="flex items-center gap-3 mb-2">
+          {/* Profile Picture */}
+          <div className="w-8 h-8 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full flex items-center justify-center text-white text-sm font-bold">
+            {getInitials(comment.user?.firstName, comment.user?.lastName)}
+          </div>
+
+          <div className="flex flex-col">
+            <span className="font-medium">
+              {comment.user?.userName || `User ${comment.user_id}`}
+            </span>
+            <span className="text-gray-500 text-xs">
+              {new Date(comment.created_at).toLocaleString()}
+              {comment.updated_at !== comment.created_at && (
+                <span className="text-gray-400 ml-2">(edited)</span>
+              )}
+            </span>
+          </div>
+        </div>
+
+        <div className="ml-11">
+          {" "}
+          {/* Align content with the username */}
+          <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
+          {user && (
+            <button
+              className="text-blue-600 text-sm mt-2 hover:underline"
+              onClick={() => setShowReplyForm(!showReplyForm)}
+            >
+              Reply
+            </button>
+          )}
+          {showReplyForm && (
+            <CommentForm
+              postId={postId}
+              parentId={comment.id}
+              onCommentAdded={() => {
+                onCommentAdded();
+                setShowReplyForm(false);
+              }}
+              onCancel={() => setShowReplyForm(false)}
+            />
           )}
         </div>
-        <p className="text-gray-700 whitespace-pre-wrap">{comment.content}</p>
-
-        {/* NOTE: show the reply the form if user want reply a comment */}
-        {user && (
-          <button
-            className="text-blue-600 text-sm mt-2 hover:underline"
-            onClick={() => setShowReplyForm(!showReplyForm)}
-          >
-            Reply
-          </button>
-        )}
-
-        {showReplyForm && (
-          <CommentForm
-            postId={postId}
-            parentId={comment.id}
-            onCommentAdded={() => {
-              onCommentAdded();
-              setShowReplyForm(false);
-            }}
-            onCancel={() => setShowReplyForm(false)}
-          ></CommentForm>
-        )}
       </div>
 
       {comment.replies && comment.replies.length > 0 && (
-        <div className="ml-8 mt-4 ">
+        <div className="ml-8 mt-4">
           {comment.replies.map((reply) => (
             <CommentItem
               key={reply.id}
               comment={reply}
               postId={postId}
               onCommentAdded={onCommentAdded}
-            ></CommentItem>
+            />
           ))}
         </div>
       )}

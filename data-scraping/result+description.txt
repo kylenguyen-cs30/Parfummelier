@@ -30,6 +30,7 @@ Accord: aromatic, Background Color: #37a089, Width: 54.377964589302%
 Accord: powdery, Background Color: #EEDDCC, Width: 54.257737284554%
 Accord: tropical, Background Color: #f6af09, Width: 53.415676513408%
 Accord: woody, Background Color: #774414, Width: 52.29699901376%
+Description: A luxurious and feminine masterpiece by Parfums de Marly, Delina captures the essence of modern elegance. Top notes of lychee, rhubarb, bergamot, and nutmeg awaken the senses, while the heart of Turkish rose, peony, and vanilla adds a velvety floral depth. Base notes of cashmeran, incense, cedar, and Haitian vetiver create a rich, long-lasting finish. Perfect for women who appreciate a blend of rose and fruity accords.
 
 ---
 
@@ -65,6 +66,7 @@ Accord: woody, Background Color: #774414, Width: 54.024399417368%
 Accord: fresh, Background Color: #9be5ed, Width: 51.481608118551%
 Accord: aromatic, Background Color: #37a089, Width: 50.732939897287%
 Accord: smoky, Background Color: #827487, Width: 49.736311229339%
+Description:Dynamic and modern, Dylan Blue embodies the Mediterranean spirit with its fresh and aromatic composition. Calabrian bergamot, water notes, and grapefruit energize the top, while the heart of ambroxan, black pepper, and violet leaf lends a captivating masculine charm. Base notes of musk, tonka bean, and saffron ensure a lasting impression. A must-have for confident men.
 
 ---
 
@@ -92,6 +94,7 @@ Accord: powdery, Background Color: #EEDDCC, Width: 51.000067099297%
 Accord: smoky, Background Color: #827487, Width: 45.973323236487%
 Accord: soft spicy, Background Color: #E27752, Width: 44.819215321645%
 Accord: sweet, Background Color: #ee363b, Width: 44.576986858123%
+Description: Tom Ford’s Eau d'Ombré Leather is an alluring mix of boldness and sophistication. Cardamom, ginger, and coriander form a spicy introduction, with a heart of vanilla and leather delivering richness. The base note of Ambrofix™ ensures a sensual, long-lasting finish. This fragrance is a tribute to leather enthusiasts who appreciate a touch of vanilla sweetness.
 
 ---
 
@@ -124,6 +127,7 @@ Accord: citrus, Background Color: #F9FF52, Width: 67.234166424086%
 Accord: fresh spicy, Background Color: #83C928, Width: 59.166909247169%
 Accord: mossy, Background Color: #5B6B32, Width: 52.340693918853%
 Accord: aromatic, Background Color: #37a089, Width: 50.602847202007%
+Description: Aether is an innovative unisex scent that combines the best of nature’s freshness with woody undertones. Top notes of green apple, bergamot, and mandarin orange exude vibrant energy, while the heart features cedar and violet, complemented by a musky base of oakmoss and amberwood. Ideal for those who prefer a fruity yet green and musky profile.
 
 ---
 
@@ -158,6 +162,7 @@ Accord: woody, Background Color: #774414, Width: 62.62973308504%
 Accord: warm spicy, Background Color: #CC3300, Width: 53.138164701014%
 Accord: sweet, Background Color: #ee363b, Width: 46.921011793917%
 Accord: powdery, Background Color: #EEDDCC, Width: 46.254034761018%
+Description:Versace’s Eros Flame ignites passion with its fiery citrus and woody composition. The top notes of mandarin orange, Madagascar pepper, and lemon create a zesty introduction, followed by a floral-spicy heart of geranium and pepperwood™. Base notes of vanilla, tonka bean, and sandalwood add warmth, making it a versatile scent for day or night.
 
 ---
 
@@ -184,6 +189,7 @@ Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: fresh spicy, Background Color: #83C928, Width: 94.670535261289%
 Accord: aromatic, Background Color: #37a089, Width: 75.338026382547%
 Accord: woody, Background Color: #774414, Width: 60.606925418569%
+Description: This refreshing fragrance combines zesty citrus with spicy and woody undertones, evoking the breezy vibe of the Mediterranean. Grapefruit and bergamot lead the way, followed by a heart of rosemary and a grounding base of musk and oakmoss.
 
 ---
 
@@ -218,6 +224,7 @@ Accord: fresh spicy, Background Color: #83C928, Width: 62.189577161096%
 Accord: lavender, Background Color: #e7ceec, Width: 60.800261462321%
 Accord: powdery, Background Color: #EEDDCC, Width: 58.914761585412%
 Accord: green, Background Color: #0E8C1D, Width: 58.086401412576%
+Description: A bold and seductive scent, Ultra Male blends sweet pear with aromatic lavender and a warm base of black vanilla and amber. It's a captivating fragrance that balances freshness with a spicy edge.
 
 ---
 
@@ -246,6 +253,7 @@ Accord: amber, Background Color: #bc4d10, Width: 60.609548859959%
 Accord: white floral, Background Color: #edf2fb, Width: 59.354838709677%
 Accord: floral, Background Color: #FF5F8D, Width: 53.308335673016%
 Accord: vanilla, Background Color: #FFFEC0, Width: 49.67040030736%
+Description: A sophisticated lavender fragrance enriched with musky and amber notes, offering a perfect blend of freshness and warmth. It’s both calming and intriguing, ideal for any season.
 
 ---
 
@@ -262,6 +270,8 @@ Accord: leather, Background Color: #78483A, Width: 55.609524777292%
 Accord: lavender, Background Color: #e7ceec, Width: 53.902381194323%
 Accord: patchouli, Background Color: #63652e, Width: 53.902381194323%
 Accord: iris, Background Color: #b7a7d7, Width: 53.902381194323%
+Description: This elegant and spicy fragrance delivers an earthy warmth with notes of cacao and leather. A luxurious scent for those who appreciate bold and refined accords.
+
 
 ---
 
@@ -295,6 +305,8 @@ Accord: citrus, Background Color: #F9FF52, Width: 53.823471091296%
 Accord: sweet, Background Color: #ee363b, Width: 52.178435047366%
 Accord: woody, Background Color: #774414, Width: 51.496510742818%
 Accord: fresh, Background Color: #9be5ed, Width: 50.021619962005%
+Description: A fresh and aromatic fragrance that combines mint and green apple with warm, woody vanilla undertones. It embodies strength and sensuality with a touch of sweetness.
+
 
 ---
 
@@ -306,6 +318,8 @@ Accord: amber, Background Color: #bc4d10, Width: 79.451671944453%
 Accord: vanilla, Background Color: #FFFEC0, Width: 52.30661514773%
 Accord: warm spicy, Background Color: #CC3300, Width: 48.935446384475%
 Accord: sweet, Background Color: #ee363b, Width: 44.840300979053%
+Description: A fresh and aromatic fragrance that combines mint and green apple with warm, woody vanilla undertones. It embodies strength and sensuality with a touch of sweetness.
+
 
 ---
 
@@ -339,6 +353,8 @@ Accord: woody, Background Color: #774414, Width: 53.455486752614%
 Accord: lavender, Background Color: #e7ceec, Width: 45.812946232193%
 Accord: herbal, Background Color: #6CA47F, Width: 45.751700334991%
 Accord: warm spicy, Background Color: #CC3300, Width: 45.080702466755%
+Description: A crisp and dynamic fragrance featuring bright citrus and spicy pepper notes with a smoky, woody base. It's a versatile scent, ideal for both day and night.
+
 
 ---
 
@@ -369,6 +385,8 @@ Accord: floral, Background Color: #FF5F8D, Width: 61.459280252393%
 Accord: earthy, Background Color: #544838, Width: 58.000106946153%
 Accord: rose, Background Color: #FE016B, Width: 54.699748676541%
 Accord: oud, Background Color: #544136, Width: 54.289610181274%
+Description: A sophisticated blend of Tuscan iris and leather, this fragrance offers a powdery and woody aroma with a hint of rose. It’s an opulent scent designed for special occasions.
+
 
 ---
 
@@ -399,6 +417,8 @@ Accord: animalic, Background Color: #8E4B13, Width: 51.240284880827%
 Accord: fruity, Background Color: #FC4B29, Width: 45.98183905303%
 Accord: floral, Background Color: #FF5F8D, Width: 45.308476891491%
 Accord: powdery, Background Color: #EEDDCC, Width: 44.84219231513%
+Description: A musky and woody fragrance with subtle fruity and floral undertones, creating an intimate and clean scent. It's minimalist yet intriguing, perfect for everyday wear.
+
 
 ---
 
@@ -429,6 +449,8 @@ Accord: green, Background Color: #0E8C1D, Width: 62.281502544148%
 Accord: citrus, Background Color: #F9FF52, Width: 51.688179686721%
 Accord: powdery, Background Color: #EEDDCC, Width: 48.083595230969%
 Accord: musky, Background Color: #E7D8EA, Width: 47.533610196548%
+Description: An aromatic tea-based fragrance with rich woody and tobacco notes, softened by a touch of fig and bergamot. It's a warm and complex scent that feels like a cozy evening by the fire.
+
 
 ---
 
@@ -463,6 +485,7 @@ Accord: woody, Background Color: #774414, Width: 75.234297108674%
 Accord: musky, Background Color: #E7D8EA, Width: 58.98598322679%
 Accord: powdery, Background Color: #EEDDCC, Width: 58.860477391355%
 Accord: balsamic, Background Color: #ad8359, Width: 55.941587003695%
+Description: A luxurious tobacco scent, blended with sweet vanilla and warm spices. Its rich and smoky profile is perfect for cold weather or evening wear.
 
 ---
 
@@ -498,6 +521,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 70.058241907084%
 Accord: lavender, Background Color: #e7ceec, Width: 62.713243261547%
 Accord: fresh, Background Color: #9be5ed, Width: 58.934968847352%
 Accord: citrus, Background Color: #F9FF52, Width: 56.79635649465%
+Description: A versatile and captivating scent with fruity top notes, a floral heart, and a base of creamy vanilla and spices. It's both fresh and warm, suitable for any occasion.
+
 
 ---
 
@@ -529,6 +554,8 @@ Accord: woody, Background Color: #774414, Width: 64.734202910809%
 Accord: lavender, Background Color: #e7ceec, Width: 62.486028963092%
 Accord: fresh, Background Color: #9be5ed, Width: 51.560647893621%
 Accord: powdery, Background Color: #EEDDCC, Width: 47.021163477746%
+Description: This crisp and aquatic fragrance features bright citrus notes and a musky, woody base. It’s clean, modern, and effortlessly stylish.
+
 
 ---
 
@@ -563,6 +590,8 @@ Accord: white floral, Background Color: #edf2fb, Width: 59.724388018737%
 Accord: fruity, Background Color: #FC4B29, Width: 58.583454081281%
 Accord: sweet, Background Color: #ee363b, Width: 52.613138909972%
 Accord: earthy, Background Color: #544838, Width: 50.282435198602%
+Description: A vibrant and uplifting fragrance combining citrus, florals, and woods for a warm and sunny vibe. It celebrates the spirit of travel and adventure.
+
 
 ---
 
@@ -593,6 +622,8 @@ Accord: green, Background Color: #0E8C1D, Width: 57.159037225295%
 Accord: fruity, Background Color: #FC4B29, Width: 56.983644789954%
 Accord: white floral, Background Color: #edf2fb, Width: 47.521662430857%
 Accord: musky, Background Color: #E7D8EA, Width: 46.645956047242%
+Description: A romantic and powdery floral fragrance featuring iris, rose, and violet notes. It's delicate yet enchanting, perfect for adding a touch of elegance.
+
 
 ---
 
@@ -621,6 +652,8 @@ Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: aromatic, Background Color: #37a089, Width: 58.015096559161%
 Accord: fresh spicy, Background Color: #83C928, Width: 49.889945430187%
 Accord: herbal, Background Color: #6CA47F, Width: 44.988824625037%
+Description: A fresh citrus fragrance with herbal and woody accents, evoking the outdoors and sun-drenched landscapes. Its crisp and natural vibe makes it ideal for daytime wear.
+
 
 ---
 
@@ -635,6 +668,8 @@ Accord: fresh spicy, Background Color: #83C928, Width: 51.161711913351%
 Accord: floral, Background Color: #FF5F8D, Width: 51.000122881393%
 Accord: animalic, Background Color: #8E4B13, Width: 50.099095066312%
 Accord: metallic, Background Color: #97B0B7, Width: 46.055990029053%
+Description: A luxurious rose and oud fragrance with warm spicy and amber undertones. It’s a bold and elegant scent with a lasting impression.
+
 
 ---
 
@@ -668,6 +703,8 @@ Accord: fruity, Background Color: #FC4B29, Width: 50.553875404441%
 Accord: musky, Background Color: #E7D8EA, Width: 48.315858526335%
 Accord: fresh, Background Color: #9be5ed, Width: 45.886767698106%
 Accord: animalic, Background Color: #8E4B13, Width: 44.035568552019%
+Description: A modern white floral fragrance with sweet and citrusy accents, balanced by warm vanilla and musk. It’s sophisticated and versatile, perfect for any occasion.
+
 
 ---
 
@@ -698,6 +735,8 @@ Accord: white floral, Background Color: #edf2fb, Width: 64.186281264521%
 Accord: musky, Background Color: #E7D8EA, Width: 62.995145086603%
 Accord: green, Background Color: #0E8C1D, Width: 59.367899889443%
 Accord: iris, Background Color: #b7a7d7, Width: 58.36631363061%
+Description: A fresh and fruity floral scent with notes of quince and grapefruit, softened by jasmine and musk. It’s youthful and vibrant, ideal for daily wear.
+
 
 ---
 
@@ -729,6 +768,8 @@ Accord: aromatic, Background Color: #37a089, Width: 69.363055434654%
 Accord: green, Background Color: #0E8C1D, Width: 64.627468048906%
 Accord: fresh spicy, Background Color: #83C928, Width: 63.236358960155%
 Accord: sweet, Background Color: #ee363b, Width: 61.445712816049%
+Description: A fresh and fruity floral scent with notes of quince and grapefruit, softened by jasmine and musk. It’s youthful and vibrant, ideal for daily wear.
+
 
 ---
 
@@ -760,6 +801,8 @@ Accord: soft spicy, Background Color: #E27752, Width: 64.112567705471%
 Accord: amber, Background Color: #bc4d10, Width: 52.333920887183%
 Accord: powdery, Background Color: #EEDDCC, Width: 46.14362480286%
 Accord: warm spicy, Background Color: #CC3300, Width: 45.747489812958%
+Description: A smoky, sweet fragrance with notes of rum, tobacco, and vanilla that evoke the ambiance of a cozy jazz bar. It’s rich, warm, and undeniably charismatic.
+
 
 ---
 
@@ -769,7 +812,9 @@ Brand: Louis Vuitton
 Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: fresh spicy, Background Color: #83C928, Width: 55.307023665706%
 Accord: warm spicy, Background Color: #CC3300, Width: 54.779081576174%
-Accord: aromatic, Background Color: #37a089, Width: 45.878186832492%
+Accord: aromatic, Background Color: #37a08
+Description: A bright citrus fragrance with a fresh and spicy edge, making it a clean and invigorating choice. Its simplicity is its strength, offering a vibrant energy.
+
 
 ---
 
@@ -803,6 +848,8 @@ Accord: sweet, Background Color: #ee363b, Width: 78.68963163223%
 Accord: woody, Background Color: #774414, Width: 51.073336100197%
 Accord: musky, Background Color: #E7D8EA, Width: 50.512658399693%
 Accord: powdery, Background Color: #EEDDCC, Width: 50.469759088952%
+Description: A luscious fruity fragrance with sweet berry notes, softened by a woody and musky base. It’s playful yet sophisticated, perfect for a casual day out.
+
 
 ---
 
@@ -832,6 +879,8 @@ Accord: tropical, Background Color: #f6af09, Width: 66.097564723054%
 Accord: cacao, Background Color: #9a3a0d, Width: 64.785972190213%
 Accord: citrus, Background Color: #F9FF52, Width: 55.733348697857%
 Accord: woody, Background Color: #774414, Width: 55.718829223323%
+Description: A floral and fruity fragrance with hints of cacao and warm spices, creating a dreamy and romantic scent. It’s elegant, with a slightly exotic twist.
+
 
 ---
 
@@ -857,6 +906,8 @@ Accord: white floral, Background Color: #edf2fb, Width: 68.137471568453%
 Accord: fresh spicy, Background Color: #83C928, Width: 63.269130465175%
 Accord: woody, Background Color: #774414, Width: 58.885967317836%
 Accord: fresh, Background Color: #9be5ed, Width: 47.763761406226%
+Description: A crisp and refreshing fragrance combining citrus, green, and aquatic notes. It’s light and breezy, ideal for warm, sunny days.
+
 
 ---
 
@@ -889,6 +940,8 @@ Accord: rose, Background Color: #FE016B, Width: 53.636875072497%
 Accord: animalic, Background Color: #8E4B13, Width: 50.702412713142%
 Accord: green, Background Color: #0E8C1D, Width: 47.413525113096%
 Accord: patchouli, Background Color: #63652e, Width: 46.662858137107%
+Description: A bold blend of warm spices, cinnamon, and citrus creates a captivating, luxurious fragrance. Its leather and amber base provide a seductive, long-lasting finish perfect for evenings.
+
 
 ---
 
@@ -905,6 +958,8 @@ Accord: leather, Background Color: #78483A, Width: 56.362725128989%
 Accord: woody, Background Color: #774414, Width: 56.286712972185%
 Accord: balsamic, Background Color: #ad8359, Width: 51.807842809687%
 Accord: sweet, Background Color: #ee363b, Width: 49.405139012934%
+Description: This rich, smoky scent combines the depth of oud with warm spices and amber. A touch of rose and leather makes it alluring and opulent.
+
 
 ---
 
@@ -938,6 +993,8 @@ Accord: sweet, Background Color: #ee363b, Width: 54.015887025596%
 Accord: musky, Background Color: #E7D8EA, Width: 53.009708737864%
 Accord: warm spicy, Background Color: #CC3300, Width: 52.500116133228%
 Accord: rose, Background Color: #FE016B, Width: 51.428903237794%
+Description: An explosion of floral elegance with jasmine, rose, and orchid over a warm base of vanilla and patchouli. Sweet and radiant, it’s a statement fragrance for every occasion.
+
 
 ---
 
@@ -967,6 +1024,8 @@ Accord: tobacco, Background Color: #ad7727, Width: 50.298737033706%
 Accord: green, Background Color: #0E8C1D, Width: 47.328344625341%
 Accord: fresh spicy, Background Color: #83C928, Width: 45.723371529238%
 Accord: powdery, Background Color: #EEDDCC, Width: 45.699900474211%
+Description: An explosion of floral elegance with jasmine, rose, and orchid over a warm base of vanilla and patchouli. Sweet and radiant, it’s a statement fragrance for every occasion.
+
 
 ---
 
@@ -992,38 +1051,37 @@ Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: powdery, Background Color: #EEDDCC, Width: 61.444703695213%
 Accord: white floral, Background Color: #edf2fb, Width: 48.952640851152%
 Accord: musky, Background Color: #E7D8EA, Width: 44.525639133398%
+Description: This citrus-dominant fragrance sparkles with blood orange, lime, and bergamot. Its soft powdery and white floral undertones evoke a magical night in the city.
+
 
 ---
 
-Perfume Name: 1 Million Rabanne for men
-Image URL: https://fimgs.net/mdimg/perfume/375x500.3747.jpg
-Brand: Rabanne
+Perfume Name: Luna Rossa Prada for men
+Image URL: https://fimgs.net/mdimg/perfume/375x500.15754.jpg
+Brand: Prada
 Top Notes:
-- Blood MandarinGrapefruitMint
-- Blood Mandarin
-- Grapefruit
-- Mint
+- LavenderBitter Orange
+- Lavender
+- Bitter Orange
 Middle Notes:
-- CinnamonSpicy NotesRose
-- Cinnamon
-- Spicy Notes
-- Rose
+- MintClary Sage
+- Mint
+- Clary Sage
 Base Notes:
-- AmberLeatherWoody NotesIndian Patchouli
-- Amber
-- Leather
-- Woody Notes
-- Indian Patchouli
-Accord: warm spicy, Background Color: #CC3300, Width: 100%
-Accord: cinnamon, Background Color: #D2691E, Width: 81.72050806171%
-Accord: citrus, Background Color: #F9FF52, Width: 72.901693539033%
-Accord: amber, Background Color: #bc4d10, Width: 62.327398213664%
-Accord: woody, Background Color: #774414, Width: 61.013629509338%
-Accord: leather, Background Color: #78483A, Width: 58.473784943742%
-Accord: rose, Background Color: #FE016B, Width: 53.636875072497%
-Accord: animalic, Background Color: #8E4B13, Width: 50.702412713142%
-Accord: green, Background Color: #0E8C1D, Width: 47.413525113096%
-Accord: patchouli, Background Color: #63652e, Width: 46.662858137107%
+- Ambrette (Musk Mallow)Ambroxan
+- Ambrette (Musk Mallow)
+- Ambroxan
+Accord: aromatic, Background Color: #37a089, Width: 100%
+Accord: lavender, Background Color: #e7ceec, Width: 77.906253131815%
+Accord: green, Background Color: #0E8C1D, Width: 67.232358036298%
+Accord: fresh spicy, Background Color: #83C928, Width: 66.355449716765%
+Accord: citrus, Background Color: #F9FF52, Width: 63.674615711334%
+Accord: musky, Background Color: #E7D8EA, Width: 58.653355158607%
+Accord: amber, Background Color: #bc4d10, Width: 49.693523525004%
+Accord: floral, Background Color: #FF5F8D, Width: 47.4185727989%
+Description: A refreshing and aromatic blend of lavender, mint, and bitter orange. This scent is clean, vibrant, and invigorating, perfect for active lifestyles.
+
+
 
 ---
 
@@ -1041,6 +1099,8 @@ Base Notes:
 - Rangoon Creeper
 Accord: white floral, Background Color: #edf2fb, Width: 100%
 Accord: tuberose, Background Color: #ebfaf3, Width: 69.477858501613%
+Description: A true white floral fragrance highlighting jasmine and tuberose with a unique Rangoon creeper note. It’s lush, elegant, and quintessentially feminine.
+
 
 ---
 
@@ -1051,6 +1111,8 @@ Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: fresh spicy, Background Color: #83C928, Width: 55.307023665706%
 Accord: warm spicy, Background Color: #CC3300, Width: 54.779081576174%
 Accord: aromatic, Background Color: #37a089, Width: 45.878186832492%
+Description Bright citrus notes blend seamlessly with fresh and warm spices. Its zesty and aromatic profile makes it perfect for lively, energetic days.
+
 
 ---
 
@@ -1075,6 +1137,8 @@ Accord: tuberose, Background Color: #ebfaf3, Width: 61.362396468779%
 Accord: citrus, Background Color: #F9FF52, Width: 58.343748450131%
 Accord: animalic, Background Color: #8E4B13, Width: 47.060705252195%
 Accord: vanilla, Background Color: #FFFEC0, Width: 44.440559440559%
+Description: A radiant floral scent featuring orange blossom, tuberose, and jasmine with a warm vanilla and cedar base. Its uplifting and fresh character makes it a signature fragrance for many.
+
 
 ---
 
@@ -1105,6 +1169,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 64.306747370374%
 Accord: fresh spicy, Background Color: #83C928, Width: 61.559706773478%
 Accord: fresh, Background Color: #9be5ed, Width: 46.527931406429%
 Accord: floral, Background Color: #FF5F8D, Width: 45.760856870006%
+Description: A fresh, citrusy blend with green tea and black currant, evoking crisp mountain streams. Woody and musky undertones give it a balanced, enduring depth.
+
 
 ---
 
@@ -1135,6 +1201,8 @@ Accord: sweet, Background Color: #ee363b, Width: 86.212928754946%
 Accord: woody, Background Color: #774414, Width: 50.648050559796%
 Accord: vanilla, Background Color: #FFFEC0, Width: 46.546218329801%
 Accord: leather, Background Color: #78483A, Width: 46.296269902294%
+Description: A fruity and sweet indulgence with strawberries, caramel, and vanilla. Woody and leathery nuances ground this playful and charming scent.
+
 
 ---
 
@@ -1172,6 +1240,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 51.745286590444%
 Accord: aromatic, Background Color: #37a089, Width: 48.646172484289%
 Accord: balsamic, Background Color: #ad8359, Width: 48.314908760506%
 Accord: sweet, Background Color: #ee363b, Width: 47.464223517831%
+Description: This complex fragrance combines whiskey, cacao, and warm spices with woody and amber undertones. It’s rich, opulent, and perfect for unique individuals.
+
 
 ---
 
@@ -1208,6 +1278,8 @@ Accord: fresh, Background Color: #9be5ed, Width: 61.80106446666%
 Accord: floral, Background Color: #FF5F8D, Width: 59.938247812431%
 Accord: tropical, Background Color: #f6af09, Width: 59.355005371538%
 Accord: woody, Background Color: #774414, Width: 57.473244819131%
+Description: A fresh, fruity floral featuring pineapple, tea rose, and jasmine, grounded by vanilla and musk. It’s playful, youthful, and perfect for springtime.
+
 
 ---
 
@@ -1222,6 +1294,9 @@ Accord: fresh spicy, Background Color: #83C928, Width: 51.089737657381%
 Accord: floral, Background Color: #FF5F8D, Width: 50.999969151716%
 Accord: animalic, Background Color: #8E4B13, Width: 50.192361083568%
 Accord: metallic, Background Color: #97B0B7, Width: 46.265991529943%
+A romantic composition of rose and oud, enriched with amber and warm spices. Its luxurious and exotic nature is ideal for special evenings.
+
+
 
 ---
 
@@ -1255,6 +1330,8 @@ Accord: woody, Background Color: #774414, Width: 53.864665486171%
 Accord: musky, Background Color: #E7D8EA, Width: 52.705187430983%
 Accord: terpenic, Background Color: #d89f00, Width: 49.184673588469%
 Accord: amber, Background Color: #bc4d10, Width: 46.666753788151%
+Description: A tropical explosion of mango and red berries with warm spices and amber. It’s an exotic, vibrant scent that feels like an eternal summer.
+
 
 ---
 
@@ -1263,6 +1340,7 @@ Image URL: https://fimgs.net/mdimg/perfume/375x500.53947.jpg
 Brand: Louis Vuitton
 Accord: citrus, Background Color: #F9FF52, Width: 100%
 Accord: fresh spicy, Background Color: #83C928, Width: 44.006726737405%
+Description: A bright, refreshing citrus fragrance with invigorating spicy undertones. Perfect for sunny days and carefree moments by the water.
 
 ---
 
@@ -1320,6 +1398,8 @@ Accord: sweet, Background Color: #ee363b, Width: 100%
 Accord: vanilla, Background Color: #FFFEC0, Width: 71.70123662799%
 Accord: powdery, Background Color: #EEDDCC, Width: 52.779405487213%
 Accord: warm spicy, Background Color: #CC3300, Width: 44.933188456414%
+Description: A delectable scent blending marshmallow, chocolate, and vanilla with a touch of whipped cream. It’s a gourmand lover’s dream, playful and irresistible.
+
 
 ---
 
@@ -1351,6 +1431,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 58.50689351716%
 Accord: musky, Background Color: #E7D8EA, Width: 57.522733939572%
 Accord: woody, Background Color: #774414, Width: 52.629803461426%
 Accord: iris, Background Color: #b7a7d7, Width: 50.819888530361%
+Description: A marine-inspired fragrance with sea salt, citrus, and fruity notes. Woody and musky undertones make it elegant and versatile.
+
 
 ---
 
@@ -1412,11 +1494,8 @@ Accord: sweet, Background Color: #ee363b, Width: 51.172476124193%
 Accord: fruity, Background Color: #FC4B29, Width: 50.506998414724%
 Accord: smoky, Background Color: #827487, Width: 49.187884236167%
 Accord: powdery, Background Color: #EEDDCC, Width: 44.235200866102%
+Description: A dark and mysterious scent with incense, blackberry, and woody ambergris. Smoky and balsamic nuances add depth to its hypnotic charm.
 
----
-
-Perfume Name: Unknown Perfume Name
-Brand: Unknown
 
 ---
 
@@ -1447,6 +1526,8 @@ Accord: sweet, Background Color: #ee363b, Width: 68.774451315547%
 Accord: soft spicy, Background Color: #E27752, Width: 54.845468367549%
 Accord: herbal, Background Color: #6CA47F, Width: 53.845597910942%
 Accord: rose, Background Color: #FE016B, Width: 49.733958777929%
+Description: A bold and fruity composition with lavender, plum, and earthy truffle. Sweet and woody undertones create a modern and electrifying aura.
+
 
 ---
 
@@ -1458,6 +1539,7 @@ Accord: aromatic, Background Color: #37a089, Width: 65.598020408011%
 Accord: woody, Background Color: #774414, Width: 59.348720207215%
 Accord: fresh spicy, Background Color: #83C928, Width: 56.635813297305%
 Accord: white floral, Background Color: #edf2fb, Width: 46.897146312151%
+Description: A refreshing citrus scent enhanced with aromatic and woody accords. Subtle white florals add sophistication to this timeless blend.
 
 ---
 
@@ -1519,6 +1601,8 @@ Accord: warm spicy, Background Color: #CC3300, Width: 46.156322345071%
 Accord: soft spicy, Background Color: #E27752, Width: 45.916957193336%
 Accord: woody, Background Color: #774414, Width: 45.567814230632%
 Accord: sweet, Background Color: #ee363b, Width: 44.025697362267%
+Description: A zesty citrus fragrance with pink pepper, neroli, and nutmeg. Its fresh and spicy nature makes it invigorating and confident.
+
 
 ---
 
@@ -1546,6 +1630,8 @@ Accord: amber, Background Color: #bc4d10, Width: 76.196126835497%
 Accord: green, Background Color: #0E8C1D, Width: 59.763183656097%
 Accord: animalic, Background Color: #8E4B13, Width: 57.717556927006%
 Accord: violet, Background Color: #9c1dff, Width: 54.404511598212%
+Description: A fresh, green blend of lemon verbena and violet leaf with woody and powdery notes. Its timeless elegance suits any occasion.
+
 
 ---
 
@@ -1577,6 +1663,8 @@ Accord: fruity, Background Color: #FC4B29, Width: 66.412286812338%
 Accord: chocolate, Background Color: #603000, Width: 53.816645578918%
 Accord: amber, Background Color: #bc4d10, Width: 48.511489268942%
 Accord: warm spicy, Background Color: #CC3300, Width: 47.175663316321%
+Description: A luscious blend of cherry, dark chocolate, and plum with a touch of amber and musk. Its rich and fruity sweetness is utterly captivating.
+
 
 ---
 
@@ -1592,6 +1680,8 @@ Accord: woody, Background Color: #774414, Width: 60.771702855259%
 Accord: nutty, Background Color: #b4955f, Width: 56.214824275885%
 Accord: powdery, Background Color: #EEDDCC, Width: 53.348852540068%
 Accord: rose, Background Color: #FE016B, Width: 53.020065098265%
+Description: A fruity and sweet composition with a rich blend of oud, almond, and vanilla. Its powdery and woody undertones create a luxurious, sensual experience.
+
 
 ---
 
@@ -1628,6 +1718,9 @@ Accord: amber, Background Color: #bc4d10, Width: 60.378994666779%
 Accord: aromatic, Background Color: #37a089, Width: 59.262447682638%
 Accord: sweet, Background Color: #ee363b, Width: 55.150478030208%
 Accord: warm spicy, Background Color: #CC3300, Width: 53.977589271966%
+Description: A fresh and spicy rose-forward fragrance with musky and woody undertones. Perfectly balanced, it radiates modern charm with a playful edge.
+
+
 
 ---
 
@@ -1662,6 +1755,8 @@ Accord: aromatic, Background Color: #37a089, Width: 66.971138316429%
 Accord: citrus, Background Color: #F9FF52, Width: 62.82705601137%
 Accord: amber, Background Color: #bc4d10, Width: 59.598165256153%
 Accord: white floral, Background Color: #edf2fb, Width: 55.763857484334%
+Description: An irresistible blend of sweet vanilla, cinnamon, and orange blossom with a warm, musky finish. This sophisticated scent is rich, spicy, and indulgent.
+
 
 ---
 
@@ -1694,6 +1789,8 @@ Accord: fruity, Background Color: #FC4B29, Width: 66.518256010355%
 Accord: powdery, Background Color: #EEDDCC, Width: 56.905949580893%
 Accord: warm spicy, Background Color: #CC3300, Width: 55.89543639205%
 Accord: lactonic, Background Color: #fbf9f2, Width: 51.41525517372%
+Description: Tropical and woody with prominent notes of coconut, pineapple, and tonka bean. Sweet and amber-rich, this fragrance is both exotic and inviting.
+
 
 ---
 
@@ -1720,6 +1817,8 @@ Accord: soft spicy, Background Color: #E27752, Width: 56.366135262073%
 Accord: floral, Background Color: #FF5F8D, Width: 56.25430671305%
 Accord: amber, Background Color: #bc4d10, Width: 53.711448140084%
 Accord: powdery, Background Color: #EEDDCC, Width: 45.094518273811%
+Description: An intense and sensual rose scent complemented by warm vanilla and amber. The soft spicy accords add a captivating edge to this floral masterpiece.
+
 
 ---
 
@@ -1755,6 +1854,9 @@ Accord: powdery, Background Color: #EEDDCC, Width: 51.44030058447%
 Accord: woody, Background Color: #774414, Width: 48.178884155088%
 Accord: almond, Background Color: #f1e3c5, Width: 46.887430687876%
 Accord: balsamic, Background Color: #ad8359, Width: 44.718523196814%
+A delectable combination of caramel, chocolate, and almond milk with warm vanilla undertones. Sweet and rich, it’s a gourmand delight for dessert lovers.
+
+
 
 ---
 
@@ -1766,6 +1868,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 65.040708065019%
 Accord: leather, Background Color: #78483A, Width: 59.793339196051%
 Accord: warm spicy, Background Color: #CC3300, Width: 54.88975490057%
 Accord: violet, Background Color: #9c1dff, Width: 47.790665513035%
+Description: A distinctive woody fragrance with leather, violet, and warm spices. Its powdery and earthy character makes it a modern classic.
+
 
 ---
 
@@ -1802,6 +1906,7 @@ Accord: amber, Background Color: #bc4d10, Width: 60.378994666779%
 Accord: aromatic, Background Color: #37a089, Width: 59.262447682638%
 Accord: sweet, Background Color: #ee363b, Width: 55.150478030208%
 Accord: warm spicy, Background Color: #CC3300, Width: 53.977589271966%
+Description: 
 
 ---
 
@@ -1834,6 +1939,8 @@ Accord: violet, Background Color: #9c1dff, Width: 75.213744152283%
 Accord: woody, Background Color: #774414, Width: 69.488627197935%
 Accord: musky, Background Color: #E7D8EA, Width: 67.732698822391%
 Accord: citrus, Background Color: #F9FF52, Width: 65.227960154864%
+Description: A tropical and powdery floral featuring mango, tuberose, and coconut. Sweet and musky, it’s a lush fragrance that feels like a tropical escape.
+
 
 ---
 
@@ -1864,6 +1971,8 @@ Accord: amber, Background Color: #bc4d10, Width: 50.249048124337%
 Accord: woody, Background Color: #774414, Width: 48.36277385931%
 Accord: musky, Background Color: #E7D8EA, Width: 45.553336246177%
 Accord: warm spicy, Background Color: #CC3300, Width: 44.120841395668%
+Description: A leathery and fruity scent with notes of raspberry, suede, and amber. Animalic and warm, it’s bold and deeply masculine.
+
 
 ---
 
@@ -1900,6 +2009,9 @@ Accord: lavender, Background Color: #e7ceec, Width: 75.277892740128%
 Accord: floral, Background Color: #FF5F8D, Width: 61.346094154165%
 Accord: fresh, Background Color: #9be5ed, Width: 56.33359199862%
 Accord: powdery, Background Color: #EEDDCC, Width: 54.731160544922%
+Description: Fresh and aromatic with citrus, amber, and woody notes. Its musky undertones make it versatile and sophisticated for any occasion.
+
+
 
 ---
 
@@ -1934,6 +2046,8 @@ Accord: powdery, Background Color: #EEDDCC, Width: 66.435166631935%
 Accord: citrus, Background Color: #F9FF52, Width: 62.317057531699%
 Accord: amber, Background Color: #bc4d10, Width: 59.742397768623%
 Accord: white floral, Background Color: #edf2fb, Width: 56.056297388712%
+Description: An irresistible blend of sweet vanilla, cinnamon, and orange blossom with a warm, musky finish. This sophisticated scent is rich, spicy, and indulgent.
+
 
 ---
 
@@ -1966,6 +2080,9 @@ Accord: fruity, Background Color: #FC4B29, Width: 66.465765566142%
 Accord: warm spicy, Background Color: #CC3300, Width: 60.918883908026%
 Accord: leather, Background Color: #78483A, Width: 57.699210826842%
 Accord: musky, Background Color: #E7D8EA, Width: 57.036424687654%
+Description: A fruity and spicy fragrance with pineapple, vanilla, and sandalwood. Woody and warm, it’s perfect for a confident and polished look.
+
+
 
 ---
 
@@ -2008,6 +2125,8 @@ Accord: woody, Background Color: #774414, Width: 64.796044264753%
 Accord: tuberose, Background Color: #ebfaf3, Width: 63.440768369303%
 Accord: almond, Background Color: #f1e3c5, Width: 61.065049446691%
 Accord: powdery, Background Color: #EEDDCC, Width: 59.885826547463%
+Description: A sweet and rich white floral featuring almond, cacao, and vanilla. Warm and spicy, it’s a bold and seductive fragrance for evenings.
+
 
 ---
 
@@ -2036,6 +2155,8 @@ Accord: amber, Background Color: #bc4d10, Width: 60.609548859959%
 Accord: white floral, Background Color: #edf2fb, Width: 59.354838709677%
 Accord: floral, Background Color: #FF5F8D, Width: 53.308335673016%
 Accord: vanilla, Background Color: #FFFEC0, Width: 49.67040030736%
+Description: A citrus and aromatic lavender fragrance with musky and powdery accents. Refreshing yet elegant, it’s a soothing and timeless choice.
+
 
 ---
 
@@ -2050,6 +2171,8 @@ Accord: sweet, Background Color: #ee363b, Width: 53.887146731593%
 Accord: aromatic, Background Color: #37a089, Width: 53.224835886214%
 Accord: powdery, Background Color: #EEDDCC, Width: 53.201374549265%
 Accord: earthy, Background Color: #544838, Width: 46.957422874226%
+Description: A woody and green scent with subtle sweet and earthy notes. Powdery and aromatic, it evokes a tranquil and grounded feeling.
+
 
 ---
 
@@ -2082,6 +2205,9 @@ Accord: musky, Background Color: #E7D8EA, Width: 58.437640326906%
 Accord: fresh, Background Color: #9be5ed, Width: 58.09546720039%
 Accord: herbal, Background Color: #6CA47F, Width: 54.60368474398%
 Accord: woody, Background Color: #774414, Width: 44.754307635067%
+Description: A zesty citrus fragrance with aquatic and aromatic touches. Warm spices and amber provide a bold yet refreshing finish.
+
+
 
 ---
 
@@ -2116,6 +2242,8 @@ Accord: aromatic, Background Color: #37a089, Width: 58.328727272727%
 Accord: earthy, Background Color: #544838, Width: 57.43903030303%
 Accord: amber, Background Color: #bc4d10, Width: 55.15103030303%
 Accord: floral, Background Color: #FF5F8D, Width: 49.24703030303%
+Description: A powdery iris and violet fragrance with spicy and woody accords. Elegant and refined, it’s ideal for formal occasions.
+
 
 ---
 
@@ -2160,6 +2288,8 @@ Accord: fresh spicy, Background Color: #83C928, Width: 50.675787347351%
 Accord: floral, Background Color: #FF5F8D, Width: 48.17770024179%
 Accord: woody, Background Color: #774414, Width: 45.306828267989%
 Accord: fresh, Background Color: #9be5ed, Width: 44.650322896581%
+Description: A classic marine-inspired fragrance with citrus, jasmine, and woody notes. Fresh and aromatic, it’s timeless and universally appealing.
+
 
 ---
 
@@ -2188,6 +2318,8 @@ Accord: amber, Background Color: #bc4d10, Width: 50.347572769331%
 Accord: fresh spicy, Background Color: #83C928, Width: 50.1883861406%
 Accord: green, Background Color: #0E8C1D, Width: 49.257536975284%
 Accord: warm spicy, Background Color: #CC3300, Width: 48.242454526604%
+Description: A bright and fresh citrus fragrance with spicy and green undertones. Amber and tea add warmth and sophistication to this invigorating scent.
+
 
 ---
 
@@ -2220,6 +2352,8 @@ Accord: rum, Background Color: #AC2005, Width: 68.711384669367%
 Accord: powdery, Background Color: #EEDDCC, Width: 64.013435868945%
 Accord: warm spicy, Background Color: #CC3300, Width: 57.388923814676%
 Accord: sweet, Background Color: #ee363b, Width: 56.778461673416%
+Description: A fruity and boozy rose scent with hints of whiskey, vanilla, and suede. Woody and powdery, it’s daring, unique, and unforgettable.
+
 
 ---
 
@@ -2254,6 +2388,8 @@ Accord: fresh spicy, Background Color: #83C928, Width: 70.088307340929%
 Accord: iris, Background Color: #b7a7d7, Width: 66.902966533871%
 Accord: woody, Background Color: #774414, Width: 62.600315570162%
 Accord: earthy, Background Color: #544838, Width: 62.195130456008%
+Description: Aromatic and musky with fresh spicy and citrus undertones, this fragrance blends lavender, suede, and bergamot for a sophisticated marine-inspired scent.
+
 
 ---
 
@@ -2287,6 +2423,8 @@ Accord: sweet, Background Color: #ee363b, Width: 54.064097966556%
 Accord: musky, Background Color: #E7D8EA, Width: 53.069291150337%
 Accord: warm spicy, Background Color: #CC3300, Width: 52.516569045437%
 Accord: rose, Background Color: #FE016B, Width: 51.420422095602%
+Description: A floral and patchouli-rich fragrance with hints of white flowers, sweet musk, and a touch of citrus, offering an explosion of femininity and elegance.
+
 
 ---
 
@@ -2321,6 +2459,7 @@ Accord: powdery, Background Color: #EEDDCC, Width: 66.435166631935%
 Accord: citrus, Background Color: #F9FF52, Width: 62.317057531699%
 Accord: amber, Background Color: #bc4d10, Width: 59.742397768623%
 Accord: white floral, Background Color: #edf2fb, Width: 56.056297388712%
+Description: Sweet and warm with rich vanilla, cinnamon, and orange blossom, it’s a spicy gourmand fragrance balanced by soft musk and powdery notes.
 
 ---
 
@@ -2354,6 +2493,8 @@ Accord: smoky, Background Color: #827487, Width: 54.488561101755%
 Accord: fruity, Background Color: #FC4B29, Width: 50.792236059987%
 Accord: fresh, Background Color: #9be5ed, Width: 49.105522754654%
 Accord: fresh spicy, Background Color: #83C928, Width: 47.967690187908%
+Description: A citrus and vanilla-forward scent complemented by lavender, earthy notes, and smoky undertones, this bold fragrance radiates futuristic energy.
+
 
 ---
 
@@ -2387,6 +2528,8 @@ Accord: mossy, Background Color: #5B6B32, Width: 62.294521836641%
 Accord: fresh spicy, Background Color: #83C928, Width: 61.053863463608%
 Accord: fresh, Background Color: #9be5ed, Width: 58.74639693542%
 Accord: amber, Background Color: #bc4d10, Width: 53.880171291384%
+Description: A woody, fruity, and green fragrance featuring fresh citrus, powdery musk, and amberwood for an invigorating and sophisticated aroma.
+
 
 ---
 
@@ -2420,6 +2563,8 @@ Accord: woody, Background Color: #774414, Width: 62.036191067548%
 Accord: mineral, Background Color: #71BBBF, Width: 59.348472080543%
 Accord: salty, Background Color: #e9fff9, Width: 46.765423337916%
 Accord: lavender, Background Color: #e7ceec, Width: 45.183394686655%
+Description: A marine-inspired fragrance with aromatic citrus and woody amber undertones, capturing the depth of the ocean in a bottle.
+
 
 ---
 
@@ -2448,6 +2593,8 @@ Accord: patchouli, Background Color: #63652e, Width: 54.881381867404%
 Accord: animalic, Background Color: #8E4B13, Width: 50.568460700939%
 Accord: powdery, Background Color: #EEDDCC, Width: 49.855339434423%
 Accord: warm spicy, Background Color: #CC3300, Width: 49.606509136921%
+Description: A luxurious white floral fragrance with creamy vanilla and woody amber undertones, creating an elegant and modern olfactory experience.
+
 
 ---
 
@@ -2481,6 +2628,8 @@ Accord: mossy, Background Color: #5B6B32, Width: 62.140978432404%
 Accord: fresh spicy, Background Color: #83C928, Width: 61.066806943714%
 Accord: fresh, Background Color: #9be5ed, Width: 58.710678590216%
 Accord: amber, Background Color: #bc4d10, Width: 53.810099947396%
+Description: A woody, fruity, and green fragrance featuring fresh citrus, powdery musk, and amberwood for an invigorating and sophisticated aroma.
+
 
 ---
 
@@ -2508,6 +2657,9 @@ Accord: fresh, Background Color: #9be5ed, Width: 58.797655522606%
 Accord: woody, Background Color: #774414, Width: 51.595155184224%
 Accord: fresh spicy, Background Color: #83C928, Width: 45.980099012744%
 Accord: rose, Background Color: #FE016B, Width: 45.683799070576%
+Description: A fresh and floral fragrance with citrus and woody notes, this sparkling scent embodies femininity and grace.
+
+
 
 ---
 
@@ -2541,6 +2693,8 @@ Accord: vanilla, Background Color: #FFFEC0, Width: 70.273361749965%
 Accord: woody, Background Color: #774414, Width: 65.435102346714%
 Accord: warm spicy, Background Color: #CC3300, Width: 63.547145065343%
 Accord: citrus, Background Color: #F9FF52, Width: 55.847112276922%
+Description: A creamy coconut and white floral blend with sweet amber and tuberose, this fragrance exudes luxurious tropical warmth.
+
 
 ---
 
@@ -2566,6 +2720,8 @@ Accord: amber, Background Color: #bc4d10, Width: 100%
 Accord: vanilla, Background Color: #FFFEC0, Width: 88.668009234904%
 Accord: powdery, Background Color: #EEDDCC, Width: 50.157723844213%
 Accord: sweet, Background Color: #ee363b, Width: 49.69165608361%
+Description: Rich amber and vanilla paired with tonka bean and cedar, this warm and powdery scent creates a golden and elegant evening aura.
+
 
 ---
 
@@ -2601,6 +2757,8 @@ Accord: fresh spicy, Background Color: #83C928, Width: 53.667370006635%
 Accord: fresh, Background Color: #9be5ed, Width: 51.763570177588%
 Accord: amber, Background Color: #bc4d10, Width: 49.243441304985%
 Accord: powdery, Background Color: #EEDDCC, Width: 45.88647734269%
+Description: A citrus-forward scent with marine and spicy woody accords, perfect for a fresh, sporty, and invigorating vibe.
+
 
 ---
 
@@ -2632,6 +2790,8 @@ Accord: oud, Background Color: #544136, Width: 63.010403848305%
 Accord: soft spicy, Background Color: #E27752, Width: 62.544468061304%
 Accord: warm spicy, Background Color: #CC3300, Width: 58.411455420069%
 Accord: earthy, Background Color: #544838, Width: 56.555543125629%
+Description: A woody and aromatic fragrance featuring citrus and amber with a touch of musky oud, creating a bold and adventurous profile.
+
 
 ---
 
@@ -2662,6 +2822,8 @@ Accord: metallic, Background Color: #97B0B7, Width: 46.40570183893%
 Accord: aromatic, Background Color: #37a089, Width: 46.388498014573%
 Accord: white floral, Background Color: #edf2fb, Width: 45.156906588535%
 Accord: animalic, Background Color: #8E4B13, Width: 44.962941902155%
+Description: A woody amber fragrance with saffron, jasmine, and warm spicy undertones, offering an unforgettable luxurious allure.
+
 
 ---
 
@@ -2690,6 +2852,8 @@ Accord: vanilla, Background Color: #FFFEC0, Width: 81.587370242215%
 Accord: cinnamon, Background Color: #D2691E, Width: 77.137464611513%
 Accord: amber, Background Color: #bc4d10, Width: 51.143441333753%
 Accord: powdery, Background Color: #EEDDCC, Width: 48.136206354199%
+Description: A sweet and warm spicy fragrance featuring cognac, cinnamon, and vanilla, evoking the comforting richness of a cozy night.
+
 
 ---
 
@@ -2723,6 +2887,8 @@ Accord: woody, Background Color: #774414, Width: 62.702450759284%
 Accord: fruity, Background Color: #FC4B29, Width: 61.163734776725%
 Accord: balsamic, Background Color: #ad8359, Width: 53.208089009172%
 Accord: powdery, Background Color: #EEDDCC, Width: 53.168621259961%
+Description: A sweet and vanilla-centric fragrance enriched with coffee, white floral, and balsamic undertones, exuding bold femininity.
+
 
 ---
 
@@ -2763,6 +2929,8 @@ Accord: smoky, Background Color: #827487, Width: 51.797696026498%
 Accord: balsamic, Background Color: #ad8359, Width: 50.298712843556%
 Accord: fresh, Background Color: #9be5ed, Width: 46.813587598485%
 Accord: powdery, Background Color: #EEDDCC, Width: 44.520573801435%
+Description: A fresh and citrusy scent with woody amber and aromatic spicy accords, making it a refined and versatile choice for men.
+
 
 ---
 
@@ -2798,6 +2966,8 @@ Accord: musky, Background Color: #E7D8EA, Width: 53.162236101181%
 Accord: tropical, Background Color: #f6af09, Width: 52.321777819795%
 Accord: fresh, Background Color: #9be5ed, Width: 51.569418757866%
 Accord: mossy, Background Color: #5B6B32, Width: 45.802021968672%
+Description: A fruity and woody scent with smoky leather and musky undertones, creating a bold and iconic fragrance.
+
 
 ---
 
@@ -2829,6 +2999,8 @@ Accord: earthy, Background Color: #544838, Width: 64.804364561368%
 Accord: warm spicy, Background Color: #CC3300, Width: 54.441075074472%
 Accord: citrus, Background Color: #F9FF52, Width: 53.610268768618%
 Accord: almond, Background Color: #f1e3c5, Width: 51.019446396894%
+Description: A powdery and vanilla-forward cherry fragrance with patchouli and woody accords, offering a sweet yet sophisticated aroma.
+
 
 ---
 
@@ -2854,6 +3026,8 @@ Base Notes:
 - Musk
 - Patchouli
 Accord: citrus, Background Color: #F9FF52, Width: 100%
+Description: A citrus explosion of lemon, blood orange, and grapefruit, perfect for an energetic and refreshing olfactory experience.
+
 
 ---
 
@@ -2885,6 +3059,8 @@ Accord: nutty, Background Color: #b4955f, Width: 52.896905690174%
 Accord: musky, Background Color: #E7D8EA, Width: 46.396935849139%
 Accord: soft spicy, Background Color: #E27752, Width: 45.35403883378%
 Accord: sweet, Background Color: #ee363b, Width: 44.688074048485%
+Description: A cozy woody and warm spicy scent with vanilla, balsamic, and nutty accords, evoking the warmth of a crackling fireplace.
+
 
 ---
 

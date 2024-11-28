@@ -26,9 +26,7 @@ def parse_perfume_data(file_path):
         # Extract brand (previously manufacturer)
         brand_match = re.search(r"Brand: (.*?)\n", perfume)
         if brand_match and brand_match.group(1) != "Unknown":
-            perfume_data["brand"] = brand_match.group(
-                1
-            )  # Changed from 'manufacturer' to 'brand'
+            perfume_data["brand"] = brand_match.group(1)
         else:
             continue
 
@@ -37,22 +35,15 @@ def parse_perfume_data(file_path):
         if image_match:
             image_filename = image_match.group(1)
             perfume_data["imageURL"] = image_filename
-        """
 
-        # Extract accords
-        accords = []
-        accord_matches = re.finditer(r"Accord: (.*?), Background Color:", perfume)
-        for match in accord_matches:
-            accords.append(match.group(1))
-        perfume_data["accords"] = accords
+        # Extract description
+        description_match = re.search(r"Description: (.*?)\n", perfume)
+        if description_match:
+            perfume_data["description"] = description_match.group(1)
+        else:
+            perfume_data["description"] = "No description available"
 
-        if perfume_data.get("name") and perfume_data.get(
-            "brand"
-        ):  # Changed from 'manufacturer' to 'brand'
-            parsed_data.append(perfume_data)
-
-        """
-
+        # Extract accords with colors
         accords_with_colors = []
         accord_matches = re.finditer(
             r"Accord: (.*?), Background Color: (#[A-Fa-f0-9]{6})", perfume
@@ -68,10 +59,36 @@ def parse_perfume_data(file_path):
     return parsed_data
 
 
+def check_existing_fragrances():
+    """
+    Fetch existing fragrances from the database to avoid duplicates.
+    Returns a set of fragrance names already in the database.
+    """
+    api_endpoint = "http://localhost:8000/products"
+    try:
+        response = requests.get(api_endpoint, headers={"Content-Type": "application/json"})
+        if response.status_code == 200:
+            existing_data = response.json()
+            return {item["name"] for item in existing_data}
+        else:
+            print(f"Failed to fetch existing products: {response.status_code} {response.text}")
+            return set()
+    except Exception as e:
+        print(f"Error fetching existing products: {str(e)}")
+        return set()
+
+
 def populate_database(data):
     api_endpoint = "http://localhost:8000/products/add_product"
 
+    existing_fragrances = check_existing_fragrances()
+    print(f"Found {len(existing_fragrances)} existing fragrances in the database.")
+
     for perfume in data:
+        if perfume["name"] in existing_fragrances:
+            print(f"Skipping duplicate fragrance: {perfume['name']}")
+            continue
+
         try:
             print(f"Sending data: {json.dumps(perfume, indent=2)}")  # Debug print
             response = requests.post(
@@ -88,8 +105,8 @@ def populate_database(data):
 
 
 if __name__ == "__main__":
-    # NOTE: remember change the path for the file
-    file_path = "/Users/kyle/Developer/projects/Parfummelier/data-scraping/result.txt"
+    # NOTE: Update the path to point to the new file
+    file_path = "/Users/bryanmedina/Documents/Parfummelier/data-scraping/result+description.txt"
     perfume_data = parse_perfume_data(file_path)
     print(f"Found {len(perfume_data)} perfumes to add")
     populate_database(perfume_data)

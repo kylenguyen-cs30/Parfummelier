@@ -1,5 +1,6 @@
 "use client";
 import { useAuth } from "@/app/components/auth/AuthContext";
+import HowitWorkHero from "@/app/components/layout/HowItWorksHero";
 import Content from "@/app/components/ui/content/Content";
 import React from "react";
 
@@ -15,6 +16,9 @@ export default function Main() {
           Welcome , {user?.firstName} {user?.lastName}
         </h1>
       </Content>
+
+      {/* NOTE: Hero section */}
+      <HowitWorkHero />
 
       {/* NOTE: How to use the website */}
 

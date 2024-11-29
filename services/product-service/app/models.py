@@ -13,6 +13,7 @@ class Product(db.Model):
     name = db.Column(db.String(100), nullable=False)
     brand = db.Column(db.String(100), nullable=False)
     imageURL = db.Column(db.String(200))
+    description = db.Column(db.String, nullable=False)
 
     accords = db.relationship(
         "Accord",

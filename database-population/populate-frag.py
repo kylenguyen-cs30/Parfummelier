@@ -66,12 +66,16 @@ def check_existing_fragrances():
     """
     api_endpoint = "http://localhost:8000/products"
     try:
-        response = requests.get(api_endpoint, headers={"Content-Type": "application/json"})
+        response = requests.get(
+            api_endpoint, headers={"Content-Type": "application/json"}
+        )
         if response.status_code == 200:
             existing_data = response.json()
             return {item["name"] for item in existing_data}
         else:
-            print(f"Failed to fetch existing products: {response.status_code} {response.text}")
+            print(
+                f"Failed to fetch existing products: {response.status_code} {response.text}"
+            )
             return set()
     except Exception as e:
         print(f"Error fetching existing products: {str(e)}")
@@ -106,7 +110,7 @@ def populate_database(data):
 
 if __name__ == "__main__":
     # NOTE: Update the path to point to the new file
-    file_path = "/Users/bryanmedina/Documents/Parfummelier/data-scraping/result+description.txt"
+    file_path = "/Users/panda/Developer/projects/Parfummelier/data-scraping/result+description.txt"
     perfume_data = parse_perfume_data(file_path)
     print(f"Found {len(perfume_data)} perfumes to add")
     populate_database(perfume_data)

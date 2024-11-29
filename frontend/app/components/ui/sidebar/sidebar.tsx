@@ -1,12 +1,17 @@
 import React, { useState } from "react";
 import "./sidebar.css";
-
-// install boxicons before import the CSS
 import "boxicons/css/boxicons.min.css";
 
 const DashboardSidebar = () => {
+  // State for sidebar visibility
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
   // State for dark mode
   const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen((prev) => !prev);
+  };
 
   const toggleDarkMode = () => {
     setIsDarkMode((prevMode) => !prevMode);
@@ -20,7 +25,7 @@ const DashboardSidebar = () => {
   };
 
   return (
-    <nav className="sidebar">
+    <nav className={`sidebar ${isSidebarOpen ? "open" : "closed"}`}>
       <header>
         <div className="image-text">
           <div className="text header-text">
@@ -28,7 +33,10 @@ const DashboardSidebar = () => {
             <span className="prof">Dashboard</span>
           </div>
         </div>
-        <i className="bx bx-chevron-right toggle"></i>
+        <i
+          className={`bx bx-chevron-${isSidebarOpen ? "left" : "right"} toggle`}
+          onClick={toggleSidebar}
+        ></i>
       </header>
 
       <div className="menu-bar">
@@ -44,35 +52,30 @@ const DashboardSidebar = () => {
                 <span className="text nav-text">Home</span>
               </a>
             </li>
-
             <li className="nav-link">
               <a href="#">
                 <i className="bx bx-child icon"></i>
                 <span className="text nav-text">Profile</span>
               </a>
             </li>
-
             <li className="nav-link">
               <a href="#">
                 <i className="bx bx-chat icon"></i>
                 <span className="text nav-text">Forum</span>
               </a>
             </li>
-
             <li className="nav-link">
               <a href="#">
                 <i className="bx bx-question-mark icon"></i>
                 <span className="text nav-text">Quiz</span>
               </a>
             </li>
-
             <li className="nav-link">
               <a href="#">
                 <i className="bx bx-cog icon"></i>
                 <span className="text nav-text">Setting</span>
               </a>
             </li>
-
             <li className="nav-link">
               <a href="#">
                 <i className="bx bx-log-out icon"></i>

@@ -203,7 +203,7 @@ header .image-text .header-text {
 }
 
 body.dark .switch::before {
-  left: 25px;
+  left: 24px;
 }
 
 body.dark-mode {
@@ -214,4 +214,47 @@ body.dark-mode {
 body.dark-mode .sidebar {
   background-color: #1e1e1e;
   color: #ffffff;
+}
+
+.sidebar {
+  width: 250px; /* Default width */
+  transition: width 0.3s ease;
+}
+
+.sidebar.closed {
+  width: 150px;
+}
+
+.sidebar .menu-links .nav-text {
+  opacity: 1;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.sidebar.closed .menu-links .nav-text {
+  opacity: 0;
+  transform: translateX(-10px); /* Slide text out slightly */
+}
+
+.sidebar .toggle {
+  position: absolute;
+  top: 20px;
+  right: -10px;
+  background: #ffffff;
+  border-radius: 50%;
+  transition: transform 0.3s ease;
+}
+
+.sidebar .mode {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: all 0.3s ease;
+}
+
+.sidebar.closed .mode-text {
+  display: none;
+}
+
+.sidebar.closed .moon-sun {
+  margin: 0 auto;
 }

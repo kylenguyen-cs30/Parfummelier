@@ -60,18 +60,21 @@ def list_products():
 
 
 # NOTE: Single product return
-@product_blueprint.route("/products/<int:id>", methods=["GET"])
-def get_product(id):
-    product = Product.query.get_or_404(id)
-    # base_url = f"{API_GATEWAY_URL}/images/"  # Get the base URL for images
-    base_url = "http://api-gateway:8000/images/"  # PERF: testing
+@product_blueprint.route("/products/<string:name>", methods=["GET"])
+def get_product(name):
+    product = Product.query.filter_by(name=name).first_or_404()
+    base_url = "http://api-gateway:8000/images/"
 
     return jsonify(
         {
             "id": product.id,
             "name": product.name,
             "brand": product.brand,
-            "accords": [accord.name for accord in product.accords],
+            "description": product.description,
+            "accords": [
+                {"name": accord.name, "background_color": accord.background_color}
+                for accord in product.accords
+            ],
             "imageURL": base_url + product.imageURL if product.imageURL else None,
         }
     )
@@ -85,6 +88,7 @@ def add_product():
         new_product = Product(
             name=data["name"],
             brand=data["brand"],
+            description=data["description"],
             imageURL=data.get("imageURL"),
         )
 
@@ -118,6 +122,7 @@ def add_product():
                     "id": new_product.id,
                     "name": new_product.name,
                     "brand": new_product.brand,
+                    "description": new_product.description,
                     "accords": [
                         {
                             "name": accord.name,
@@ -135,6 +140,7 @@ def add_product():
         return jsonify({"error": str(e)}), 400
 
 
+# NOTE: Add a review for a product
 @product_blueprint.route("/add_review/<int:product_id>", methods=["POST"])
 def add_review(product_id):
     try:
@@ -175,12 +181,32 @@ def add_review(product_id):
         return jsonify({"error": str(e)}), 400
 
 
-@product_blueprint.route("/products/<int:id>", methods=["DELETE"])
-def delete_product(id):
-    product = Product.query.get_or_404(id)
-    db.session.delete(product)
-    db.session.commit()
-    return jsonify({"message": "Product deleted successfully"})
+# NOTE: return reviews that belong a product
+@product_blueprint.route("/products/<int:product_id>/reviews", methods=["GET"])
+def get_product_reviews(product_id):
+    try:
+        product = Product.query.get_or_404(product_id)
+        reviews = product.reviews.all()
+
+        return (
+            jsonify(
+                {
+                    "product_id": product_id,
+                    "reviews": [
+                        {
+                            "id": review.id,
+                            "rating": review.rating,
+                            "content": review.content,
+                        }
+                        for review in reviews
+                    ],
+                }
+            ),
+            200,
+        )
+    except Exception as e:
+        print(f"Error fetching reviews: {e}")
+        return jsonify({"error": str(e)}), 400
 
 
 # ----------------------------- #

@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/card/Card";
 import { api } from "../../lib/axios";
+import { Search } from "lucide-react";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import axios from "axios";
@@ -27,6 +28,8 @@ interface Product {
   imageURL: string | null;
 }
 
+// NOTE: format the image to point the correct addresss
+// and render them correctly on the right server
 const getImageUrl = (url: string | null) => {
   if (!url) return null;
   try {
@@ -83,11 +86,46 @@ const ProductCard = ({ product }: { product: Product }) => {
   );
 };
 
-export default function ProductsPage() {
+export default function AllProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Search and filter states
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedBrand, setSelectedBrand] = useState<string>("all");
+  const [selectedAccord, setSelectedAccord] = useState<string>("all");
+
+  //Memoized unique brands and accords
+  const brands = useMemo(() => {
+    const uniqueBrands = Array.from(new Set(products.map((p) => p.brand)));
+    return ["all", ...uniqueBrands.sort()];
+  }, [products]);
+
+  const accords = useMemo(() => {
+    const uniqueAccords = Array.from(
+      new Set(products.flatMap((p) => p.accords.map((a) => a.name))),
+    );
+    return ["all", ...uniqueAccords.sort()];
+  }, [products]);
+
+  // memoized filter product
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesSearch =
+        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.brand.toLowerCase().includes(searchTerm.toLowerCase());
+      const matchesBrand =
+        selectedBrand === "all" || product.brand === selectedBrand;
+      const matchesAccord =
+        selectedAccord === "all" ||
+        product.accords.some((accord) => accord.name === selectedAccord);
+
+      return matchesSearch && matchesBrand && matchesAccord;
+    });
+  }, [products, searchTerm, selectedAccord, selectedBrand]);
+
+  // api request to the backend for product
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -129,9 +167,68 @@ export default function ProductsPage() {
     <ProtectedRoute>
       <div className="container mx-auto p-8">
         <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
+        {/* NOTE: Search and filter Section */}
+        <div className="mb-8 space-y-3">
+          <div className="flex flex-col sm:flex-row gap-4">
+            {/* NOTE: Search Input */}
+            <div className="relative flex-1">
+              <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+                <Search className="h-5 w-5 text-gray-400" />
+              </div>
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10 pr-4 py-2 w-full border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              />
+            </div>
+
+            {/* NOTE: Brand Select  */}
+            <select
+              value={selectedBrand}
+              onChange={(e) => setSelectedBrand(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+            >
+              <option value="all">All Brands</option>
+              {brands
+                .filter((brand) => brand !== "all")
+                .map((brand) => (
+                  <option key={brand} value={brand}>
+                    {brand}
+                  </option>
+                ))}
+            </select>
+
+            {/* NOTE: Accord Select */}
+            <select
+              value={selectedAccord}
+              onChange={(e) => setSelectedAccord(e.target.value)}
+              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
+            >
+              <option value="all">All Accords</option>
+              {accords
+                .filter((accord) => accord !== "all")
+                .map((accord) => (
+                  <option key={accord} value={accord}>
+                    {accord}
+                  </option>
+                ))}
+            </select>
+          </div>
+          {/* NOTE: Result count */}
+          <div>
+            Showing {filteredProducts.length} of {products.length} products
+          </div>
+        </div>
+
+        {/* NOTE: Product Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {products.map((product) => (
-            <Link key={product.id} href={`/products/${product.id}`}>
+          {filteredProducts.map((product) => (
+            <Link
+              key={product.id}
+              href={`/products/${encodeURIComponent(product.name)}`}
+            >
               <Card className="flex flex-col">
                 <CardHeader className="flex-none">
                   <CardTitle className="text-lg">{product.name}</CardTitle>

@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "../../components/ui/card/Card";
 import { api } from "../../lib/axios";
-import { Search } from "lucide-react";
+import { Search, X } from "lucide-react";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import axios from "axios";
@@ -94,7 +94,8 @@ export default function AllProductsPage() {
   // Search and filter states
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedBrand, setSelectedBrand] = useState<string>("all");
-  const [selectedAccord, setSelectedAccord] = useState<string>("all");
+  // const [selectedAccord, setSelectedAccord] = useState<string>("all"); old methods
+  const [selectedAccords, setSelectedAccords] = useState<string[]>([]);
 
   //Memoized unique brands and accords
   const brands = useMemo(() => {
@@ -106,24 +107,45 @@ export default function AllProductsPage() {
     const uniqueAccords = Array.from(
       new Set(products.flatMap((p) => p.accords.map((a) => a.name))),
     );
-    return ["all", ...uniqueAccords.sort()];
+    return uniqueAccords.sort();
   }, [products]);
 
   // memoized filter product
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
+      // NOTE: filter by search content
       const matchesSearch =
         product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         product.brand.toLowerCase().includes(searchTerm.toLowerCase());
+
+      // NOTE: filter by brands option
       const matchesBrand =
         selectedBrand === "all" || product.brand === selectedBrand;
-      const matchesAccord =
-        selectedAccord === "all" ||
-        product.accords.some((accord) => accord.name === selectedAccord);
 
-      return matchesSearch && matchesBrand && matchesAccord;
+      // NOTE: filter by accords options
+      const matchesAccords =
+        selectedAccords.length === 0 ||
+        selectedAccords.every((selectedAccords) =>
+          product.accords.some((accord) => accord.name === selectedAccords),
+        );
+
+      return matchesSearch && matchesBrand && matchesAccords;
     });
-  }, [products, searchTerm, selectedAccord, selectedBrand]);
+  }, [products, searchTerm, selectedAccords, selectedBrand]);
+
+  // Handle accord selection
+  const handleAccordSelect = (accord: string) => {
+    if (selectedAccords.includes(accord)) {
+      setSelectedAccords(selectedAccords.filter((a) => a !== accord));
+    } else {
+      setSelectedAccords([...selectedAccords, accord]);
+    }
+  };
+
+  //Clear all accord filter
+  const clearAccordFilters = () => {
+    setSelectedAccords([]);
+  };
 
   // api request to the backend for product
   useEffect(() => {
@@ -167,10 +189,10 @@ export default function AllProductsPage() {
     <ProtectedRoute>
       <div className="container mx-auto p-8">
         <h1 className="text-3xl font-bold mb-8">Perfume Collection</h1>
-        {/* NOTE: Search and filter Section */}
-        <div className="mb-8 space-y-3">
+
+        <div className="mb-8 space-y-4">
           <div className="flex flex-col sm:flex-row gap-4">
-            {/* NOTE: Search Input */}
+            {/* Search Input */}
             <div className="relative flex-1">
               <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
                 <Search className="h-5 w-5 text-gray-400" />
@@ -184,7 +206,7 @@ export default function AllProductsPage() {
               />
             </div>
 
-            {/* NOTE: Brand Select  */}
+            {/* Brand Select */}
             <select
               value={selectedBrand}
               onChange={(e) => setSelectedBrand(e.target.value)}
@@ -199,37 +221,62 @@ export default function AllProductsPage() {
                   </option>
                 ))}
             </select>
-
-            {/* NOTE: Accord Select */}
-            <select
-              value={selectedAccord}
-              onChange={(e) => setSelectedAccord(e.target.value)}
-              className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none bg-white"
-            >
-              <option value="all">All Accords</option>
-              {accords
-                .filter((accord) => accord !== "all")
-                .map((accord) => (
-                  <option key={accord} value={accord}>
-                    {accord}
-                  </option>
-                ))}
-            </select>
           </div>
-          {/* NOTE: Result count */}
-          <div>
+
+          {/* Accord Multi-Select Section */}
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">
+                Filter by Accords:
+              </label>
+              {selectedAccords.length > 0 && (
+                <button
+                  onClick={clearAccordFilters}
+                  className="text-sm text-blue-500 hover:text-blue-700"
+                >
+                  Clear all
+                </button>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {accords.map((accord) => (
+                <button
+                  key={accord}
+                  onClick={() => handleAccordSelect(accord)}
+                  className={`px-3 py-1 rounded-full text-sm flex items-center gap-1 ${
+                    selectedAccords.includes(accord)
+                      ? "bg-blue-500 text-white"
+                      : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                  }`}
+                >
+                  {accord}
+                  {selectedAccords.includes(accord) && (
+                    <X className="h-3 w-3" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Results count */}
+          <div className="text-sm text-gray-500">
             Showing {filteredProducts.length} of {products.length} products
+            {selectedAccords.length > 0 && (
+              <span className="ml-2">
+                (Filtered by: {selectedAccords.join(", ")})
+              </span>
+            )}
           </div>
         </div>
 
-        {/* NOTE: Product Grid */}
+        {/* Products Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {filteredProducts.map((product) => (
             <Link
               key={product.id}
               href={`/products/${encodeURIComponent(product.name)}`}
             >
-              <Card className="flex flex-col">
+              <Card className="flex flex-col hover:shadow-lg transition-shadow duration-200">
                 <CardHeader className="flex-none">
                   <CardTitle className="text-lg">{product.name}</CardTitle>
                   <p className="text-gray-500 text-sm">{product.brand}</p>

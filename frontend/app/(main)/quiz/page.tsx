@@ -4,6 +4,7 @@
  */
 
 "use client";
+import ProtectedRoute from "@/app/components/ProtectedRoute";
 import QuizModal from "@/app/components/quiz/QuizModal";
 import React, { useState } from "react";
 
@@ -108,25 +109,27 @@ const QuizPage: React.FC = () => {
   const closeModal = () => setModalOpen(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200 p-4">
-      <h1 className="text-4xl font-bold mb-8">Parfummelier</h1>
-      <button
-        onClick={openModal}
-        className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500"
-      >
-        Start Quiz
-      </button>
+    <ProtectedRoute>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gray-200 p-4">
+        <h1 className="text-4xl font-bold mb-8">Parfummelier</h1>
+        <button
+          onClick={openModal}
+          className="bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-500"
+        >
+          Start Quiz
+        </button>
 
-      {/* Render the QuizModal */}
-      <QuizModal
-        isOpen={isModalOpen}
-        onClose={closeModal}
-        questions={questions}
-      />
+        {/* Render the QuizModal */}
+        <QuizModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          questions={questions}
+        />
 
-      {/* Portal Target */}
-      <div id="portal"></div>
-    </div>
+        {/* Portal Target */}
+        <div id="portal"></div>
+      </div>
+    </ProtectedRoute>
   );
 };
 

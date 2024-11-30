@@ -37,8 +37,18 @@ const Header = () => {
           <div className="flex">
             {/* Logo */}
             <div className="flex-shrink-0 flex items-center">
-              <Link href="/main" className="font-bold text-xl">
-                Parfumelier
+              {/* <Link href="/main" className="font-bold text-xl"> */}
+              {/*   Parfumelier */}
+              {/* </Link> */}
+              <Link href={"/main"}>
+                <Image
+                  src="/logo/Parfummelier_Logo.webp"
+                  alt="Parfummelier Logo"
+                  width={150}
+                  height={40}
+                  className="h-10 w-auto"
+                  priority
+                />
               </Link>
             </div>
 

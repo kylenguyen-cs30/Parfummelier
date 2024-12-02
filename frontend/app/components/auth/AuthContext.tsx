@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
 
         if (userResponse.status === 200) {
+          console.log("User data from backend: ", userResponse.data);
           setState((prev) => ({
             ...prev,
             user: userResponse.data,
@@ -118,28 +119,53 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             isLoading: false,
           });
         }
+        return;
       } else {
-        // trying using existing token
-        const userResponse = await axios.get(
-          "http://localhost:8000/user/current-user/info",
-          {
-            headers: {
-              Authorization: `Bearer ${access_token}`,
+        //NOTE: trying using existing token
+        try {
+          const userResponse = await axios.get(
+            "http://localhost:8000/user/current-user/info",
+            {
+              headers: {
+                Authorization: `Bearer ${access_token}`,
+              },
             },
-          },
-        );
-
-        if (userResponse.status === 200) {
-          setState({
-            user: userResponse.data,
-            isAuthenticated: true,
-            isLoading: false,
-          });
-
-          return;
+          );
+          if (userResponse.status === 200) {
+            console.log("User data from request: ", userResponse.data);
+            // Update state with new data
+            setState((prevState) => ({
+              ...prevState,
+              user: userResponse.data,
+              isAuthenticated: true,
+              isLoading: false,
+            }));
+          }
+        } catch (userError) {
+          if (axios.isAxiosError(userError)) {
+            if (userError.response?.status === 404) {
+              console.error("User's scentbank not found");
+              setState((prevState) => ({
+                ...prevState,
+                user: null,
+                isAuthenticated: false,
+                isLoading: false,
+              }));
+            } else if (userError.response?.status === 401) {
+              const refreshed = await refreshToken();
+              if (!refreshed) {
+                setState({
+                  user: null,
+                  isAuthenticated: false,
+                  isLoading: false,
+                });
+              }
+            }
+          }
         }
       }
     } catch (error: any) {
+      // Return error
       console.error("Auth Check Error:", {
         status: error.reponse?.status,
         data: error.response?.data,

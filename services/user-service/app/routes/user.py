@@ -455,12 +455,16 @@ def get_user_chat_info_by_id(current_user, user_id):
 @token_required
 def get_user_info(current_user):
     try:
+        scent_bank = ScentBank.query.get(current_user.scentID)
+        if not scent_bank:
+            return jsonify({"error": "user scent bank not found"}), 404
         user_info = {
             "id": current_user.id,
             "email": current_user.email,
             "firstName": current_user.firstName,
             "lastName": current_user.lastName,
             "userName": current_user.userName,
+            "favorite_accords": [accord.name for accord in scent_bank.favorite_accords],
         }
 
         return jsonify(user_info), 200

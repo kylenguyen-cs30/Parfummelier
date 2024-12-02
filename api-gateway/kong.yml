@@ -70,7 +70,10 @@ services:
     routes:
       - name: quiz-route
         paths:
-          - /quiz
+          - /get-recommendations
+          - /submit-quiz
+          - /accord-data
+          - /update-accordbank
         strip_path: false
         preserve_host: true
         methods:

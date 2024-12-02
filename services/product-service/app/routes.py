@@ -2,6 +2,7 @@ from flask_migrate import branches
 from flask import Blueprint, request, jsonify, send_from_directory
 from app.models import db, Product, Accord, Review
 from sqlalchemy import func
+from datetime import date
 import os
 
 
@@ -268,6 +269,99 @@ def recommend_products():
     except Exception as e:
         print(f"Error in recommendations route: {e}")
         return jsonify({"error": str(e)}), 500
+
+@product_blueprint.route("/recommendations/seasonal", methods=["POST"])
+def recommend_by_season():
+    try:
+        # Determine current season based on today's date
+        today = date.today()
+        month = today.month
+
+        # Map months to seasons
+        if month in [12, 1, 2]:
+            season = "winter"
+        elif month in [3, 4, 5]:
+            season = "spring"
+        elif month in [6, 7, 8]:
+            season = "summer"
+        else:
+            season = "fall"
+
+        # Seasonal Accord Mapping
+        seasonal_accords = {
+            "winter": [
+                "Amber", "Animalic", "Leather", "Musky", "Oud", "Patchouli", "Smoky", 
+                "Tobacco", "Vanilla", "Warm Spicy", "Balsamic", "Beeswax", "Bitter", 
+                "Cacao", "Caramel", "Chocolate", "Coffee", "Rum", "Whiskey", "Asphalt", 
+                "Brown Scotch Tape", "Gasoline", "Industrial Glue", "Meat", "Rubber", 
+                "Wet Plaster"
+            ],
+            "spring": [
+                "Aldehydic", "Floral", "Fresh", "Green", "Herbal", "Powdery", "Rose", 
+                "Violet", "White Floral", "Yellow Floral", "Almond", "Iris", "Lavender", 
+                "Tuberose"
+            ],
+            "summer": [
+                "Aquatic", "Citrus", "Fruity", "Marine", "Salty", "Tropical", "Ozonic", 
+                "Soapy", "Sweet", "Coconut", "Cherry", "Conifer", "Honey", "Sand", "Sour"
+            ],
+            "fall": [
+                "Aromatic", "Earthy", "Mossy", "Soft Spicy", "Woody", "Camphor", "Cinnamon", 
+                "Nutty", "Spicy", "Mineral", "Vinyl", "Plastic", "Hot Iron", "Bacon", 
+                "Tennis Ball"
+            ],
+        }
+
+        accords = seasonal_accords[season]
+
+        # Query products matching seasonal accords and count matches
+        recommended_products = (
+            db.session.query(
+                Product,
+                func.count(func.lower(Accord.name)).label("match_count")
+            )
+            .join(Product.accords)
+            .filter(func.lower(Accord.name).in_([accord.lower() for accord in accords]))
+            .group_by(Product.id)
+            .having(func.count(func.lower(Accord.name)) >= 3)
+            .order_by(func.count(func.lower(Accord.name)).desc())  # Order by match count
+            .limit(10)  # Fetch more products initially to handle duplicates
+            .all()
+        )
+
+        if not recommended_products:
+            return jsonify({"message": f"No recommendations found for the {season} season"}), 200
+
+        # Generate unique recommendations
+        recommendations = []
+        added_names = set()  # Track already added product names
+
+        for product, match_count in recommended_products:
+            if product.name.lower() not in added_names:
+                recommendations.append({
+                    "id": product.id,
+                    "name": product.name,
+                    "brand": product.brand,
+                    "accords": [accord.name for accord in product.accords],
+                    "imageURL": (
+                        f"{API_GATEWAY_URL}/product/images/{product.imageURL}"
+                        if product.imageURL
+                        else None
+                    ),
+                    "matching_accords_count": match_count,  # Include the match count
+                })
+                added_names.add(product.name.lower())
+
+            # Stop adding products once we have 5 unique recommendations
+            if len(recommendations) == 5:
+                break
+
+        return jsonify({"season": season.capitalize(), "recommendations": recommendations})
+
+    except Exception as e:
+        print(f"Error in seasonal recommendations route: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 # NOTE: Rating Routes

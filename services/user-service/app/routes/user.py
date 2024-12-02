@@ -520,3 +520,38 @@ def get_user_preferences(current_user):
         return jsonify(scentBank), 200
     except Exception as e:
         return jsonify({"error": f"Error fetching Scent Bank: {str(e)}"}), 500
+
+@user_blueprint.route("/scentbank/quiz-accords/<int:user_id>", methods=["POST"])
+@cross_origin(origin="http://quiz-service:5000")
+def update_accords_from_quiz(user_id):
+    """
+    Updates the favorite accords for a user's scent bank based on data from quiz-service.
+    """
+    try:
+        favorite_accords = request.json.get("accords", [])
+        if not favorite_accords:
+            return jsonify({"error": "No accords provided"}), 400
+
+        # Fetch the user's scent bank
+        scent_bank = ScentBank.query.get(user_id)
+        if not scent_bank:
+            return jsonify({"error": "ScentBank not found for this user"}), 404
+
+        # Retrieve or create Accord objects
+        accord_objects = []
+        for accord in favorite_accords:
+            accord_obj = Accord.query.filter_by(name=accord).first()
+            if not accord_obj:
+                accord_obj = Accord(name=accord)
+                db.session.add(accord_obj)
+            accord_objects.append(accord_obj)
+
+        # Update favorite accords in ScentBank
+        scent_bank.favorite_accords = accord_objects
+        db.session.commit()
+
+        return jsonify({"message": "Favorite accords updated successfully"}), 201
+
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": f"Failed to update favorite accords: {str(e)}"}), 500

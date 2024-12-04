@@ -11,6 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/app/components/ui/card/Card";
+import AccordMatchPercent from "@/app/components/ui/accordmatchpercent/AccordMatchPercent";
 
 interface Accord {
   name: string;
@@ -62,7 +63,6 @@ export default function SingleProductPage() {
       try {
         // make sure to decode the URL paramter since it might contain space
         const decodedName = decodeURIComponent(params.name as string);
-        console.log("Fetching product:", decodedName);
         // sending request the backend
         const { data } = await api.get(
           `/products/products/${encodeURIComponent(decodedName)}`,
@@ -102,6 +102,7 @@ export default function SingleProductPage() {
                     <div className="relative w-full aspect-[3/4]">
                       <Image
                         src={product.imageURL}
+                        product
                         alt={product.name}
                         fill
                         className="rounded-lg object-cover"
@@ -122,6 +123,8 @@ export default function SingleProductPage() {
                     <h1 className="text-3xl font-bold mb-2">{product.name}</h1>
                     <p className="text-xl text-gray-600">{product.brand}</p>
                   </div>
+
+                  <AccordMatchPercent productAccords={product.accords} />
 
                   <div>
                     <h2 className="text-xl font-semibold mb-3">Accords</h2>

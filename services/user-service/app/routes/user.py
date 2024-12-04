@@ -521,6 +521,7 @@ def get_user_preferences(current_user):
     except Exception as e:
         return jsonify({"error": f"Error fetching Scent Bank: {str(e)}"}), 500
 
+
 @user_blueprint.route("/scentbank/quiz-accords/<int:user_id>", methods=["POST"])
 @cross_origin(origin="http://quiz-service:5000")
 def update_accords_from_quiz(user_id):

@@ -82,7 +82,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
 
         if (userResponse.status === 200) {
-          console.log("User data from backend: ", userResponse.data);
           setState((prev) => ({
             ...prev,
             user: userResponse.data,

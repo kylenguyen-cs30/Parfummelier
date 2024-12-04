@@ -1,14 +1,9 @@
-/*
-  The component imports the useState hook to manage the state of whether the quiz modal is open or closed.
-  The QuizModal component is imported and used to render a modal that displays quiz questions.
- */
-
 "use client";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
 import QuizModal from "@/app/components/quiz/QuizModal";
 import React, { useState } from "react";
 
-const QuizPage: React.FC = () => {
+export default function QuizPage() {
   const [isModalOpen, setModalOpen] = useState(false);
 
   // Example quiz/survey questions
@@ -131,6 +126,4 @@ const QuizPage: React.FC = () => {
       </div>
     </ProtectedRoute>
   );
-};
-
-export default QuizPage;
+}

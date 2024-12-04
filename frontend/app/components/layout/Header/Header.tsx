@@ -18,10 +18,7 @@ const Header = () => {
   const { theme, setTheme } = useTheme();
 
   const navigation = {
-    products: [
-      { name: "All Products", href: "products/all" },
-      { name: "Product By Grade", href: "products/grade" },
-    ],
+    products: [{ name: "All Products", href: "/products/all" }],
 
     community: [
       { name: "Forum", href: "/forum" },

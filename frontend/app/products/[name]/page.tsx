@@ -10,8 +10,10 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/app/components/ui/card/Card";
-import AccordMatchPercent from "@/app/components/ui/accordmatchpercent/AccordMatchPercent";
+} from "../../components/ui/card/Card";
+import AccordMatchPercent from "../../components/ui/accordmatchpercent/AccordMatchPercent";
+import { Heart } from "lucide-react";
+import axios from "axios";
 
 interface Accord {
   name: string;
@@ -50,8 +52,9 @@ export default function SingleProductPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [imageError, setImageError] = useState(false);
-
-  console.log("Params:", params); // add this to debug
+  const [updateError, setUpdateError] = useState<string | null>(null);
+  const [favorite, setFavorite] = useState(false);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -83,6 +86,51 @@ export default function SingleProductPage() {
     fetchProduct();
   }, [params.name]);
 
+  const handleToggleFavorite = async () => {
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      const accessToken = tokenResponse.data.access_token;
+
+      if (!accessToken) {
+        throw new Error("No access token available");
+      }
+
+      // prespare the request data
+      const requestData = {
+        favorite_product_name: product?.name,
+        action: favorite ? "remove" : "add",
+      };
+
+      const response = await axios.put(
+        "http://localhost:8000/user/scentbank/products",
+        requestData,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (response.status === 200) {
+        setFavorite((prev) => !prev);
+        setUpdateError(null);
+      }
+    } catch (error) {
+      // handle errors
+      console.error("Error updating favorite status: ", error);
+      setUpdateError("Failed to update favorite status");
+
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data.error || "Failed to update favorite status";
+        setUpdateError(errorMessage);
+      }
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
   if (isLoading) return <LoadingScreen />;
   if (error)
     return <div className="text-center text-red-500 p-8">Error: {error}</div>;
@@ -102,7 +150,6 @@ export default function SingleProductPage() {
                     <div className="relative w-full aspect-[3/4]">
                       <Image
                         src={product.imageURL}
-                        product
                         alt={product.name}
                         fill
                         className="rounded-lg object-cover"
@@ -145,6 +192,24 @@ export default function SingleProductPage() {
                       ))}
                     </div>
                   </div>
+                  {/* add to favorite */}
+                  <button
+                    className="ml-2 px-3 py-1 rounded-full text-sm"
+                    onClick={handleToggleFavorite}
+                    disabled={isUpdating}
+                  >
+                    {isUpdating ? (
+                      <span className="animate-spin">⌛</span>
+                    ) : (
+                      <Heart
+                        fill={favorite ? "currentColor" : "none"}
+                        size={24}
+                      />
+                    )}
+                  </button>
+                  {updateError && (
+                    <p className="text-red-500 text-sm mt-2">{updateError}</p>
+                  )}
                 </div>
               </div>
 

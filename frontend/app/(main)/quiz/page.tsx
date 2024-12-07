@@ -36,7 +36,7 @@ export default function QuizPage() {
       ],
     },
     {
-      question: "Which type of cuisine do you prefer?",
+      question: "What is your favorite time of day?",
       options: [
         "Sunrise, when the world feels fresh and quiet",
         "Mid-afternoon, when the sun is warm but not too hot",

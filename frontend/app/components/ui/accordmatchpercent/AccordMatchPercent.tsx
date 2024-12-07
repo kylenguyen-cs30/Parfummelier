@@ -36,10 +36,7 @@ const AccordMatchPercent: React.FC<AccordMatchPercentProps> = ({
     return Math.round((matchingAccords / productAccords.length) * 100);
   };
 
-  console.log("product accord: ", productAccords);
-  console.log("user accord: ", user?.favorite_accords);
   const matchPercentage = calculateMatchPercentage();
-  console.log("Match Percent: ", matchPercentage);
 
   return (
     <div className="mt-4">

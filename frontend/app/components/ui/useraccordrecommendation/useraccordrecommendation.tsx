@@ -92,7 +92,7 @@ const UserAccordRecommendation = () => {
     console.log("Favorite Accords:", user?.favorite_accords);
 
     fetchRecommendations();
-  }, [user?.favorite_accords]); // Only depend on the accords array
+  }, [user?.favorite_accords]);
 
   if (isLoading) {
     return <LoadingScreen />;

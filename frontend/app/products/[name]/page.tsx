@@ -14,6 +14,7 @@ import {
 import AccordMatchPercent from "../../components/ui/accordmatchpercent/AccordMatchPercent";
 import { Heart } from "lucide-react";
 import axios from "axios";
+import { useAuth } from "@/app/components/auth/AuthContext";
 
 interface Accord {
   name: string;
@@ -48,6 +49,7 @@ const getImageUrl = (url: string | null) => {
 
 export default function SingleProductPage() {
   const params = useParams();
+  const { user, refreshUserData } = useAuth();
   const [product, setProduct] = useState<Product | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +77,11 @@ export default function SingleProductPage() {
           imageURL: getImageUrl(data.imageURL),
         };
         setProduct(transformedProduct);
+
+        // check if product is in user's favorites
+        if (user && user.favorite_products.includes(transformedProduct.name)) {
+          setFavorite(true);
+        }
       } catch (error) {
         setError(
           error instanceof Error ? error.message : "Failed to fetch product",
@@ -84,9 +91,13 @@ export default function SingleProductPage() {
       }
     };
     fetchProduct();
-  }, [params.name]);
+  }, [params.name, user]);
 
   const handleToggleFavorite = async () => {
+    if (!product) {
+      return;
+    }
+    setIsUpdating(true);
     try {
       const tokenResponse = await axios.get("/api/getAccessToken");
       const accessToken = tokenResponse.data.access_token;
@@ -115,6 +126,8 @@ export default function SingleProductPage() {
       if (response.status === 200) {
         setFavorite((prev) => !prev);
         setUpdateError(null);
+        // refresh user data to keep context in sync
+        await refreshUserData();
       }
     } catch (error) {
       // handle errors

@@ -14,6 +14,7 @@ interface AuthContextProps extends AuthState {
   logout: () => Promise<void>;
   refreshToken: () => Promise<boolean>;
   login: (email: string, password: string) => Promise<void>;
+  refreshUserData: () => Promise<void>;
 }
 
 const AUTH_TIMES = {
@@ -214,6 +215,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
+  const refreshUserData = async () => {
+    try {
+      const tokenResponse = await axios.get("/api/getAccessToken");
+      const access_token = tokenResponse.data?.access_token;
+
+      if (access_token) {
+        const userResponse = await axios.get(
+          "http://localhost:8000/user/current-user/info",
+          {
+            headers: {
+              Authorization: `Bearer ${access_token}`,
+            },
+          },
+        );
+
+        if (userResponse.status === 200) {
+          setState((prev) => ({
+            ...prev,
+            user: userResponse.data,
+          }));
+        }
+      }
+    } catch (error) {
+      console.error("Error refreshing user data: ", error);
+    }
+  };
+
   // Initialize the auth state on mount
   useEffect(() => {
     checkAuth();
@@ -239,6 +267,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         refreshToken,
+        refreshUserData,
       }}
     >
       {children}

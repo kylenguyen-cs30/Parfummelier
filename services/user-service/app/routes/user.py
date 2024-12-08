@@ -497,6 +497,9 @@ def get_user_info(current_user):
             "favorite_products": [
                 product.name for product in scent_bank.favorite_products
             ],
+            "favorite_collections": [
+                collection.name for collection in scent_bank.favorite_collections
+            ],
         }
 
         return jsonify(user_info), 200

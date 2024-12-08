@@ -68,7 +68,7 @@ export default function SingleProductPage() {
         const decodedName = decodeURIComponent(params.name as string);
         // sending request the backend
         const { data } = await api.get(
-          `/products/products/${encodeURIComponent(decodedName)}`,
+          `/products/product/${encodeURIComponent(decodedName)}`,
         );
         const transformedProduct = {
           ...data,

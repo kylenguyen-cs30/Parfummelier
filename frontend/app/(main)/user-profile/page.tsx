@@ -5,6 +5,7 @@ import axios from "axios";
 import { Camera, Heart, Star, Box, Plus } from "lucide-react";
 import LoadingScreen from "@/app/components/common/LoadingScreen/LoadingScreen";
 import ProtectedRoute from "@/app/components/ProtectedRoute";
+import { AccordBadge } from "@/app/components/ui/AccordBadge/AccordBadge";
 
 interface ScentBankData {
   favorite_accords: string[];
@@ -106,16 +107,16 @@ const UserProfile = () => {
                   <Heart className="mr-2" />
                   <h2 className="text-lg font-semibold">Favorite Accords</h2>
                 </div>
+                {/* maping the user's favorite accord */}
                 {scentData.favorite_accords.length > 0 ? (
-                  <div className="space-y-2">
+                  <div className="flex flex-wrap gap-2">
                     {scentData.favorite_accords.map((accord, index) => (
-                      <div
+                      <AccordBadge
                         key={index}
-                        className="px-3 py-2 bg-purple-50 rounded-md text-purple-700 animate-fade-in"
+                        name={accord}
+                        className="animate-fade-in"
                         style={{ animationDelay: `${index * 100}ms` }}
-                      >
-                        {accord}
-                      </div>
+                      />
                     ))}
                   </div>
                 ) : (

@@ -131,7 +131,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             },
           );
           if (userResponse.status === 200) {
-            console.log("User data from request: ", userResponse.data);
             // Update state with new data
             setState((prevState) => ({
               ...prevState,

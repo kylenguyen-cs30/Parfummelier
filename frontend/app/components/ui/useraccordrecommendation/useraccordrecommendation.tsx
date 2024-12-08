@@ -59,8 +59,6 @@ const UserAccordRecommendation = () => {
       }
 
       try {
-        console.log("Sending accords:", { accordbank: user.favorite_accords });
-
         // Remove the nested data object
         const response = await api.post("/products/recommendation-by-accord", {
           accordbank: user.favorite_accords,
@@ -87,9 +85,6 @@ const UserAccordRecommendation = () => {
         setIsLoading(false);
       }
     };
-
-    console.log("User Data:", user);
-    console.log("Favorite Accords:", user?.favorite_accords);
 
     fetchRecommendations();
   }, [user?.favorite_accords]);

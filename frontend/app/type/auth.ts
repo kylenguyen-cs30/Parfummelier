@@ -5,6 +5,7 @@ export interface User {
   lastName: string;
   userName: string;
   favorite_accords: string[];
+  favorite_products: string[];
 }
 
 export interface AuthState {

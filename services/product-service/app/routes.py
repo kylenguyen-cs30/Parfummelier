@@ -66,7 +66,7 @@ def list_products():
 
 
 # NOTE: Single product return
-@product_blueprint.route("/products/<string:name>", methods=["GET"])
+@product_blueprint.route("/product/<string:name>", methods=["GET"])
 def get_product(name):
     product = Product.query.filter_by(name=name).first_or_404()
     base_url = "http://api-gateway:8000/images/"

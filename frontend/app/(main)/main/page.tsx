@@ -18,9 +18,15 @@ export default function Main() {
     <ProtectedRoute>
       <div>
         <Content>
-          <h1>
-            Welcome , {user?.firstName} {user?.lastName}
+          <h1 className="text-4xl font-bold tracking-tight text-orange-500 sm:text-6xl mb-4">
+            Welcome,{" "}
+            <span className="text-orange-300">
+              {user?.firstName} {user?.lastName}
+            </span>
           </h1>
+          <p className="text-lg leading-8 text-orange-400 font-medium italic">
+            Where we make scents make sense!
+          </p>
         </Content>
         <HowitWorkHero />
         {/* NOTE: Quiz prompt section */}

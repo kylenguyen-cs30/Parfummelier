@@ -135,7 +135,7 @@ export default function ProductActions({ product }: ProductActionsProps) {
           icon={Star}
           isActive={inCollection}
           isLoading={isUpdatingCollection}
-          label="I had it"
+          label="I have it"
           onClick={() => handleToggle("collection")}
         />
       </div>

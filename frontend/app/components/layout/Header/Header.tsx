@@ -154,7 +154,7 @@ const Header = () => {
                   className="rounded-full"
                 />
                 <span className="text-sm font-medium">
-                  Welcome, {user?.firstName || "Guest"}
+                  Welcome {user?.firstName || "Guest"}
                 </span>
                 <ChevronDown className="h-4 w-4" />
               </MenuButton>

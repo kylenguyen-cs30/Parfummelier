@@ -35,7 +35,7 @@ try:
     logger.info("Postgresql tables created successfully")
 
 except Exception as e:
-    logger.info(f"Failed to create Postgresql tables : {e}")
+    logger.error(f"Failed to create PostgresSQL tables : {e}")
     raise
 
 

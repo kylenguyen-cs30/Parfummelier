@@ -20,6 +20,9 @@ export default function Home() {
     return <LoadingScreen />;
   }
 
+
+
+
   const handleClick = (type: "signin" | "signup") => {
     router.push(`/${type}`);
   };

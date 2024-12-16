@@ -11,6 +11,9 @@ import React from "react";
 export default function Main() {
   const { user } = useAuth();
 
+
+
+
   const isNewUser =
     !user?.favorite_accords || user.favorite_accords.length === 0;
 

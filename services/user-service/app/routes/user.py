@@ -1,13 +1,13 @@
-import jwt
 import logging
-
 from datetime import datetime
-from flask import Blueprint, request, jsonify, current_app
-from flask_cors import cross_origin
 from functools import wraps
-from app.models.user import User
-from app.models.scent import ScentBank, Accord, Product, Collection
+
+import jwt
 from app.extensions import db
+from app.models.scent import Accord, Collection, Product, ScentBank
+from app.models.user import User
+from flask import Blueprint, current_app, jsonify, request
+from flask_cors import cross_origin
 
 user_blueprint = Blueprint("user", __name__)
 
@@ -21,11 +21,6 @@ logger = logging.getLogger(__name__)
 # Service to  service user need to go through JWT Checking point
 #
 # ------------------------------------------------------------------------------------------#
-
-# NOTE:
-# Database reset is neccessary if the token authentication are not accepted or invalid
-# make sure writing the documentaion if there are unprecedented case. This service is
-# reponsible for creating user account, return user's json information for client side
 
 
 # NOTE: Home route
@@ -78,6 +73,7 @@ def token_required(f):
 @user_blueprint.route("/register", methods=["POST", "OPTIONS"])
 @cross_origin(origins="*", headers=["Content-Type", "Authorization"])
 def register_user():
+    # this is for browser that is send request with "OPTIONS"
     if request.method == "OPTIONS":
         return _build_cors_prelight_response()
 

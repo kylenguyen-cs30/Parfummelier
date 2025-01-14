@@ -1,6 +1,6 @@
 from app.extensions import db
 from flask_login import UserMixin
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 
 
 class User(db.Model, UserMixin):
@@ -15,6 +15,7 @@ class User(db.Model, UserMixin):
     firstName = db.Column(db.String(100), nullable=False)
     lastName = db.Column(db.String(100), nullable=False)
     dateOfBirth = db.Column(db.Date, nullable=False)
+    # this scent id for tracking user scent bank data
     scentID = db.Column(
         db.Integer,
         db.ForeignKey("scent_bank.id"),
@@ -22,7 +23,7 @@ class User(db.Model, UserMixin):
         unique=True,
     )
 
-    # Relationships
+    # setting many to many relationship for each user that establish many to many relationship
     scent = db.relationship("ScentBank", backref="users", lazy=True)
 
     def __init__(self, userName, email, firstName, lastName, dateOfBirth, password):
